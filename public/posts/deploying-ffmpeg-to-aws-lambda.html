@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide | Building in Public</title>
+    <meta name="description" content="How a non-technical founder learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches. From Lambda Layers to ECS Fargate, here's what actually works.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">Technical learnings from a non-technical founder</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide for Developers (and Their AI Assistants)</h1>
+
+            <p><em>How a non-technical founder learned to stop worrying and ship production-ready FFmpeg in serverless environments</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-19">October 19, 2025</time>
+                <span class="post-category">AWS</span>
+                <span class="post-category">Lambda</span>
+                <span class="post-category">FFmpeg</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, GitHub Copilot, and ChatGPT). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <p><strong>The context</strong>: Over the past few months, I've shipped multiple audio processing services to production using AWS Lambda, handling everything from text-to-speech stitching for meditation apps to complex podcast automation. This post distills the hard-won lessons about deploying FFmpeg in serverless environments—something that took me weeks of debugging, architecture mismatches, and "but it works on my Mac!" moments to figure out.</p>
+
+            <p>If you're a seasoned developer, you might find some of these mistakes obvious. But if you're building with AI assistants (as a solo founder, product person learning to code, or developer new to DevOps), this guide will save you days of frustration.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p>Deploying FFmpeg to AWS Lambda is deceptively simple until you hit production. After multiple failed attempts, architecture mismatches, and mysterious "file not found" errors across audio processing and video transcoding projects, we've distilled our learnings into this guide. Whether you're coding solo or pair-programming with AI assistants like Claude or GitHub Copilot, these patterns will save you days of debugging.</p>
+
+            <p><strong>Key Takeaways</strong>:</p>
+            <ul>
+                <li>Know your use case: Audio stitching ≠ Complex mixing ≠ Video processing</li>
+                <li>Use Lambda Layers for simple ops, Fargate for heavy processing</li>
+                <li>Static binaries are non-negotiable</li>
+                <li>x86_64 vs ARM64 matters more than you think</li>
+                <li>AI assistants often get the architecture wrong—here's how to guide them</li>
+                <li>Local testing ≠ AWS Lambda reality</li>
+            </ul>
+
+            <h2>Why FFmpeg in Serverless?</h2>
+
+            <p>Before diving into deployment, let's establish <strong>why</strong> you might need FFmpeg in a serverless environment:</p>
+
+            <h3>Common Use Cases We've Built</h3>
+
+            <p><strong>1. Audio Stitching & Silence Injection</strong> ⚡</p>
+            <ul>
+                <li><strong>Problem</strong>: Text-to-speech APIs generate separate audio segments. You need to stitch them with precise silence gaps.</li>
+                <li><strong>Why FFmpeg</strong>: Native TTS "break" tags cause artifacts and speedup. FFmpeg provides frame-accurate silence injection.</li>
+                <li><strong>Example</strong>: Meditation apps with breathing exercises ("Breathe in... [2s silence] ... One... [1s] ... Two...")</li>
+                <li><strong>Architecture</strong>: Lambda Layer (fast, simple)</li>
+            </ul>
+
+            <p><strong>2. Audio Format Conversion</strong> 🔄</p>
+            <ul>
+                <li><strong>Problem</strong>: Users upload WAV/FLAC/OGG, you need MP3/AAC for web delivery.</li>
+                <li><strong>Why FFmpeg</strong>: Industry-standard codec support, reliable quality.</li>
+                <li><strong>Example</strong>: Podcast hosting platforms normalizing all uploads to 128kbps MP3</li>
+                <li><strong>Architecture</strong>: Lambda Layer (straightforward)</li>
+            </ul>
+
+            <p><strong>3. Complex Audio Mixing</strong> 🎚️</p>
+            <ul>
+                <li><strong>Problem</strong>: Multi-track audio with crossfades, loudness normalization, ducking.</li>
+                <li><strong>Why FFmpeg</strong>: Professional-grade audio filters (compressor, EQ, dynamics).</li>
+                <li><strong>Example</strong>: Automated podcast production with music beds, intro/outro stingers, sound effects</li>
+                <li><strong>Architecture</strong>: ECS Fargate (heavy processing, >300MB dependencies)</li>
+            </ul>
+
+            <p><strong>4. Video Processing</strong> 🎬</p>
+            <ul>
+                <li><strong>Problem</strong>: Thumbnail generation, format conversion, resolution scaling.</li>
+                <li><strong>Why FFmpeg</strong>: Only tool that handles every video codec reliably.</li>
+                <li><strong>Example</strong>: Social media platforms generating preview clips</li>
+                <li><strong>Architecture</strong>: Depends on scale - Layer for thumbnails, Fargate for transcoding</li>
+            </ul>
+
+            <h3>Why Not Use Cloud Services?</h3>
+
+            <p>You might ask: "Why not use AWS MediaConvert or Elastic Transcoder?"</p>
+
+            <p><strong>When we chose FFmpeg over managed services:</strong></p>
+            <ul>
+                <li><strong>Precise control</strong>: Frame-accurate silence injection at specific timestamps</li>
+                <li><strong>Custom filters</strong>: Breathing exercise pacing, meditation-specific audio profiles</li>
+                <li><strong>Cost</strong>: $0.015 per job vs $0.30+ for managed transcoding</li>
+                <li><strong>Flexibility</strong>: Custom FFmpeg filter graphs not available in managed services</li>
+                <li><strong>Speed</strong>: No queue delays, instant processing for short audio</li>
+            </ul>
+
+            <p><strong>When managed services make sense:</strong></p>
+            <ul>
+                <li>Large-scale video transcoding (hundreds of hours daily)</li>
+                <li>ABR/HLS packaging for video streaming</li>
+                <li>You don't need custom audio filters</li>
+                <li>Budget allows for premium convenience</li>
+            </ul>
+
+            <h2>The Problem: "But It Works on My MacBook!"</h2>
+
+            <p>You've got FFmpeg working perfectly locally for your audio stitching pipeline. You ask your AI assistant to "deploy this to AWS Lambda," and 30 minutes later you're staring at:</p>
+
+            <pre><code>Error: /opt/bin/ffmpeg: cannot execute binary file: Exec format error</code></pre>
+
+            <p><strong>What went wrong?</strong> Your M1/M2 Mac runs ARM64. AWS Lambda (by default) runs x86_64. Your AI assistant just copied your local binary to Lambda. Chaos ensued.</p>
+
+            <p>This is the #1 failure mode we've seen across Claude Code, Copilot, and other AI coding assistants. Let's fix it.</p>
+
+            <h2>Architecture Decision #1: Lambda Layer vs. Container vs. Fargate</h2>
+
+            <p>The first question: Where should FFmpeg run? This decision shapes everything else.</p>
+
+            <h3>Decision Matrix by Use Case</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Use Case</th>
+                        <th>Best Architecture</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Audio stitching</strong> (2-5 segments, &lt;30s total)</td>
+                        <td>Lambda Layer</td>
+                        <td>Fast cold starts, simple deployment</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Format conversion</strong> (single file ops)</td>
+                        <td>Lambda Layer</td>
+                        <td>Straightforward, cost-effective</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complex mixing</strong> (multi-track, &gt;5min)</td>
+                        <td>ECS Fargate</td>
+                        <td>Needs &gt;10min processing, heavy deps</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Video transcoding</strong> (short clips)</td>
+                        <td>Lambda Container</td>
+                        <td>Needs full FFmpeg + codecs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Video transcoding</strong> (long form)</td>
+                        <td>ECS Fargate</td>
+                        <td>Processing time exceeds Lambda limits</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>The AI Assistant Trap</h3>
+
+            <p><strong>What AI assistants typically suggest first:</strong></p>
+            <pre><code>"Let's use a Docker container! It's more flexible and we can
+install whatever we need."</code></pre>
+
+            <p><strong>Why this often backfires for simple use cases:</strong></p>
+            <ul>
+                <li>5-10 second cold starts (vs 1-2s for layers)</li>
+                <li>Extra complexity (ECR, image builds, multi-stage Dockerfiles)</li>
+                <li>Harder to debug</li>
+                <li>Your team now needs Docker/ECS expertise</li>
+                <li>Overkill for audio stitching or format conversion</li>
+            </ul>
+
+            <p><strong>When to actually use containers:</strong></p>
+            <ul>
+                <li>You need &gt;250MB of dependencies (complex mixing with Rubber Band, Sox, etc.)</li>
+                <li>Processing exceeds Lambda's 15-minute limit</li>
+                <li>Need &gt;10GB RAM (Lambda max is 10GB)</li>
+                <li>Hit Lambda's 10-second initialization timeout (rare, but we've seen it with heavy libraries)</li>
+            </ul>
+
+            <h3>Our Recommendation: Start with Lambda Layers</h3>
+
+            <p><strong>For 80% of FFmpeg use cases, Lambda Layers win:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Factor</th>
+                        <th>Lambda Layer</th>
+                        <th>Container</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cold Start</td>
+                        <td>1-2s ⚡</td>
+                        <td>5-10s 🐌</td>
+                    </tr>
+                    <tr>
+                        <td>Size Limit</td>
+                        <td>50MB compressed, 250MB uncompressed</td>
+                        <td>10GB</td>
+                    </tr>
+                    <tr>
+                        <td>Complexity</td>
+                        <td>Low ✅</td>
+                        <td>Medium-High ⚠️</td>
+                    </tr>
+                    <tr>
+                        <td>Caching</td>
+                        <td>Excellent</td>
+                        <td>Good</td>
+                    </tr>
+                    <tr>
+                        <td>Debugging</td>
+                        <td>Easy</td>
+                        <td>Harder</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>How to guide your AI assistant:</strong></p>
+
+            <blockquote>
+                <p>❌ "Help me deploy FFmpeg to Lambda"</p>
+                <p>✅ "Create a Lambda Layer with FFmpeg static binaries for x86_64. Use pre-built binaries from johnvansickle.com. Target size: &lt;50MB."</p>
+            </blockquote>
+
+            <h2>Architecture Decision #2: Static vs. Dynamic Binaries</h2>
+
+            <h3>The Shared Library Nightmare</h3>
+
+            <p>Your AI assistant might suggest:</p>
+
+            <pre><code># ❌ DON'T DO THIS
+apt-get install ffmpeg
+cp /usr/bin/ffmpeg /opt/bin/</code></pre>
+
+            <p><strong>Why this fails:</strong></p>
+            <pre><code>error while loading shared libraries: libavcodec.so.58:
+cannot open shared object file: No such file or directory</code></pre>
+
+            <p>FFmpeg needs <code>libavcodec</code>, <code>libavformat</code>, <code>libavutil</code>, <code>libswscale</code>, etc. You're now playing "find the shared library" across different Lambda runtimes.</p>
+
+            <h3>The Solution: Static Binaries</h3>
+
+            <p><strong>Static binaries = self-contained, no dependencies.</strong></p>
+
+            <pre><code># ✅ DO THIS
+curl -L https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz \
+  -o ffmpeg.tar.xz</code></pre>
+
+            <p><strong>How to verify:</strong></p>
+            <pre><code>file ffmpeg
+# Should output: "statically linked" ✅
+# NOT: "dynamically linked" ❌</code></pre>
+
+            <p><strong>Prompting AI assistants:</strong></p>
+            <blockquote>
+                <p>❌ "Install ffmpeg in the Lambda environment"</p>
+                <p>✅ "Download static ffmpeg binaries from John Van Sickle's builds (johnvansickle.com/ffmpeg/). These are self-contained and don't require shared libraries. Verify the binary is statically linked using the 'file' command."</p>
+            </blockquote>
+
+            <h2>The x86_64 vs ARM64 Trap</h2>
+
+            <h3>How AI Assistants Get This Wrong</h3>
+
+            <p><strong>Scenario:</strong> You're developing on an M1/M2 Mac (ARM64).</p>
+
+            <p><strong>AI assistant generates:</strong></p>
+            <pre><code>FROM arm64v8/alpine
+RUN apk add ffmpeg</code></pre>
+
+            <p><strong>Looks reasonable, right?</strong> ❌</p>
+
+            <p><strong>Problem:</strong> AWS Lambda defaults to x86_64. Your ARM64 binary won't run.</p>
+
+            <h3>The Fix: Explicit Architecture Specification</h3>
+
+            <p><strong>When prompting AI:</strong></p>
+            <blockquote>
+                <p>✅ "Build FFmpeg layer for AWS Lambda x86_64 architecture. Even though I'm on an M1 Mac (ARM64), Lambda runs x86_64. Download the amd64-static build, NOT arm64."</p>
+            </blockquote>
+
+            <p><strong>In Dockerfile (if using Docker build):</strong></p>
+            <pre><code># ✅ Explicitly specify platform
+FROM --platform=linux/amd64 public.ecr.aws/lambda/provided:al2
+
+# Download x86_64 binaries
+curl -L https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz \
+  -o ffmpeg.tar.xz</code></pre>
+
+            <p><strong>In CDK:</strong></p>
+            <pre><code>// ✅ Specify architecture
+const ffmpegLayer = new lambda.LayerVersion(this, 'FFmpegLayer', {
+  code: lambda.Code.fromAsset('layers/ffmpeg/ffmpeg-layer.zip'),
+  compatibleArchitectures: [lambda.Architecture.X86_64], // Explicit!
+  compatibleRuntimes: [lambda.Runtime.NODEJS_18_X],
+});</code></pre>
+
+            <h3>Testing Architecture Locally</h3>
+
+            <p><strong>Don't trust "it works on my Mac":</strong></p>
+
+            <pre><code># Test with Docker (forced x86_64)
+docker run --platform linux/amd64 --rm -it \
+  -v $(pwd)/ffmpeg:/opt/bin/ffmpeg \
+  public.ecr.aws/lambda/nodejs:18 \
+  /opt/bin/ffmpeg -version
+
+# Should work! If not, wrong architecture.</code></pre>
+
+            <h2>Building the Layer: The Right Way</h2>
+
+            <h3>AI Assistant Anti-Pattern</h3>
+
+            <p><strong>What AI suggests first (often wrong):</strong></p>
+            <pre><code># ❌ Oversimplified
+wget https://some-ffmpeg-url.tar.gz
+tar xf ffmpeg.tar.gz
+cp ffmpeg /opt/bin
+zip -r layer.zip /opt</code></pre>
+
+            <p><strong>Problems:</strong></p>
+            <ul>
+                <li>No verification of architecture</li>
+                <li>Includes unnecessary files (docs, examples)</li>
+                <li>No size optimization</li>
+                <li>No testing</li>
+            </ul>
+
+            <h3>Battle-Tested Build Script</h3>
+
+            <p><strong>Save this as <code>layers/ffmpeg/build.sh</code>:</strong></p>
+
+            <pre><code>#!/bin/bash
+set -e  # Exit on error
+
+echo "🔨 Building FFmpeg Lambda Layer (x86_64)..."
+
+# 1. Create temp directory
+TEMP_DIR=$(mktemp -d)
+cd "$TEMP_DIR"
+echo "📁 Working in: $TEMP_DIR"
+
+# 2. Download STATIC binaries (x86_64)
+echo "⬇️  Downloading FFmpeg static binaries (amd64)..."
+curl -L -o ffmpeg-static.tar.xz \
+  https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz
+
+# 3. Extract
+echo "📦 Extracting..."
+tar xf ffmpeg-static.tar.xz
+
+# 4. Find extracted directory (version changes)
+FFMPEG_DIR=$(find . -name "ffmpeg-git-*-amd64-static" -type d | head -1)
+
+# 5. Create Lambda layer structure (MUST be opt/bin for layers)
+echo "🏗️  Creating layer structure..."
+mkdir -p opt/bin
+
+# 6. Copy ONLY needed binaries (skip ffplay, docs, etc.)
+cp "$FFMPEG_DIR/ffmpeg" opt/bin/
+cp "$FFMPEG_DIR/ffprobe" opt/bin/
+
+# 7. Make executable
+chmod +x opt/bin/ffmpeg opt/bin/ffprobe
+
+# 8. VERIFY architecture
+echo "🔍 Verifying architecture..."
+file opt/bin/ffmpeg | grep "x86-64" || {
+  echo "❌ ERROR: Wrong architecture! Expected x86-64"
+  exit 1
+}
+
+file opt/bin/ffmpeg | grep "statically linked" || {
+  echo "❌ ERROR: Binary is dynamically linked! Need static."
+  exit 1
+}
+
+# 9. Test execution
+echo "🧪 Testing binary..."
+./opt/bin/ffmpeg -version | head -1 || {
+  echo "❌ ERROR: Binary doesn't execute"
+  exit 1
+}
+
+# 10. Create zip (maximum compression)
+echo "📦 Creating Lambda layer zip..."
+zip -r9 ffmpeg-layer.zip opt/
+
+# 11. Check size (must be &lt;50MB compressed)
+SIZE=$(du -m ffmpeg-layer.zip | cut -f1)
+echo "📊 Layer size: ${SIZE}MB"
+
+if [ "$SIZE" -gt 50 ]; then
+  echo "⚠️  WARNING: Layer exceeds 50MB limit!"
+fi
+
+# 12. Move to project
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cp ffmpeg-layer.zip "$SCRIPT_DIR/"
+
+# 13. Cleanup
+cd /
+rm -rf "$TEMP_DIR"
+
+echo "✅ FFmpeg layer created: $SCRIPT_DIR/ffmpeg-layer.zip"
+echo "📊 Final size: $(du -h "$SCRIPT_DIR/ffmpeg-layer.zip" | cut -f1)"</code></pre>
+
+            <p><strong>Why this works:</strong></p>
+            <ul>
+                <li>✅ Explicit architecture verification</li>
+                <li>✅ Static linking check</li>
+                <li>✅ Execution test before deployment</li>
+                <li>✅ Size validation</li>
+                <li>✅ Only includes necessary binaries</li>
+            </ul>
+
+            <h2>CDK Integration: Common Pitfalls</h2>
+
+            <h3>AI Assistant Mistake #1: Wrong Layer Path</h3>
+
+            <pre><code>// ❌ AI often generates this
+const ffmpegLayer = new lambda.LayerVersion(this, 'FFmpegLayer', {
+  code: lambda.Code.fromAsset('ffmpeg-layer.zip'),  // Wrong!
+});</code></pre>
+
+            <p><strong>Problem:</strong> Layer structure must have <code>opt/</code> directory inside the zip. The zip itself is the asset.</p>
+
+            <pre><code>// ✅ Correct
+const ffmpegLayer = new lambda.LayerVersion(this, 'FFmpegLayer', {
+  code: lambda.Code.fromAsset(
+    path.join(__dirname, '../../layers/ffmpeg/ffmpeg-layer.zip')
+  ),
+  compatibleArchitectures: [lambda.Architecture.X86_64],
+  compatibleRuntimes: [lambda.Runtime.NODEJS_18_X],
+  description: 'FFmpeg and FFprobe static binaries (x86_64)',
+});</code></pre>
+
+            <h3>AI Assistant Mistake #2: Forgetting PATH</h3>
+
+            <pre><code>// ❌ Layer attached but PATH not set
+const worker = new lambda.Function(this, 'Worker', {
+  layers: [ffmpegLayer],
+  // FFmpeg won't be found!
+});</code></pre>
+
+            <pre><code>// ✅ Must set PATH
+const worker = new lambda.Function(this, 'Worker', {
+  layers: [ffmpegLayer],
+  environment: {
+    PATH: '/opt/bin:/usr/local/bin:/usr/bin:/bin',  // /opt/bin first!
+    FFMPEG_BINARY: '/opt/bin/ffmpeg',
+    FFPROBE_BINARY: '/opt/bin/ffprobe',
+  },
+});</code></pre>
+
+            <h3>AI Assistant Mistake #3: Insufficient Memory</h3>
+
+            <pre><code>// ❌ Default 128MB - FFmpeg will fail
+const worker = new lambda.Function(this, 'Worker', {
+  memorySize: 128,  // Too small!
+});</code></pre>
+
+            <p><strong>FFmpeg memory needs:</strong></p>
+            <ul>
+                <li>Simple concat: 512MB minimum</li>
+                <li>Audio stitching: 1024-2048MB</li>
+                <li>Complex filters: 2048-3008MB</li>
+            </ul>
+
+            <pre><code>// ✅ Right-sized for audio processing
+const worker = new lambda.Function(this, 'Worker', {
+  memorySize: 3008,  // 3GB = ~2 vCPU
+  timeout: Duration.minutes(10),
+  ephemeralStorageSize: Size.gibibytes(2),  // Extra /tmp space
+});</code></pre>
+
+            <h2>Summary: The Golden Rules</h2>
+
+            <h3>Choose the Right Architecture</h3>
+            <ol>
+                <li><strong>Lambda Layer</strong> for simple ops (audio stitching, format conversion, thumbnails)</li>
+                <li><strong>Lambda Container</strong> for moderate complexity (video processing &lt;15min)</li>
+                <li><strong>ECS Fargate</strong> for heavy processing (complex mixing, long transcodes, &gt;10min runtime)</li>
+            </ol>
+
+            <h3>Lambda Layer Best Practices</h3>
+            <ol start="4">
+                <li><strong>Static binaries only</strong> from johnvansickle.com</li>
+                <li><strong>x86_64 architecture</strong> for Lambda (even on M1/M2 Macs)</li>
+                <li><strong>Verify before deploy</strong>: <code>file</code> command shows "x86-64" and "statically linked"</li>
+                <li><strong>All file ops in /tmp</strong> with unique names</li>
+                <li><strong>Cleanup /tmp at start</strong> and in finally blocks</li>
+                <li><strong>Set PATH</strong> to include /opt/bin</li>
+                <li><strong>Right-size resources</strong>: 2048-3008MB, 5-10min timeout, 1-2GB ephemeral</li>
+            </ol>
+
+            <h3>Testing & Deployment</h3>
+            <ol start="11">
+                <li><strong>Test in Docker</strong> with --platform linux/amd64</li>
+                <li><strong>Verify architecture</strong> at every step</li>
+                <li><strong>Monitor in production</strong>: Memory, duration, /tmp usage, errors</li>
+            </ol>
+
+            <h3>When You Outgrow Lambda</h3>
+            <ol start="14">
+                <li><strong>Fargate signals</strong>: &gt;15min processing, &gt;10GB RAM needed, initialization timeouts</li>
+                <li><strong>Consider ARM64</strong> on Fargate for 20% cost savings</li>
+                <li><strong>Different static binaries</strong>: arm64-static for Fargate, amd64-static for Lambda</li>
+            </ol>
+
+            <h2>Conclusion</h2>
+
+            <p>Deploying FFmpeg in AWS serverless environments is a solved problem—once you know the patterns and choose the right architecture for your use case.</p>
+
+            <p><strong>The big lessons:</strong></p>
+            <ol>
+                <li><strong>Start simple</strong>: Lambda Layers for audio stitching and format conversion</li>
+                <li><strong>Know when to scale</strong>: Fargate for complex mixing and long processing</li>
+                <li><strong>Architecture matters</strong>: ARM64 local ≠ x86_64 Lambda (this catches everyone)</li>
+                <li><strong>Static binaries</strong>: Non-negotiable for Lambda deployments</li>
+                <li><strong>/tmp hygiene</strong>: Clean up or die from "No space left on device"</li>
+                <li><strong>Guide your AI</strong>: Specific prompts about architecture prevent days of debugging</li>
+            </ol>
+
+            <p><strong>Why we chose FFmpeg over managed services:</strong></p>
+            <ul>
+                <li>Frame-accurate silence injection (not possible with AWS MediaConvert)</li>
+                <li>Custom audio filter graphs (breathing exercise pacing)</li>
+                <li>Cost ($0.015 vs $0.30+ per job)</li>
+                <li>Speed (instant vs queue delays)</li>
+            </ul>
+
+            <p><strong>When to use managed services instead:</strong></p>
+            <ul>
+                <li>Large-scale video transcoding (hundreds of hours/day)</li>
+                <li>You don't need custom filters</li>
+                <li>Budget allows for premium convenience</li>
+            </ul>
+
+            <p>Whether you're coding solo or with AI assistants, this guide gives you the guardrails to ship production-ready FFmpeg. Bookmark it, share it with your AI, and may your cold starts be swift and your binaries statically linked.</p>
+
+            <p><strong>Production-ready in 3 steps:</strong></p>
+            <ol>
+                <li>Run our build script → Get verified x86_64 static layer</li>
+                <li>Deploy with our CDK config → Proper resources + PATH</li>
+                <li>Use our /tmp patterns → Cleanup + unique names</li>
+            </ol>
+
+            <p>Happy shipping! 🚀</p>
+
+            <hr>
+
+            <h2>Further Reading</h2>
+
+            <ul>
+                <li><a href="https://johnvansickle.com/ffmpeg/" target="_blank" rel="noopener">John Van Sickle's FFmpeg Builds</a></li>
+                <li><a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html" target="_blank" rel="noopener">AWS Lambda Layers Documentation</a></li>
+                <li><a href="https://ffmpeg.org/documentation.html" target="_blank" rel="noopener">FFmpeg Official Documentation</a></li>
+                <li><a href="https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" target="_blank" rel="noopener">Lambda Best Practices</a></li>
+            </ul>
+
+            <hr>
+
+            <h2>About This Series</h2>
+
+            <p>This post is part of my journey documenting what it's like to build production systems as a non-technical founder using AI coding assistants. You can follow along as I share:</p>
+
+            <ul>
+                <li><strong>Technical deep-dives</strong> like this one (what actually works in production)</li>
+                <li><strong>AI assistant prompting strategies</strong> (how to get Claude/Copilot to build what you need)</li>
+                <li><strong>Architecture decision-making</strong> (when to use Lambda vs Fargate vs managed services)</li>
+                <li><strong>Lessons learned the hard way</strong> (so you don't have to repeat my mistakes)</li>
+            </ul>
+
+            <p>I'm building in public and learning in public. If you're on a similar journey—whether you're a founder who can't find a technical co-founder, a PM learning to code, or a developer exploring AI-assisted development—I hope these posts help you ship faster.</p>
+
+            <hr>
+
+            <p><em>Written after deploying FFmpeg across multiple audio processing and TTS projects over three months of intense learning. From meditation apps to podcast automation, I've hit every architecture mismatch and "exec format error" imaginable—and lived to document it.</em></p>
+
+        </article>
+
+        <section class="newsletter">
+            <div class="newsletter-content">
+                <h2>Follow the Journey</h2>
+                <p>Get notified when I publish new posts about building with AI, serverless architecture, and shipping production systems as a non-technical founder.</p>
+                <form class="newsletter-form" action="#" method="post">
+                    <input type="email" placeholder="your@email.com" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+                <p class="newsletter-note">No spam. Unsubscribe anytime. Usually 1-2 posts per month.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Building in Public. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/yourhandle" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
