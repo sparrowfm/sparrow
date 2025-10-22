@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Building in Public</title>
+    <link>https://sparrowfm.github.io/sparrow/</link>
+    <atom:link href="https://sparrowfm.github.io/sparrow/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>A non-technical founder building audio &amp; media tech with AI</description>
+    <language>en-US</language>
+    <copyright>Copyright 2025 Neel Ketkar</copyright>
+    <managingEditor>neel@ketkar.com (Neel Ketkar)</managingEditor>
+    <webMaster>neel@ketkar.com (Neel Ketkar)</webMaster>
+    <lastBuildDate>Tue, 22 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Hand-crafted with Claude Code</generator>
+
+    <item>
+      <title>Building Airtable + AWS Integrations That Actually Work</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html</guid>
+      <description>Why the webhook pattern beats synchronous calls and Airtable API updates. After building five production microservices, here's what actually works—including when to use Airtable AI vs AWS Bedrock, and how to debug across the stack.</description>
+      <pubDate>Tue, 22 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>Airtable</category>
+      <category>AWS</category>
+      <category>Architecture</category>
+      <category>Microservices</category>
+      <category>Webhooks</category>
+      <category>Integration Patterns</category>
+    </item>
+
+    <item>
+      <title>Why I Started with Whisper Locally (Before Moving to the Cloud)</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html</guid>
+      <description>How running OpenAI Whisper locally taught me about transcription, FFmpeg, Python dependencies, and system architecture—before I eventually moved to cloud APIs for good reason.</description>
+      <pubDate>Tue, 22 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>Whisper</category>
+      <category>Transcription</category>
+      <category>AI Tools</category>
+    </item>
+
+    <item>
+      <title>Building This Blog with Claude Code: Why I Skipped WordPress</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html</guid>
+      <description>How I built a custom static blog in hours instead of wrestling with WordPress. From contemporary serif design to bold TV Guide aesthetic—complete design evolution, comprehensive SEO/GEO optimization, and zero hosting costs. All through conversation with an AI coding assistant.</description>
+      <pubDate>Mon, 21 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>Claude Code</category>
+      <category>Static Sites</category>
+      <category>Design</category>
+      <category>AI-Assisted Development</category>
+      <category>Blog Design</category>
+      <category>WordPress Alternative</category>
+    </item>
+
+    <item>
+      <title>Building Cronkiter: A Vintage Audio Transformer in Under 2 Hours</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/building-cronkiter-vintage-audio-transformer.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/building-cronkiter-vintage-audio-transformer.html</guid>
+      <description>From Reddit inspiration to production deployment: How I built a browser-based vintage audio tool with Claude Code, learned about Web Audio API, and shipped it live with GoatCounter analytics and full SEO optimization—all in about 90 minutes.</description>
+      <pubDate>Mon, 21 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>Web Audio API</category>
+      <category>Claude Code</category>
+      <category>SEO</category>
+      <category>AI-Assisted Development</category>
+      <category>Browser APIs</category>
+      <category>Privacy-Friendly Analytics</category>
+    </item>
+
+    <item>
+      <title>Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html</guid>
+      <description>How I learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches and "exec format error" messages. From Lambda Layers to ECS Fargate, here's what actually works—and how to guide your AI coding assistants to get it right.</description>
+      <pubDate>Sat, 19 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>AWS</category>
+      <category>Lambda</category>
+      <category>FFmpeg</category>
+      <category>AI-Assisted Development</category>
+      <category>Audio Processing</category>
+      <category>DevOps</category>
+    </item>
+
+  </channel>
+</rss>
