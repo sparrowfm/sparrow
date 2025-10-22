@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Building Airtable + AWS Integrations That Actually Work | Building in Public</title>
+    <meta name="title" content="Building Airtable + AWS Integrations That Actually Work">
+    <meta name="description" content="Why the webhook pattern beats synchronous calls and Airtable API updates. Lessons learned building production podcast workflows integrating Airtable with AWS Lambda, including when to use Airtable AI vs AWS Bedrock.">
+    <meta name="keywords" content="Airtable, AWS Lambda, webhooks, async architecture, API Gateway, microservices, Airtable AI, AWS Bedrock, integration patterns, serverless">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html">
+    <meta property="og:title" content="Building Airtable + AWS Integrations That Actually Work">
+    <meta property="og:description" content="From sync calls to webhooks: How we evolved our Airtable + AWS integration pattern after hitting every possible wall. Includes when to use Airtable AI vs AWS Bedrock.">
+    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/posts/airtable-aws-og-image.png">
+    <meta property="og:image:secure_url" content="https://sparrowfm.github.io/sparrow/posts/airtable-aws-og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Airtable AWS integration architecture diagram">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-22T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="Airtable">
+    <meta property="article:tag" content="AWS">
+    <meta property="article:tag" content="Architecture">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html">
+    <meta name="twitter:title" content="Building Airtable + AWS Integrations That Actually Work">
+    <meta name="twitter:description" content="Why the webhook pattern beats sync calls and Airtable API updates. Lessons from production podcast workflows.">
+    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/posts/airtable-aws-og-image.png">
+    <meta name="twitter:image:alt" content="Airtable AWS integration patterns">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Building Airtable + AWS Integrations That Actually Work",
+      "description": "Why the webhook pattern beats synchronous calls and Airtable API updates. Lessons learned building production podcast workflows integrating Airtable with AWS Lambda.",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://sparrowfm.github.io/sparrow/posts/airtable-aws-og-image.png",
+        "width": 1200,
+        "height": 630
+      },
+      "datePublished": "2025-10-22T00:00:00Z",
+      "dateModified": "2025-10-22T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html"
+      },
+      "keywords": ["Airtable", "AWS Lambda", "webhooks", "async architecture", "API Gateway", "microservices", "Airtable AI", "AWS Bedrock"],
+      "articleBody": "Why the webhook pattern beats synchronous calls and Airtable API updates when integrating Airtable with AWS Lambda. Lessons learned building production podcast workflows.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Building Airtable + AWS Integrations That Actually Work</h1>
+
+            <p><em>Why the webhook pattern beats synchronous calls and Airtable API updates—lessons from building real production workflows</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-22">October 22, 2025</time>
+                <span class="post-category">Airtable</span>
+                <span class="post-category">AWS</span>
+                <span class="post-category">Architecture</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams at <a href="https://www.amazon.com" target="_blank" rel="noopener">Amazon</a>, <a href="https://web.archive.org/web/20250101000000/wondery.com" target="_blank" rel="noopener">Wondery</a>, <a href="https://web.archive.org/web/20150101000000/fox.com" target="_blank" rel="noopener">Fox</a>, <a href="https://web.archive.org/web/20120101000000/rovicorp.com" target="_blank" rel="noopener">Rovi</a>, and <a href="https://web.archive.org/web/20060101000000/tvguide.com" target="_blank" rel="noopener">TV Guide</a>, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, GitHub Copilot, and ChatGPT). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <p><strong>The context</strong>: Over the past few months, I've built a suite of podcast production microservices—text-to-speech (Condor), transcription (Kestrel), audio asset gathering (Magpie), and research (Osprey)—all orchestrated through Airtable. What started as "let's make an API call from Airtable" evolved into a robust async architecture after hitting every possible integration wall. This post shares those lessons.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p>After trying multiple approaches to integrate Airtable with AWS Lambda, we landed on a webhook-based async pattern that actually works in production. The key insight: <strong>keep Airtable automations thin, respond fast, process async, and use webhooks to update records when done</strong>.</p>
+
+            <p><strong>Key Learnings</strong>:</p>
+            <ul>
+                <li><strong>Don't call Airtable API from Lambda</strong> - Field name vs field ID issues make migrations painful</li>
+                <li><strong>Don't wait for long jobs</strong> - Airtable automations timeout, embrace async from the start</li>
+                <li><strong>Use the webhook pattern</strong> - Submit job → get job_id → webhook callback when done</li>
+                <li><strong>Airtable AI vs AWS Bedrock</strong> - Use the right tool: Airtable AI for quick field transforms, Bedrock for long-form generation</li>
+                <li><strong>Observability matters</strong> - Correlation IDs tie Airtable runs to CloudWatch logs</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Airtable + AWS Dream</h2>
+
+            <p>The promise is compelling: use Airtable as your flexible database and UI, then offload heavy lifting to AWS Lambda. You get:</p>
+
+            <ul>
+                <li>Airtable's spreadsheet-like flexibility for rapid iteration</li>
+                <li>Built-in UI for operations teams (no admin panel to build)</li>
+                <li>AWS Lambda's scalability for compute-intensive tasks</li>
+                <li>Fast iteration cycles without database migrations</li>
+            </ul>
+
+            <p>For our podcast production workflow, this looked perfect. We needed to:</p>
+            <ul>
+                <li>Generate speech from scripts (2-5 minutes)</li>
+                <li>Transcribe audio files (3-10 minutes)</li>
+                <li>Gather audio assets from libraries (1-3 minutes)</li>
+                <li>Research topics via Perplexity (30-60 seconds)</li>
+            </ul>
+
+            <p>All triggered by updating fields in Airtable. How hard could integration be?</p>
+
+            <p>Very hard, it turns out.</p>
+
+            <hr>
+
+            <h2>Approach #1: The Naive Synchronous Call</h2>
+
+            <p><strong>What we tried</strong>: Airtable automation triggers on record update → POST to AWS Lambda → Wait for response → Update record with results.</p>
+
+            <pre><code>// Airtable automation script
+let cfg = input.config();
+let response = await fetch(cfg.api_url, {
+  method: 'POST',
+  headers: { 'X-API-Key': input.secret('API_KEY') },
+  body: JSON.stringify({
+    text: cfg.script,
+    voice: cfg.voice_id
+  })
+});
+
+let result = await response.json();
+console.log('Audio URL:', result.audio_url);
+</code></pre>
+
+            <h3>Why It Failed Spectacularly</h3>
+
+            <p><strong>1. Timeout Hell</strong></p>
+            <p>Airtable automations have a ~20-30 second timeout. Our TTS jobs took 2-5 minutes. Every single run failed with a timeout error. No results, no visibility into what went wrong.</p>
+
+            <p><strong>2. Lambda Cold Starts</strong></p>
+            <p>Even "fast" operations like research (30-60s) would occasionally timeout because Lambda cold starts added 3-5 seconds. Unpredictable failures are worse than consistent failures.</p>
+
+            <p><strong>3. No Progress Visibility</strong></p>
+            <p>When a job hung, we had no idea if Lambda was processing or crashed. Airtable automation logs just said "timeout" after 30 seconds.</p>
+
+            <p><strong>4. Impossible to Debug</strong></p>
+            <p>Correlation between Airtable automation runs and Lambda logs? Nonexistent. Good luck finding which CloudWatch log corresponds to which Airtable record.</p>
+
+            <p><strong>The Lesson</strong>: Synchronous calls work for truly fast operations (<5s), but anything longer needs a different approach.</p>
+
+            <hr>
+
+            <h2>Approach #2: Lambda Calls Airtable API Back</h2>
+
+            <p><strong>What we tried</strong>: Keep the initial call simple (submit job, return immediately), then have Lambda call the Airtable API to update the record when processing completes.</p>
+
+            <pre><code>// Lambda function (Node.js)
+async function updateAirtableRecord(recordId, audioUrl) {
+  await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${recordId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fields: {
+        'Audio URL': audioUrl,  // ⚠️ This is the problem
+        'Status': 'completed'
+      }
+    })
+  });
+}
+</code></pre>
+
+            <h3>Why This Became a Maintenance Nightmare</h3>
+
+            <p><strong>1. Field Names vs Field IDs</strong></p>
+            <p>This is the killer issue. The Airtable API uses field <em>names</em>, not field <em>IDs</em>. What does this mean?</p>
+
+            <ul>
+                <li>Rename "Audio URL" to "Generated Audio"? Your Lambda breaks.</li>
+                <li>Duplicate the base to test a new workflow? Need to update all field names in Lambda code.</li>
+                <li>Move to a fresh base? Every single field reference needs updating.</li>
+            </ul>
+
+            <p>We discovered this painfully when duplicating our "Briefly Remembered" base to create a new podcast base. Every automation broke because field names had slight variations.</p>
+
+            <p><strong>2. Schema Changes Are Invisible</strong></p>
+            <p>When someone renames a field in Airtable, Lambda silently fails to update it. No errors in CloudWatch—the API call succeeds—but the field just doesn't update. Debugging this took hours.</p>
+
+            <p><strong>3. Lost the Declarative Magic</strong></p>
+            <p>One of Airtable's strengths is its declarative nature: "When this status changes, do this." By pushing updates from Lambda, we lost that clarity. Now logic was split between Airtable automations and Lambda code.</p>
+
+            <p><strong>4. Personal Access Token Management</strong></p>
+            <p>Every Lambda needs an Airtable PAT stored in AWS Secrets Manager. Rotating tokens means updating multiple secrets. Adding a new service? Create another PAT, store it, grant permissions.</p>
+
+            <p><strong>5. Rate Limiting</strong></p>
+            <p>Airtable API has rate limits (5 requests/second per base). When processing 20 podcast episodes in parallel, we started hitting 429 errors. Now we needed retry logic, backoff strategies, and queuing.</p>
+
+            <p><strong>The Lesson</strong>: Calling the Airtable API from Lambda trades simplicity for brittleness. Every integration point becomes a maintenance burden.</p>
+
+            <hr>
+
+            <h2>The Pattern That Actually Works: Webhook-Based Async</h2>
+
+            <p>After weeks of frustration, we realized the answer was staring at us: <strong>Airtable has incoming webhooks</strong>. Instead of Lambda calling Airtable's API, have Lambda <em>POST</em> to an Airtable webhook URL.</p>
+
+            <h3>The Architecture</h3>
+
+            <pre><code>Airtable Automation (trigger on status change)
+    ↓ POST to Lambda with webhook_url
+API Gateway + Lambda (ingest)
+    ↓ Returns job_id + status immediately (<3s)
+    ↓ Enqueues job to SQS
+Lambda Worker
+    ↓ Processes job (can take minutes)
+    ↓ Stores artifacts in S3 + CloudFront
+    ↓ POST to webhook_url with results
+Airtable Incoming Webhook Automation
+    → Updates record with final status + artifacts
+</code></pre>
+
+            <h3>Why This Works</h3>
+
+            <p><strong>1. Fast Initial Response</strong></p>
+            <p>The ingest Lambda accepts the request, validates inputs, generates a job_id, and enqueues to SQS—all in under 3 seconds. Airtable automation completes successfully every time.</p>
+
+            <p><strong>2. Worker Takes As Long As Needed</strong></p>
+            <p>The worker Lambda processes from SQS asynchronously. TTS can take 5 minutes? No problem. Transcription takes 10 minutes? Fine. Airtable doesn't care—it's already moved on.</p>
+
+            <p><strong>3. Airtable Handles All Field Updates</strong></p>
+            <p>The webhook POSTs to an Airtable incoming webhook URL. The webhook automation updates fields using Airtable's internal field IDs. Rename a field? The webhook automation still works because it references the field by ID, not name.</p>
+
+            <p><strong>4. Easy Base Duplication</strong></p>
+            <p>Want to duplicate a base? Just:</p>
+            <ul>
+                <li>Duplicate the base</li>
+                <li>Create new webhook URLs</li>
+                <li>Update the webhook URLs in the submit automation</li>
+            </ul>
+            <p>No Lambda code changes. No field name mapping. It just works.</p>
+
+            <p><strong>5. Better Observability</strong></p>
+            <p>Include a <code>correlation_id</code> (the Airtable record ID) in every request and webhook. Now you can:</p>
+            <ul>
+                <li>Search CloudWatch logs by record ID</li>
+                <li>Trace a job from submit → process → webhook → record update</li>
+                <li>Debug failures by looking at both Airtable run history and Lambda logs</li>
+            </ul>
+
+            <h3>Simplified Example: Submit Automation</h3>
+
+            <pre><code>// Airtable automation: "When Status = Ready, run this script"
+let cfg = input.config();
+
+// Validation (fail fast with helpful hints)
+const apiBase = cfg.api_base?.trim();
+const webhookUrl = cfg.webhook_url?.trim();
+const recordId = cfg.record_id?.trim();
+
+if (!apiBase || !webhookUrl || !recordId) {
+  throw new Error('Missing required: api_base, webhook_url, record_id');
+}
+
+// Build idempotency key (safe retries)
+const idempotencyKey = `${recordId}:tts:v1`;
+
+// Prepare payload
+const payload = {
+  text: cfg.script,
+  voice_id: cfg.voice_id,
+  callback_url: webhookUrl,
+  correlation_id: recordId,
+  idempotency_key: idempotencyKey,
+  options: {
+    speed: 1.0,
+    audio_gain_db: 0
+  }
+};
+
+// Submit job
+const response = await fetch(`${apiBase}/v1/tts/jobs`, {
+  method: 'POST',
+  headers: {
+    'X-API-Key': input.secret('Condor TTS'),
+    'Content-Type': 'application/json',
+    'X-Correlation-Id': recordId
+  },
+  body: JSON.stringify(payload)
+});
+
+if (!response.ok) {
+  const error = await response.text();
+  throw new Error(`HTTP ${response.status}: ${error.slice(0, 500)}`);
+}
+
+const result = await response.json();
+
+// Output for Airtable
+output.set('job_id', result.job_id);
+output.set('status', 'submitted');
+output.set('api_url_used', `${apiBase}/v1/tts/jobs`);
+</code></pre>
+
+            <h3>Simplified Example: Lambda Ingest Handler</h3>
+
+            <pre><code>// Lambda handler (TypeScript)
+export async function handler(event: APIGatewayProxyEvent) {
+  const body = JSON.parse(event.body || '{}');
+
+  // Validate required fields
+  const { text, voice_id, callback_url, correlation_id, idempotency_key } = body;
+
+  if (!text || !voice_id || !callback_url) {
+    return {
+      statusCode: 422,
+      body: JSON.stringify({
+        error: 'Missing required fields: text, voice_id, callback_url'
+      })
+    };
+  }
+
+  // Check idempotency (have we seen this before?)
+  const existing = await checkIdempotency(idempotency_key);
+  if (existing) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        job_id: existing.job_id,
+        status: 'accepted',
+        message: 'Job already submitted (idempotent)'
+      })
+    };
+  }
+
+  // Generate job ID
+  const jobId = `job_${correlation_id}_${Date.now()}`;
+
+  // Store in DynamoDB
+  await dynamoDB.put({
+    TableName: JOBS_TABLE,
+    Item: {
+      job_id: jobId,
+      status: 'queued',
+      correlation_id,
+      callback_url,
+      created_at: new Date().toISOString()
+    }
+  }).promise();
+
+  // Enqueue to SQS for processing
+  await sqs.sendMessage({
+    QueueUrl: QUEUE_URL,
+    MessageBody: JSON.stringify({
+      job_id: jobId,
+      text,
+      voice_id,
+      callback_url,
+      correlation_id,
+      options: body.options || {}
+    })
+  }).promise();
+
+  // Return immediately
+  return {
+    statusCode: 202,
+    body: JSON.stringify({
+      job_id: jobId,
+      status: 'accepted'
+    })
+  };
+}
+</code></pre>
+
+            <h3>Simplified Example: Webhook Payload</h3>
+
+            <pre><code>// What the worker Lambda POSTs to Airtable webhook
+{
+  "event_type": "tts.completed",
+  "version": "v1",
+  "job_id": "job_recABC123_1729612345678",
+  "correlation_id": "recABC123",
+  "status": "success",
+  "artifacts": {
+    "audio_url": "https://cdn.example.com/audio.mp3",
+    "duration_seconds": 127,
+    "file_size_bytes": 2048000
+  },
+  "metadata": {
+    "provider": "google",
+    "model": "en-US-Neural2-D",
+    "processing_time_ms": 4230
+  },
+  "occurred_at": "2025-10-22T10:30:00Z"
+}
+</code></pre>
+
+            <p>The Airtable webhook automation receives this and updates:</p>
+            <ul>
+                <li>Status → "Completed"</li>
+                <li>Audio URL → artifacts.audio_url</li>
+                <li>Duration → artifacts.duration_seconds</li>
+                <li>Job ID → job_id</li>
+            </ul>
+
+            <p>All using field IDs internally, so renaming fields doesn't break anything.</p>
+
+            <hr>
+
+            <h2>When to Use What: Airtable AI vs AWS Bedrock vs External APIs</h2>
+
+            <p>With Airtable now offering built-in AI capabilities, there's a new decision to make: when do you use Airtable AI vs AWS Bedrock vs external APIs like Perplexity or OpenAI?</p>
+
+            <h3>Use Airtable AI When:</h3>
+
+            <ul>
+                <li><strong>Simple field transformations</strong> - Summarize text, extract entities, categorize content</li>
+                <li><strong>Fast, synchronous responses</strong> - Results needed in <5 seconds</li>
+                <li><strong>Low volume</strong> - Processing dozens/hundreds of records, not thousands</li>
+                <li><strong>Staying in Airtable</strong> - Want to avoid external integrations</li>
+                <li><strong>Quick prototyping</strong> - Testing an idea before building a full service</li>
+            </ul>
+
+            <p><strong>Example</strong>: Automatically categorize podcast episode topics, extract guest names from descriptions, or summarize research notes.</p>
+
+            <h3>Use AWS Bedrock (Lambda) When:</h3>
+
+            <ul>
+                <li><strong>Long-form content generation</strong> - Scripts, articles, detailed analysis (>500 tokens)</li>
+                <li><strong>Specific models required</strong> - Need Claude Sonnet 4.5 for reasoning, or Haiku for speed</li>
+                <li><strong>High volume at scale</strong> - Better pricing for thousands of requests</li>
+                <li><strong>Prompt engineering</strong> - Want to version control prompts in code, not UI</li>
+                <li><strong>Complex workflows</strong> - Multi-step AI processes with conditional logic</li>
+                <li><strong>Longer processing times</strong> - Jobs that take >30 seconds</li>
+            </ul>
+
+            <p><strong>Example</strong>: We use Bedrock via Lambda for our Sound Design Container (SDC) generation—analyzing podcast transcripts and generating detailed audio cue sheets. This takes 20-40 seconds and produces 2-3KB of structured JSON.</p>
+
+            <h3>Use External APIs (Perplexity, OpenAI, ElevenLabs) When:</h3>
+
+            <ul>
+                <li><strong>Specialized capabilities</strong> - Research (Perplexity), audio generation (ElevenLabs)</li>
+                <li><strong>Best-in-class for specific tasks</strong> - Worth the integration for quality</li>
+                <li><strong>Cost-effective for use case</strong> - Sometimes external APIs are cheaper than Bedrock</li>
+                <li><strong>Proven models</strong> - Using established services reduces risk</li>
+            </ul>
+
+            <p><strong>Example</strong>: We use Perplexity for podcast research (superior citation quality), ElevenLabs for certain TTS voices, and Google Cloud TTS for others (cost vs quality tradeoffs).</p>
+
+            <h3>Our Decision Matrix</h3>
+
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Use Case</th>
+                        <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Tool</th>
+                        <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Categorize episode topic</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Airtable AI</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Fast, simple, built-in</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Generate sound design cues</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Bedrock (Lambda)</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Complex reasoning, long output, versioned prompts</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Research historical events</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Perplexity API (Lambda)</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Superior citations, specialized for research</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Generate speech from script</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Google TTS / ElevenLabs (Lambda)</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Best quality, proven reliability</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Extract key quotes from transcript</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Airtable AI</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Fast, simple, low volume</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Generate podcast description</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Airtable AI or Bedrock</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">Airtable AI if <200 words, Bedrock if more control needed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>The Key Insight</strong>: Start with Airtable AI for simple cases. Move to Bedrock when you need control, scale, or longer processing. Use external APIs when they're demonstrably better for specific tasks.</p>
+
+            <hr>
+
+            <h2>Debugging Across the Stack</h2>
+
+            <p>One of the hardest parts of Airtable + AWS integrations is debugging when things go wrong. Here's how we handle common issues:</p>
+
+            <h3>Common Issues & Solutions</h3>
+
+            <p><strong>Issue 1: Job submitted but webhook never arrives</strong></p>
+            <ul>
+                <li><strong>Check</strong>: CloudWatch logs for the worker Lambda</li>
+                <li><strong>Search by</strong>: <code>correlation_id</code> (the Airtable record ID)</li>
+                <li><strong>Look for</strong>: Processing errors, SQS DLQ messages, webhook POST failures</li>
+                <li><strong>Common causes</strong>: Worker Lambda timed out, SQS message expired, webhook URL changed</li>
+            </ul>
+
+            <p><strong>Issue 2: Webhook arrives but record not updated</strong></p>
+            <ul>
+                <li><strong>Check</strong>: Airtable automation run history for the webhook automation</li>
+                <li><strong>Look for</strong>: Parsing errors, field mapping issues, automation disabled</li>
+                <li><strong>Common causes</strong>: Webhook payload format changed, field was deleted, automation was turned off</li>
+            </ul>
+
+            <p><strong>Issue 3: Airtable automation times out</strong></p>
+            <ul>
+                <li><strong>Check</strong>: API response time in CloudWatch (look for cold starts)</li>
+                <li><strong>Look for</strong>: Lambda duration >3s, initialization errors</li>
+                <li><strong>Solutions</strong>: Provisioned concurrency, optimize cold start time, simplify validation logic</li>
+            </ul>
+
+            <p><strong>Issue 4: Wrong data in webhook payload</strong></p>
+            <ul>
+                <li><strong>Trace</strong>: Use <code>correlation_id</code> to find the full flow</li>
+                <li><strong>Check</strong>: Initial request payload (logged by ingest), worker processing logs, webhook POST body</li>
+                <li><strong>Look for</strong>: Data transformation bugs, field mapping errors</li>
+            </ul>
+
+            <h3>Best Practices for Observability</h3>
+
+            <p><strong>1. Structured Logging</strong></p>
+            <p>Log JSON objects with consistent fields:</p>
+            <pre><code>console.log(JSON.stringify({
+  level: 'info',
+  event: 'job_submitted',
+  job_id: jobId,
+  correlation_id: correlationId,
+  timestamp: new Date().toISOString()
+}));
+</code></pre>
+
+            <p><strong>2. Correlation IDs Everywhere</strong></p>
+            <p>Include the Airtable record ID in:</p>
+            <ul>
+                <li>Initial API request headers (<code>X-Correlation-Id</code>)</li>
+                <li>Lambda log entries</li>
+                <li>SQS message attributes</li>
+                <li>Webhook payload (<code>correlation_id</code> field)</li>
+            </ul>
+
+            <p><strong>3. Webhook Signatures</strong></p>
+            <p>Sign webhook payloads with HMAC for security:</p>
+            <pre><code>// Lambda worker
+const signature = crypto
+  .createHmac('sha256', WEBHOOK_SECRET)
+  .update(JSON.stringify(payload))
+  .digest('hex');
+
+await fetch(callbackUrl, {
+  method: 'POST',
+  headers: {
+    'X-Signature': `sha256=${signature}`,
+    'X-Timestamp': new Date().toISOString()
+  },
+  body: JSON.stringify(payload)
+});
+</code></pre>
+
+            <p><strong>4. Status API Endpoint</strong></p>
+            <p>Provide a GET endpoint to query job status (backup to webhooks):</p>
+            <pre><code>GET /v1/jobs/{job_id}
+
+Response:
+{
+  "job_id": "job_recABC123_1729612345678",
+  "status": "processing",
+  "progress": {
+    "current_step": "rendering_audio",
+    "percent_complete": 60
+  },
+  "created_at": "2025-10-22T10:30:00Z",
+  "updated_at": "2025-10-22T10:32:15Z"
+}
+</code></pre>
+
+            <p><strong>5. Error Payloads with Hints</strong></p>
+            <p>When jobs fail, include actionable hints in webhook payloads:</p>
+            <pre><code>{
+  "event_type": "tts.failed",
+  "status": "error",
+  "error": {
+    "code": "INVALID_VOICE",
+    "message": "Voice 'en-US-Neural2-Z' not found",
+    "hint": "Valid voices: en-US-Neural2-A through en-US-Neural2-J. Check voice_id field."
+  }
+}
+</code></pre>
+
+            <hr>
+
+            <h2>Lessons Learned</h2>
+
+            <h3>What Worked</h3>
+
+            <p><strong>1. Embracing Async from Day One</strong></p>
+            <p>For new services, we now start with the webhook pattern immediately. Don't try sync first, don't add async later—just build it right from the start.</p>
+
+            <p><strong>2. Thin Airtable Automations</strong></p>
+            <p>Keep automation scripts focused on one job: validate inputs, submit request, store job_id. All business logic lives in Lambda where we can test, version, and monitor it.</p>
+
+            <p><strong>3. Standard Webhook Payload Format</strong></p>
+            <p>We standardized webhook payloads across all services (Condor, Kestrel, Magpie, Osprey). Same top-level fields, same error structure, same metadata format. This makes webhook automations reusable.</p>
+
+            <p><strong>4. Field IDs Over Field Names</strong></p>
+            <p>By using Airtable's internal webhooks instead of the external API, we let Airtable handle field IDs internally. This single decision eliminated 90% of our "broken automation" bugs.</p>
+
+            <h3>What We'd Do Differently</h3>
+
+            <p><strong>1. Start with Webhook Pattern Earlier</strong></p>
+            <p>We wasted 2-3 weeks trying sync approaches and Airtable API updates. If we'd known the webhook pattern from the start, we'd have saved significant time.</p>
+
+            <p><strong>2. Invest in Observability Sooner</strong></p>
+            <p>Correlation IDs, structured logging, and status endpoints should be part of the initial implementation, not added later when debugging gets painful.</p>
+
+            <p><strong>3. Document the Standards</strong></p>
+            <p>We eventually created a <a href="https://github.com/sparrowfm/microservice-standards" target="_blank" rel="noopener">microservice-standards repo</a> with templates, but we should have done this after building the second service, not the fifth.</p>
+
+            <p><strong>4. Build a Webhook Testing Tool</strong></p>
+            <p>We kept manually triggering Airtable automations to test webhooks. A simple CLI tool that simulates webhook payloads would have been helpful.</p>
+
+            <h3>When to Use Airtable + AWS</h3>
+
+            <p><strong>✅ Great fit when</strong>:</p>
+            <ul>
+                <li>Data model changes frequently (rapid prototyping phase)</li>
+                <li>Operations teams need a UI (don't want to build admin panels)</li>
+                <li>You need spreadsheet flexibility + compute power</li>
+                <li>Team is small and wants to move fast</li>
+                <li>Workflows are human-in-the-loop (operations, content production)</li>
+            </ul>
+
+            <p><strong>❌ Not a good fit when</strong>:</p>
+            <ul>
+                <li>Need millisecond latency (Airtable adds ~200-500ms baseline)</li>
+                <li>Extremely high scale (millions of records, thousands of ops/second)</li>
+                <li>Complex transactional workflows (Airtable isn't ACID)</li>
+                <li>Airtable becomes the bottleneck (API rate limits, automation limits)</li>
+                <li>Need programmatic data access patterns (better off with DynamoDB/RDS)</li>
+            </ul>
+
+            <hr>
+
+            <h2>Final Thoughts</h2>
+
+            <p>The webhook-based async pattern isn't revolutionary—it's just the right tool for the job. The key insights:</p>
+
+            <ul>
+                <li><strong>Airtable is great at UI and flexibility</strong>, terrible at long-running compute</li>
+                <li><strong>AWS Lambda is great at compute</strong>, terrible at being a database/UI</li>
+                <li><strong>Webhooks bridge the gap</strong> without forcing either platform to do what it's bad at</li>
+                <li><strong>Let each tool do what it's good at</strong>, and connect them loosely</li>
+            </ul>
+
+            <p>After building five production services (Condor TTS, Kestrel Transcription, Magpie Audio, Osprey Research, and Nightingale Mix) using this pattern, we've processed thousands of jobs without major issues. The pattern scales, it's maintainable, and—most importantly—it doesn't break every time someone renames a field in Airtable.</p>
+
+            <p>If you're building Airtable + AWS integrations, save yourself weeks of pain: skip the sync calls, skip calling the Airtable API from Lambda, and go straight to webhooks. Your future self will thank you.</p>
+
+            <h3>Resources</h3>
+
+            <p>We've open-sourced our microservice standards and patterns:</p>
+            <ul>
+                <li><a href="https://github.com/sparrowfm/microservice-standards" target="_blank" rel="noopener">Microservice Standards</a> - Reusable templates, CDK patterns, and documentation</li>
+                <li><a href="https://github.com/sparrowfm/microservice-standards/blob/main/docs/airtable-automations.md" target="_blank" rel="noopener">Airtable Automation Standards</a> - Detailed specs for the webhook pattern</li>
+            </ul>
+
+            <p><strong>Questions or feedback?</strong> Find me on <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a> or <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>. I'd love to hear how you're approaching these integrations.</p>
+
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Neel Ketkar. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="../about.html">About</a>
+                    <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
