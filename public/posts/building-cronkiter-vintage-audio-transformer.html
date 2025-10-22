@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Cronkiter: A Vintage Audio Transformer in Under 2 Hours | Building in Public</title>
+    <meta name="description" content="From Reddit inspiration to production deployment: How I built a browser-based vintage audio tool with Claude Code, learned about Web Audio API, and shipped it live with GoatCounter analytics and full SEO.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">Technical learnings from a non-technical founder</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Building Cronkiter: A Vintage Audio Transformer in Under 2 Hours</h1>
+
+            <p><em>From Reddit inspiration to production: How AI coding tools are changing what "shipping fast" means</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-21">October 21, 2025</time>
+                <span class="post-category">Web Audio API</span>
+                <span class="post-category">Claude Code</span>
+                <span class="post-category">SEO</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, GitHub Copilot, and ChatGPT). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p><strong>The Story</strong>: Saw a Reddit post asking ElevenLabs to add vintage radio effects to their TTS. Built <a href="https://sparrowfm.github.io/cronkiter/" target="_blank">Cronkiter</a>, a free browser-based vintage audio transformer, in about 90 minutes using Claude Code.</p>
+
+            <p><strong>Key Learnings</strong>:</p>
+            <ul>
+                <li>Web Audio API is surprisingly powerful—no FFmpeg needed for this</li>
+                <li>Browser-based tools = zero backend, instant deployment</li>
+                <li>First time using GoatCounter for privacy-friendly analytics</li>
+                <li>Learned proper SEO meta tags, Open Graph, and social media validation</li>
+                <li>Mobile UX matters: built responsive "desktop required" message</li>
+                <li>Branding iteration: "Edward R. Mur-Wren" → "Cronkiter" (less birdy, more broadcast)</li>
+            </ul>
+
+            <p><strong>Tech Stack</strong>: Vanilla JavaScript + Web Audio API + GitHub Pages. That's it.</p>
+
+            <p><strong>Try it</strong>: <a href="https://sparrowfm.github.io/cronkiter/" target="_blank">sparrowfm.github.io/cronkiter</a></p>
+
+            <hr>
+
+            <h2>The Inspiration: A Reddit Comment</h2>
+
+            <p>I was browsing the ElevenLabs subreddit when I saw someone asking for a feature to make TTS output sound like it was coming through an old 1940s radio or vintage TV. The use case was perfect: they wanted to add atmospheric authenticity to historical content.</p>
+
+            <p>My immediate thought: "Wait, couldn't I just build this as a standalone tool?"</p>
+
+            <p>A few things clicked:</p>
+            <ul>
+                <li><strong>No backend needed</strong> - The Web Audio API can process audio entirely in the browser</li>
+                <li><strong>Universal utility</strong> - Not just for TTS, but any audio file</li>
+                <li><strong>Simple enough to ship in hours</strong> - Audio filters, echo, bandpass filters... these are built into browsers!</li>
+            </ul>
+
+            <p>I opened Claude Code and started building.</p>
+
+            <hr>
+
+            <h2>Why NOT FFmpeg This Time?</h2>
+
+            <p>Regular readers know I've been deep in <a href="deploying-ffmpeg-to-aws-lambda.html">FFmpeg-land with AWS Lambda</a> recently. Why not use FFmpeg here?</p>
+
+            <h3>The Web Audio API Alternative</h3>
+
+            <p>For client-side audio effects like this, the Web Audio API is actually <em>better</em> than FFmpeg because:</p>
+
+            <ol>
+                <li><strong>Zero infrastructure</strong> - Runs entirely in the user's browser. No Lambda, no S3, no upload/download.</li>
+                <li><strong>Real-time preview</strong> - Users can hear the effect instantly before rendering.</li>
+                <li><strong>Privacy-first</strong> - Audio never leaves the user's device. No file uploads to servers.</li>
+                <li><strong>Free at scale</strong> - Processing happens on the client. My hosting cost: $0.</li>
+            </ol>
+
+            <p><strong>When to use FFmpeg vs Web Audio API</strong>:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Use Case</th>
+                        <th>Use FFmpeg</th>
+                        <th>Use Web Audio API</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Server-side batch processing</td>
+                        <td>✅ Yes</td>
+                        <td>❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>Video processing</td>
+                        <td>✅ Yes</td>
+                        <td>❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>Complex multi-track mixing</td>
+                        <td>✅ Yes</td>
+                        <td>⚠️ Maybe</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time audio effects</td>
+                        <td>❌ No</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Privacy-sensitive audio</td>
+                        <td>⚠️ Requires uploads</td>
+                        <td>✅ Client-side only</td>
+                    </tr>
+                    <tr>
+                        <td>Simple format conversion</td>
+                        <td>✅ Yes</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>For Cronkiter, the Web Audio API was perfect. No need to overcomplicate.</p>
+
+            <hr>
+
+            <h2>Building the Audio Processing Chain</h2>
+
+            <h3>The Vintage Broadcast Sound</h3>
+
+            <p>What makes audio sound "old-timey" or like it's coming through a vintage radio? I researched and identified these key elements:</p>
+
+            <ol>
+                <li><strong>Narrowband filtering</strong> - Old AM radios had limited frequency response (roughly 300-3000 Hz)</li>
+                <li><strong>Slapback echo</strong> - Vintage broadcast studios had characteristic short delays (60-120ms)</li>
+                <li><strong>Mono fold-down</strong> - Old equipment was mono, so collapsing stereo gives that "centered" feel</li>
+                <li><strong>Compression</strong> - Broadcast limiters created that "squashed" dynamic range</li>
+                <li><strong>Tape hiss</strong> - Optional atmospheric noise for extra authenticity</li>
+            </ol>
+
+            <h3>Translating to Web Audio API</h3>
+
+            <p>Here's how each effect maps to Web Audio API nodes:</p>
+
+            <pre><code>// Audio processing chain
+Source → [Mono Fold] → High-Pass → Low-Pass → Compressor
+           ↓
+      Dry Path → Output
+           ↓
+      Wet Path → Delay → Feedback → Output
+           ↓
+    [Optional White Noise] → Output</code></pre>
+
+            <p><strong>Key Web Audio API Components Used</strong>:</p>
+
+            <ul>
+                <li><code>BiquadFilterNode</code> - High-pass and low-pass filters to create narrowband sound</li>
+                <li><code>DelayNode</code> - For slapback echo effect</li>
+                <li><code>GainNode</code> - For wet/dry mix and feedback control</li>
+                <li><code>DynamicsCompressorNode</code> - Broadcast-style limiting</li>
+                <li><code>ChannelSplitterNode</code> / <code>ChannelMergerNode</code> - Mono fold-down</li>
+                <li><code>AudioBufferSourceNode</code> - For white noise generation</li>
+                <li><code>OfflineAudioContext</code> - For rendering final WAV files</li>
+            </ul>
+
+            <p>The beauty? All of this runs <strong>in real-time</strong> with preview playback, then can render to a WAV file for download.</p>
+
+            <h3>Four Presets Emerged</h3>
+
+            <p>During testing, I created four distinct sound profiles:</p>
+
+            <ol>
+                <li><strong>Raw</strong> - Baseline, no processing</li>
+                <li><strong>Newsroom</strong> - Subtle slapback (80ms), gentle filtering (100Hz-5kHz). Think Walter Cronkite era.</li>
+                <li><strong>Old TV / AM Radio</strong> - Aggressive narrowband (300Hz-3kHz), pronounced echo (110ms). Full vintage vibe.</li>
+                <li><strong>Old TV + Hiss</strong> - Same as #3 but with light white noise for maximum authenticity</li>
+            </ol>
+
+            <p>Users can also tweak every parameter manually: delay time, wet/dry mix, feedback, filter frequencies, and hiss level.</p>
+
+            <hr>
+
+            <h2>Design Evolution: From Birds to Broadcast Journalism</h2>
+
+            <h3>Original Name: "Edward R. Mur-Wren"</h3>
+
+            <p>I started with a pun on Edward R. Murrow (legendary CBS broadcaster) + wren (bird). The tagline was "Good night, and good chirp." Cute, right?</p>
+
+            <p>After showing it to friends: <em>"It's too birdy. I don't immediately get what it does."</em></p>
+
+            <p>Fair point. The bird puns distracted from the core value proposition.</p>
+
+            <h3>Rebranding: "Cronkiter"</h3>
+
+            <p>Renamed to <strong>Cronkiter</strong> - a play on Walter Cronkite, the most trusted voice in American broadcast news. New tagline: <em>"And that's the way it sounds."</em></p>
+
+            <p><strong>Why this works better</strong>:</p>
+            <ul>
+                <li>Immediately evokes broadcast journalism</li>
+                <li>Sounds like a legit audio tool, not a toy</li>
+                <li>Tagline references Cronkite's famous sign-off ("And that's the way it is")</li>
+                <li>Less quirky, more professional</li>
+            </ul>
+
+            <p>The badge also evolved from "Broadcast Audio Tool" to <strong>"Vintage Audio Transformer"</strong> - more descriptive and SEO-friendly.</p>
+
+            <hr>
+
+            <h2>New Tech: Privacy-Friendly Analytics with GoatCounter</h2>
+
+            <p>I wanted to track usage but didn't want Google Analytics' bloat or privacy concerns. This was my first time using <a href="https://www.goatcounter.com/" target="_blank">GoatCounter</a>.</p>
+
+            <h3>Why GoatCounter?</h3>
+
+            <ul>
+                <li><strong>Privacy-first</strong> - No cookies, no tracking pixels, GDPR compliant by default</li>
+                <li><strong>Lightweight</strong> - ~3KB script vs Google Analytics' ~45KB</li>
+                <li><strong>Free tier</strong> - Perfect for side projects</li>
+                <li><strong>Simple integration</strong> - One script tag, done</li>
+            </ul>
+
+            <p><strong>The entire integration</strong>:</p>
+
+            <pre><code>&lt;script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"&gt;&lt;/script&gt;</code></pre>
+
+            <p>That's it. Now I can see:</p>
+            <ul>
+                <li>Page views and unique visitors</li>
+                <li>Referrer sources (Reddit, Twitter, etc.)</li>
+                <li>Browser and device breakdown</li>
+                <li>Geographic regions (anonymized)</li>
+            </ul>
+
+            <p><strong>Lesson learned</strong>: For simple sites, GoatCounter is fantastic. No need to overcomplicate with GA4's event tracking complexity.</p>
+
+            <hr>
+
+            <h2>Deep Dive: Comprehensive SEO for the First Time</h2>
+
+            <p>I've built production tools before, but never properly tackled SEO and social media meta tags. With Cronkiter, I decided to do it right.</p>
+
+            <h3>What I Implemented</h3>
+
+            <h4>1. Basic SEO Meta Tags</h4>
+
+            <pre><code>&lt;title&gt;Cronkiter - Free Vintage Audio Transformer | Make Audio Sound Old-Timey&lt;/title&gt;
+&lt;meta name="description" content="Transform your audio into nostalgic, old-timey broadcasts for free! Make any recording sound like it's crackling through a 1940s radio or vintage TV. No uploads, runs in your browser."&gt;
+&lt;meta name="keywords" content="vintage audio, old radio sound, audio transformer, retro audio effect, broadcast audio, 1940s radio"&gt;</code></pre>
+
+            <p><strong>Key learnings</strong>:</p>
+            <ul>
+                <li>Title should be <strong>under 60 characters</strong> for Google's display limit</li>
+                <li>Description should be <strong>150-160 characters</strong> (I aimed for the sweet spot)</li>
+                <li>Keywords help, but are less important than they used to be</li>
+                <li>Include your main value prop in the title ("Free", "No uploads")</li>
+            </ul>
+
+            <h4>2. Open Graph Tags (Facebook, LinkedIn, WhatsApp)</h4>
+
+            <pre><code>&lt;meta property="og:type" content="website"&gt;
+&lt;meta property="og:title" content="Cronkiter - Free Vintage Audio Transformer"&gt;
+&lt;meta property="og:description" content="Transform your audio into nostalgic, old-timey broadcasts! Make recordings sound like 1940s radio or vintage TV."&gt;
+&lt;meta property="og:image" content="https://sparrowfm.github.io/cronkiter/og-image.png"&gt;
+&lt;meta property="og:image:width" content="1200"&gt;
+&lt;meta property="og:image:height" content="630"&gt;
+&lt;meta property="og:image:alt" content="Cronkiter interface showing vintage audio presets"&gt;</code></pre>
+
+            <p><strong>Critical details I learned</strong>:</p>
+            <ul>
+                <li><strong>Image dimensions matter</strong> - 1200x630px is the golden standard for all platforms</li>
+                <li><strong>Always specify width/height</strong> - Helps platforms cache and display correctly</li>
+                <li><strong>Alt text is required</strong> - Both for accessibility and fallback</li>
+                <li><strong>Use og:image:secure_url</strong> - Explicitly declare HTTPS image URL</li>
+            </ul>
+
+            <h4>3. Twitter Card Tags</h4>
+
+            <pre><code>&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:title" content="Cronkiter - Free Vintage Audio Transformer"&gt;
+&lt;meta name="twitter:description" content="Transform audio into nostalgic broadcasts!"&gt;
+&lt;meta name="twitter:image" content="https://sparrowfm.github.io/cronkiter/og-image.png"&gt;
+&lt;meta name="twitter:image:alt" content="Cronkiter interface"&gt;</code></pre>
+
+            <p><strong>Twitter-specific learnings</strong>:</p>
+            <ul>
+                <li>Use <code>summary_large_image</code> card type for best engagement</li>
+                <li>Twitter descriptions are limited to <strong>200 characters</strong></li>
+                <li>Image should be <strong>at least 300x157px</strong>, but 1200x630px is recommended</li>
+                <li>Add <code>twitter:site</code> and <code>twitter:creator</code> if you have a Twitter handle</li>
+            </ul>
+
+            <h4>4. Structured Data (JSON-LD Schema)</h4>
+
+            <p>This was entirely new to me. I added Schema.org structured data so search engines understand what the tool is:</p>
+
+            <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cronkiter",
+  "description": "Free vintage audio transformer that makes recordings sound like old-timey broadcasts",
+  "url": "https://sparrowfm.github.io/cronkiter/",
+  "applicationCategory": "MultimediaApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Vintage audio presets",
+    "Real-time audio preview",
+    "WAV file export",
+    "Browser-based processing"
+  ]
+}
+&lt;/script&gt;</code></pre>
+
+            <p><strong>Why this matters</strong>:</p>
+            <ul>
+                <li>Google can show <strong>rich snippets</strong> in search results</li>
+                <li>Clearly declares it's <strong>free</strong> (price: 0)</li>
+                <li>Lists features that search engines can index</li>
+                <li>Categorizes it as a multimedia web application</li>
+            </ul>
+
+            <h4>5. Semantic HTML5</h4>
+
+            <p>I also learned to use proper HTML5 semantic tags instead of generic <code>&lt;div&gt;</code> elements:</p>
+
+            <pre><code>&lt;main class="container"&gt;
+  &lt;article class="main-content"&gt;
+    &lt;header class="branding"&gt;
+      &lt;h1&gt;Cronkiter - Free Vintage Audio Transformer&lt;/h1&gt;
+    &lt;/header&gt;
+    &lt;!-- content --&gt;
+    &lt;footer&gt;
+      &lt;!-- footer content --&gt;
+    &lt;/footer&gt;
+  &lt;/article&gt;
+&lt;/main&gt;</code></pre>
+
+            <p><strong>Benefits</strong>:</p>
+            <ul>
+                <li>Better <strong>accessibility</strong> for screen readers</li>
+                <li>Improved <strong>SEO</strong> - search engines understand page structure</li>
+                <li>Cleaner, more maintainable code</li>
+            </ul>
+
+            <h3>Validating Social Media Tags Across Platforms</h3>
+
+            <p>I created a comprehensive validation checklist for all major platforms:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Protocol</th>
+                        <th>Status</th>
+                        <th>Validation Tool</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Facebook</td>
+                        <td>Open Graph</td>
+                        <td>✅ Fully optimized</td>
+                        <td><a href="https://developers.facebook.com/tools/debug/" target="_blank">Sharing Debugger</a></td>
+                    </tr>
+                    <tr>
+                        <td>LinkedIn</td>
+                        <td>Open Graph</td>
+                        <td>✅ Fully optimized</td>
+                        <td><a href="https://www.linkedin.com/post-inspector/" target="_blank">Post Inspector</a></td>
+                    </tr>
+                    <tr>
+                        <td>Twitter/X</td>
+                        <td>Twitter Cards</td>
+                        <td>✅ Fully optimized</td>
+                        <td><a href="https://cards-dev.twitter.com/validator" target="_blank">Card Validator</a></td>
+                    </tr>
+                    <tr>
+                        <td>WhatsApp</td>
+                        <td>Open Graph</td>
+                        <td>✅ Works perfectly</td>
+                        <td>Test by sending link</td>
+                    </tr>
+                    <tr>
+                        <td>Discord</td>
+                        <td>Open Graph</td>
+                        <td>✅ Rich embeds</td>
+                        <td>Send link in channel</td>
+                    </tr>
+                    <tr>
+                        <td>Slack</td>
+                        <td>Open Graph</td>
+                        <td>✅ Auto-unfurl</td>
+                        <td>Share link in workspace</td>
+                    </tr>
+                    <tr>
+                        <td>Reddit</td>
+                        <td>Open Graph</td>
+                        <td>✅ Thumbnail support</td>
+                        <td>Post and preview</td>
+                    </tr>
+                    <tr>
+                        <td>Instagram</td>
+                        <td>Open Graph</td>
+                        <td>⚠️ Stories only</td>
+                        <td>Link sticker in Stories</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Instagram caveat</strong>: Regular Instagram posts don't show link previews (this is an Instagram limitation, not a meta tag issue). However, link stickers in Instagram Stories <em>do</em> use Open Graph tags!</p>
+
+            <h3>Generated the Social Media Preview Image</h3>
+
+            <p>I used Puppeteer to automatically generate a 1200x630px screenshot for social sharing:</p>
+
+            <pre><code>// create-og-image.js
+const page = await browser.newPage();
+await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 2 });
+await page.goto('http://localhost:8000');
+await page.screenshot({ path: 'og-image.png' });</code></pre>
+
+            <p>Now when someone shares Cronkiter on social media, they see a professional preview card with the app interface.</p>
+
+            <h3>Key SEO Takeaways</h3>
+
+            <ol>
+                <li><strong>Start with the basics</strong> - Title, description, keywords</li>
+                <li><strong>Social = SEO</strong> - Open Graph tags help with sharing AND search rankings</li>
+                <li><strong>Images matter</strong> - 1200x630px is universal for all platforms</li>
+                <li><strong>Validate everything</strong> - Use platform-specific debuggers before launch</li>
+                <li><strong>Semantic HTML helps</strong> - Use <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;header&gt;</code> instead of <code>&lt;div&gt;</code></li>
+                <li><strong>Structured data = rich results</strong> - JSON-LD helps Google understand your content</li>
+            </ol>
+
+            <hr>
+
+            <h2>Mobile UX: The "Desktop Required" Message</h2>
+
+            <p>During testing, I discovered that mobile browsers have <strong>severely limited</strong> Web Audio API support. Audio processing works, but:</p>
+
+            <ul>
+                <li>Mobile Safari requires user interaction to start AudioContext</li>
+                <li>Performance is inconsistent across devices</li>
+                <li>Small screens make the UI cramped</li>
+                <li>Mobile browsers often have restricted audio playback</li>
+            </ul>
+
+            <h3>The Solution: Responsive Messaging</h3>
+
+            <p>Instead of a broken mobile experience, I added a media query that shows a clear message on small screens:</p>
+
+            <pre><code>@media (max-width: 768px) {
+  .mobile-message {
+    display: block;
+  }
+  .main-content {
+    display: none;
+  }
+}</code></pre>
+
+            <p>Mobile users see:</p>
+
+            <blockquote>
+                <p><strong>Desktop Required</strong></p>
+                <p>This vintage audio transformer works best on desktop browsers with full audio processing capabilities.</p>
+                <p>Please visit this page on your computer to give your recordings that classic old-timey radio sound!</p>
+            </blockquote>
+
+            <p><strong>Lesson learned</strong>: It's better to be honest about device limitations than to deliver a broken experience. Users appreciate clarity.</p>
+
+            <hr>
+
+            <h2>Comprehensive Testing with Puppeteer</h2>
+
+            <p>To ensure everything worked, I wrote a full test suite using Puppeteer:</p>
+
+            <h3>Three Test Suites Created</h3>
+
+            <ol>
+                <li><strong>Full Suite</strong> (51 tests) - Desktop/mobile layouts, UI controls, presets, visual design</li>
+                <li><strong>Upload Test</strong> (14 tests) - File upload workflow, audio processing, WAV rendering</li>
+                <li><strong>E2E Test</strong> (17 tests) - Sample loading via HTTP server, complete workflow</li>
+            </ol>
+
+            <p><strong>Test coverage</strong>:</p>
+            <ul>
+                <li>✅ All 4 audio presets apply correct parameters</li>
+                <li>✅ Preview playback works</li>
+                <li>✅ WAV rendering produces downloadable files</li>
+                <li>✅ Mobile responsive design shows proper messages</li>
+                <li>✅ All UI controls function correctly</li>
+                <li>✅ Branding and footer display properly</li>
+            </ul>
+
+            <p><strong>Results</strong>: 100% pass rate on upload and E2E tests. The only failures in the full suite were CORS issues when loading sample.mp3 via file:// URLs (expected, not a real issue).</p>
+
+            <p>Running tests:</p>
+
+            <pre><code>npm run test:upload  # 14/14 passed ✅
+npm run test:e2e      # 17/17 passed ✅</code></pre>
+
+            <p><strong>Why this matters</strong>: As a non-technical founder, having automated tests gives me confidence that future changes won't break core functionality.</p>
+
+            <hr>
+
+            <h2>Deployment: GitHub Pages = Zero Infrastructure</h2>
+
+            <p>One of the best parts of this project? <strong>Zero backend infrastructure.</strong></p>
+
+            <ul>
+                <li>No Lambda functions to maintain</li>
+                <li>No S3 buckets to configure</li>
+                <li>No database to provision</li>
+                <li>No API keys to manage</li>
+            </ul>
+
+            <p>Just:</p>
+
+            <ol>
+                <li>Push <code>index.html</code> to GitHub</li>
+                <li>Enable GitHub Pages</li>
+                <li>Done</li>
+            </ol>
+
+            <p><strong>Total monthly cost</strong>: $0<br>
+            <strong>Maintenance burden</strong>: Zero<br>
+            <strong>Scalability</strong>: Infinite (processing happens on client devices)</p>
+
+            <p>This is the beauty of browser-based tools. GitHub Pages serves static files at CDN speeds globally, and all the "work" happens on the user's device.</p>
+
+            <hr>
+
+            <h2>What I'd Do Differently</h2>
+
+            <h3>1. Start with Branding</h3>
+
+            <p>I wasted time with "Edward R. Mur-Wren" before realizing the bird puns were distracting. Should have tested the name with a few people before building the full UI.</p>
+
+            <h3>2. Mobile Strategy Upfront</h3>
+
+            <p>I built the entire desktop experience before considering mobile. Should have checked Web Audio API mobile support first and planned the "desktop required" message from the start.</p>
+
+            <h3>3. SEO from Day One</h3>
+
+            <p>Added comprehensive SEO meta tags after the tool was built. Would have been easier to include them in the initial HTML template.</p>
+
+            <h3>4. Consider a Visual Waveform</h3>
+
+            <p>Users can preview audio, but there's no visual feedback. Adding a simple waveform visualization with <code>AnalyserNode</code> would improve UX.</p>
+
+            <h3>5. Preset Descriptions</h3>
+
+            <p>The preset dropdown is bare-bones. Adding tooltip descriptions of each preset would help users understand what they do before trying them.</p>
+
+            <hr>
+
+            <h2>Key Learnings from Building with AI</h2>
+
+            <h3>What Claude Code Did Well</h3>
+
+            <ul>
+                <li><strong>Web Audio API expertise</strong> - Generated clean, working audio processing chains</li>
+                <li><strong>CSS styling</strong> - Beautiful gradient backgrounds and card-based UI</li>
+                <li><strong>Responsive design</strong> - Media queries and mobile detection</li>
+                <li><strong>SEO meta tags</strong> - Comprehensive Open Graph and Twitter Card setup</li>
+                <li><strong>Test generation</strong> - Full Puppeteer test suite with good coverage</li>
+            </ul>
+
+            <h3>What Required Human Guidance</h3>
+
+            <ul>
+                <li><strong>Product direction</strong> - "Make it less birdy" → rebrand to Cronkiter</li>
+                <li><strong>UX decisions</strong> - Mobile blocking vs broken mobile experience</li>
+                <li><strong>Naming presets</strong> - "Newsroom" vs "Old TV" vs "Old TV + Hiss"</li>
+                <li><strong>SEO keyword selection</strong> - "vintage audio transformer" vs "broadcast audio tool"</li>
+                <li><strong>Platform validation</strong> - Testing social media previews across all platforms</li>
+            </ul>
+
+            <h3>The AI Coding Reality</h3>
+
+            <p>Building with AI isn't about "the AI builds it all for you." It's about:</p>
+
+            <ol>
+                <li><strong>You provide clear direction</strong> - What to build, why, and for whom</li>
+                <li><strong>AI handles implementation</strong> - Code, styling, testing, documentation</li>
+                <li><strong>You make decisions</strong> - UX, branding, feature scope</li>
+                <li><strong>AI accelerates iteration</strong> - Quick changes, refactoring, testing</li>
+            </ol>
+
+            <p>In 90 minutes, I went from idea → working prototype → deployed production tool. That would have taken me weeks (or months) trying to learn Web Audio API, CSS, SEO best practices, and social media meta tags from scratch.</p>
+
+            <p>But I still had to:</p>
+            <ul>
+                <li>Understand what makes audio sound "vintage"</li>
+                <li>Decide on the user experience</li>
+                <li>Choose the branding and messaging</li>
+                <li>Validate it worked across platforms</li>
+                <li>Write this blog post explaining the journey</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Numbers (So Far)</h2>
+
+            <p><strong>Development Time</strong>: ~90 minutes<br>
+            <strong>Lines of Code</strong>: ~670 (single HTML file)<br>
+            <strong>Dependencies</strong>: 0 (vanilla JavaScript)<br>
+            <strong>Test Coverage</strong>: 51 tests, 90%+ pass rate<br>
+            <strong>Hosting Cost</strong>: $0/month<br>
+            <strong>GitHub Stars</strong>: TBD (just launched!)</p>
+
+            <p><strong>GoatCounter Analytics</strong> (first week):</p>
+            <ul>
+                <li>Will update this post with traffic data once it's live!</li>
+            </ul>
+
+            <hr>
+
+            <h2>Try Cronkiter Yourself</h2>
+
+            <p><strong>Live Demo</strong>: <a href="https://sparrowfm.github.io/cronkiter/" target="_blank">sparrowfm.github.io/cronkiter</a><br>
+            <strong>Source Code</strong>: <a href="https://github.com/sparrowfm/cronkiter" target="_blank">github.com/sparrowfm/cronkiter</a><br>
+            <strong>License</strong>: MIT (use it for anything!)</p>
+
+            <h3>Use Cases</h3>
+
+            <ul>
+                <li><strong>Content creators</strong> - Add vintage radio vibes to podcasts or videos</li>
+                <li><strong>Game developers</strong> - Process voiceovers for historical/retro games</li>
+                <li><strong>Audiobook producers</strong> - Create atmospheric effects for period pieces</li>
+                <li><strong>TTS enthusiasts</strong> - Make ElevenLabs output sound old-timey</li>
+                <li><strong>Musicians</strong> - Vintage-ify vocals or instruments</li>
+            </ul>
+
+            <hr>
+
+            <h2>What's Next?</h2>
+
+            <p>Cronkiter is feature-complete for v1.0, but here are some ideas for future iterations:</p>
+
+            <ul>
+                <li><strong>Visual waveform</strong> - Real-time audio visualization</li>
+                <li><strong>More presets</strong> - Telephone, megaphone, underwater, vinyl record</li>
+                <li><strong>Custom preset saving</strong> - Let users save their favorite settings</li>
+                <li><strong>Batch processing</strong> - Process multiple files at once</li>
+                <li><strong>Share presets</strong> - URL parameters to share exact settings</li>
+            </ul>
+
+            <p>But for now, I'm shipping it as-is. Done is better than perfect.</p>
+
+            <hr>
+
+            <h2>Final Thoughts</h2>
+
+            <p>This project reinforced something I've learned over and over: <strong>AI coding tools are incredible accelerators, but you still need to know what to build and why.</strong></p>
+
+            <p>I didn't need to know:</p>
+            <ul>
+                <li>How to code biquad filters in Web Audio API</li>
+                <li>The exact syntax for Open Graph meta tags</li>
+                <li>How to write Puppeteer tests</li>
+                <li>CSS grid vs flexbox for responsive layouts</li>
+            </ul>
+
+            <p>But I <em>did</em> need to know:</p>
+            <ul>
+                <li>What makes audio sound "vintage"</li>
+                <li>That users value privacy (client-side processing)</li>
+                <li>Mobile limitations should be communicated clearly</li>
+                <li>Good branding matters</li>
+                <li>SEO and social sharing drive discovery</li>
+            </ul>
+
+            <p>The combination of <strong>product intuition + AI coding</strong> is incredibly powerful. You can ship real, production-ready tools in hours instead of weeks.</p>
+
+            <p>If you're on the fence about trying AI coding assistants, my advice: <strong>just start building.</strong> Pick a small project, open Claude Code (or Cursor, or GitHub Copilot), and see how far you can get in an afternoon.</p>
+
+            <p>You might be surprised how much you can ship.</p>
+
+            <hr>
+
+            <p><em>Questions? Feedback? Find me on <a href="https://github.com/sparrowfm" target="_blank">GitHub</a> or try Cronkiter and let me know what you think!</em></p>
+
+            <p><strong>"And that's the way it sounds." 🎙️</strong></p>
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Building in Public. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
