@@ -3,12 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
     <title>Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide | Building in Public</title>
-    <meta name="description" content="How a non-technical founder learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches. From Lambda Layers to ECS Fargate, here's what actually works.">
+    <meta name="title" content="Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide">
+    <meta name="description" content="How a non-technical founder learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches. From Lambda Layers to ECS Fargate, here's what actually works when building with AI coding assistants.">
+    <meta name="keywords" content="FFmpeg, AWS Lambda, serverless, ECS Fargate, Lambda Layers, audio processing, architecture mismatch, exec format error, AI coding, DevOps, AWS, Docker">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html">
+    <meta property="og:title" content="Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide">
+    <meta property="og:description" content="From Lambda Layers to ECS Fargate: What actually works when deploying FFmpeg in serverless environments. Battle-tested lessons from a non-technical founder.">
+    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/posts/ffmpeg-lambda-og-image.png">
+    <meta property="og:image:secure_url" content="https://sparrowfm.github.io/sparrow/posts/ffmpeg-lambda-og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="AWS Lambda and FFmpeg deployment architecture">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-19T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="AWS">
+    <meta property="article:tag" content="Lambda">
+    <meta property="article:tag" content="FFmpeg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html">
+    <meta name="twitter:title" content="Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide">
+    <meta name="twitter:description" content="From Lambda Layers to ECS Fargate: What actually works when deploying FFmpeg in serverless environments.">
+    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/posts/ffmpeg-lambda-og-image.png">
+    <meta name="twitter:image:alt" content="AWS Lambda FFmpeg deployment guide">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Deploying FFmpeg to AWS Lambda: A Battle-Tested Guide",
+      "description": "How a non-technical founder learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches. From Lambda Layers to ECS Fargate, here's what actually works.",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://sparrowfm.github.io/sparrow/posts/ffmpeg-lambda-og-image.png",
+        "width": 1200,
+        "height": 630
+      },
+      "datePublished": "2025-10-19T00:00:00Z",
+      "dateModified": "2025-10-19T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/deploying-ffmpeg-to-aws-lambda.html"
+      },
+      "keywords": ["FFmpeg", "AWS Lambda", "serverless", "ECS Fargate", "Lambda Layers", "audio processing", "DevOps", "AI coding"],
+      "articleBody": "How a non-technical founder learned to deploy FFmpeg in serverless environments after weeks of architecture mismatches. From Lambda Layers to ECS Fargate, battle-tested lessons on what actually works when building with AI coding assistants.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets and Fonts -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
