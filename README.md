@@ -42,9 +42,31 @@ npm run deploy
 
 ## Writing Posts
 
-Posts are written in Markdown, then converted to HTML with the site template applied.
+### Using the Template
 
-See `posts/` directory for examples.
+1. **Copy the template**: `cp blog-post-template.html public/posts/your-post-name.html`
+2. **Fill in the placeholders**:
+   - `[POST TITLE]` - Your blog post title
+   - `[POST DESCRIPTION]` - SEO meta description (150-160 chars)
+   - `[YYYY-MM-DD]` - Publication date
+   - `[Month Day, Year]` - Human-readable date
+   - `[Category 1]`, etc. - Post categories/tags
+   - Replace content sections with your post
+3. **Add to index**: Update `public/index.html` with a new post card
+4. **Test locally**: Run `python3 -m http.server 8000` in `public/` directory
+5. **Commit and push**: Footer and analytics are already included!
+
+### Template Features
+
+The template (`blog-post-template.html`) includes:
+- ✅ Correct site header and footer (matching index.html)
+- ✅ GoatCounter analytics pre-configured
+- ✅ Proper meta tags for SEO
+- ✅ Consistent styling with existing posts
+- ✅ "Back to all posts" link
+- ✅ Standard post structure (TL;DR, sections, etc.)
+
+See `posts/` directory for examples of completed posts.
 
 ## Task Tracking
 
