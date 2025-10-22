@@ -1,0 +1,987 @@
+# Sound Design Guide: Aviary Audio Production Pipeline
+
+**For Sound Designers & Audio Engineers**
+A non-technical guide to understanding how music, SFX, and ambiance work in the Magpie + Nightingale + Skylark system.
+
+---
+
+## Table of Contents
+
+1. [Overview: The Big Picture](#overview-the-big-picture)
+2. [Your Workflow in Airtable](#your-workflow-in-airtable)
+3. [How Sound Design Works](#how-sound-design-works)
+4. [Mixing & Audio Processing](#mixing--audio-processing)
+5. [How to Control the Mix](#how-to-control-the-mix)
+6. [Technical Specs & Quality Standards](#technical-specs--quality-standards)
+7. [Pitfalls & Known Issues](#pitfalls--known-issues)
+8. [Opportunities for Improvement](#opportunities-for-improvement)
+
+---
+
+## Overview: The Big Picture
+
+The audio production pipeline consists of **three main systems** that work together:
+
+```
+┌─────────────┐      ┌──────────┐      ┌──────────────┐      ┌──────────────┐
+│  AIRTABLE   │ ───> │ MAGPIE   │ ───> │ NIGHTINGALE  │ ───> │ FINAL AUDIO  │
+│  (You!)     │      │ (Assets) │      │  (Mixing)    │      │   (MP3 +     │
+└─────────────┘      └──────────┘      └──────────────┘      │    Stems)    │
+                                                               └──────────────┘
+```
+
+### What Each System Does:
+
+1. **AIRTABLE** - Your creative workspace
+   - Where you review episode content and create sound design plans
+   - Uses AI to generate a "Sound Design Container" (SDC) - a creative brief
+
+2. **MAGPIE** - The asset librarian
+   - Finds and gathers audio files (music, SFX, ambiance)
+   - Searches Freesound (Creative Commons) and ElevenLabs (AI generation)
+   - Delivers CDN URLs for all audio assets
+
+3. **NIGHTINGALE** - The mixing engineer
+   - Takes speech audio + assets from Magpie
+   - Mixes everything together with professional processing
+   - Outputs broadcast-ready MP3 + individual stems
+
+4. **SKYLARK** - The script writer (not audio!)
+   - Generates podcast scripts with text-based audio cues
+   - Outputs SSML-marked scripts for TTS (Text-to-Speech)
+   - Not directly involved in actual audio production
+
+---
+
+## Your Workflow in Airtable
+
+### Step-by-Step Process:
+
+#### 1. **Review Episode Content**
+   - Look at the episode transcript, tone, and show metadata
+   - Understand the narrative flow and emotional beats
+
+#### 2. **AI Generates Sound Design Container (SDC)**
+   - Click the "Generate SDC" AI field in Airtable
+   - The AI reads your episode content and creates a complete sound design plan
+   - The SDC includes:
+     - Specific cue placements (when sounds should occur)
+     - Creative direction (mood, energy, tone)
+     - Search parameters for finding assets on Freesound
+
+**Example SDC Cue:**
+```json
+{
+  "id": "M01",
+  "type": "music",
+  "start_time": 0,
+  "end_time": 15,
+  "description": "Opening music - warm, contemplative",
+  "search": {
+    "query": "piano ambient contemplative -vocals",
+    "filter": "duration:[12 TO 18] AND ac_loop:true"
+  }
+}
+```
+
+#### 3. **Review & Adjust SDC (Optional)**
+   - You can manually edit the SDC if needed
+   - Adjust cue timings, descriptions, search queries
+   - **This is your creative control point!**
+
+#### 4. **Trigger Asset Gathering**
+   - Change the status field to trigger the Airtable automation
+   - The automation submits the SDC to Magpie
+   - Magpie searches for assets and mirrors them to CDN
+
+#### 5. **Review Assets**
+   - Webhook updates your Airtable record with asset URLs
+   - Preview the audio files that were found
+   - Approve or request changes
+
+#### 6. **Mixing Happens Automatically**
+   - Once assets are approved, Nightingale mixes the episode
+   - Applies professional loudness normalization, ducking, fades
+   - Outputs final mix + stems
+
+---
+
+## How Sound Design Works
+
+### Asset Types & How They're Used:
+
+#### **1. Music Beds**
+- **Purpose:** Background music that sets mood and energy
+- **Source:** Primarily ElevenLabs AI Music (always instrumental)
+- **Behavior:**
+  - Automatically loops with seamless crossfades (default 10s crossfade)
+  - Ducks under speech (reduces volume during narration)
+  - Can fade in/out at specific times
+
+**Default Ducking Settings for Music:**
+- Threshold: 0.03 (how loud speech needs to be to trigger ducking)
+- Ratio: 8:1 (music reduced by 8dB for every 1dB of speech)
+- Attack: 25ms (how fast music ducks down)
+- Release: 250ms (how fast music comes back up)
+
+#### **2. Ambiance**
+- **Purpose:** Environmental soundscapes (coffee shop, rain, office)
+- **Source:** Freesound (Creative Commons Zero) or ElevenLabs
+- **Behavior:**
+  - Loops seamlessly for long durations
+  - Gentler ducking than music (so it stays present)
+  - High-pass filter at 100Hz (removes low rumble)
+
+**Default Ducking Settings for Ambiance:**
+- Threshold: 0.03
+- Ratio: 6:1 (gentler than music)
+- Attack: 20ms
+- Release: 220ms
+
+#### **3. Sound Effects (SFX)**
+- **Purpose:** Spot effects for specific moments (door slam, footstep, etc.)
+- **Source:** Freesound first, ElevenLabs fallback
+- **Behavior:**
+  - Placed at exact timing (millisecond accuracy)
+  - NO ducking (always heard clearly)
+  - Micro fades (10ms) to avoid clicks
+
+#### **4. Stingers**
+- **Purpose:** Intro/outro branding elements
+- **Behavior:**
+  - Can overlap with content or append to end
+  - Optional ducking under speech
+  - Configurable padding before/after
+
+### Asset Search Strategy:
+
+Magpie uses a **hierarchical search** to find the best audio:
+
+**For Music:**
+1. Always use ElevenLabs AI Music
+2. Generate instrumental music based on mood/style keywords
+3. Always exclude vocals, lyrics, singing
+
+**For SFX & Ambiance:**
+1. **First attempt:** Search Freesound with tight filters
+   - Creative Commons Zero only (legally safe)
+   - Match duration closely
+   - Look for loop-friendly ambiance
+2. **Second attempt:** Relax Freesound filters if nothing good found
+   - Wider duration bands
+   - Fewer search terms
+3. **Fallback:** Generate with ElevenLabs SFX
+   - Triggered when Freesound score is too low (< 0.6 for SFX, < 1.2 for ambiance)
+   - Automatically determines if sound should loop or be one-shot
+
+**Intelligent Looping (ElevenLabs):**
+- **Always loops:** Ambiance, anything >5s, keywords like "rain", "wind", "traffic"
+- **Never loops:** Short impacts <5s like "door slam", "footstep", "gunshot"
+
+---
+
+## Mixing & Audio Processing
+
+### The Nightingale Mixing Engine:
+
+Nightingale uses **FFmpeg** (professional audio processing) to build a complex mixing pipeline.
+
+#### **Multi-Bus Architecture:**
+
+Think of buses like mixing faders in a DAW:
+
+```
+Speech Bus ──┐
+             │
+Music Bus ───┤
+             ├──> Final Mix (MP3 + Stems)
+Ambience Bus─┤
+             │
+SFX Bus ─────┤
+             │
+Stinger Bus──┘
+```
+
+Each bus has its own processing:
+
+1. **Speech Bus**
+   - NO ducking applied (speech is authoritative)
+   - Loudness normalization to -16 LUFS
+   - No compression (keeps natural dynamics)
+
+2. **Music Bus**
+   - Crossfaded looping
+   - Speech-aware ducking (sidechain compression)
+   - Fade in/out control
+
+3. **Ambiance Bus**
+   - Crossfaded looping
+   - Gentler ducking than music
+   - 100Hz high-pass filter (removes rumble)
+
+4. **SFX Bus**
+   - Precise timing control (millisecond accuracy)
+   - No ducking (always heard)
+   - 10ms micro fades to avoid clicks
+
+5. **Stinger Bus**
+   - Optional ducking
+   - Flexible placement modes
+
+### Audio Processing Features:
+
+#### **A. Crossfaded Looping**
+- Seamless transitions when music/ambiance needs to loop
+- Default crossfade: 10 seconds
+- Configurable: 2-20 seconds per cue
+- Uses triangular crossfade curve for smooth blending
+
+#### **B. Speech-Aware Ducking (Sidechain Compression)**
+- Music and ambiance automatically reduce volume during speech
+- Implemented using FFmpeg's `sidechaincompress` filter
+- Controlled by 4 parameters per cue:
+  - **Threshold:** How loud speech needs to be (0.02-0.03 typical)
+  - **Ratio:** How much to reduce background (6:1 to 12:1)
+  - **Attack:** How fast to duck down (10-25ms)
+  - **Release:** How fast to come back up (180-300ms)
+
+#### **C. Time Manipulation**
+- **Loop mode:** Repeat audio with crossfades
+- **Stretch mode:** Time-stretch using Rubber Band library (±8% tolerance)
+- **Truncate mode:** Trim to fit (default for SFX)
+
+#### **D. Loudness Normalization**
+- Two-pass EBU R128 loudness normalization
+- Target: **-16 LUFS** (streaming standard)
+- True Peak: **≤ -1.0 dBTP** (broadcast safe)
+- LRA (Loudness Range): **7-15 LU** (natural dynamics)
+
+#### **E. Final Mastering**
+- Dynamic range compression (4:1 ratio, -18dB threshold)
+- Safety limiter (prevents clipping)
+- MP3 encoding at **320 kbps CBR**
+
+---
+
+## How to Control the Mix
+
+### What You Can Control RIGHT NOW:
+
+#### **1. Via Airtable SDC (Per-Episode Control):**
+
+When reviewing the AI-generated SDC, you can edit these fields for each cue:
+
+**Timing:**
+- `start_time` - When the cue begins (seconds)
+- `end_time` - When the cue ends (seconds)
+
+**Volume:**
+- `gain_db` - Volume adjustment in dB (typically -12 to +12)
+  - Example: `"gain_db": -6` makes it quieter by 6dB
+
+**Fades:**
+- `fade_in_ms` - Fade in duration (milliseconds)
+- `fade_out_ms` - Fade out duration (milliseconds)
+  - Example: `"fade_in_ms": 3000` = 3-second fade in
+
+**Looping:**
+- `fill_mode` - How to handle duration mismatch
+  - `"loop"` - Repeat with crossfades
+  - `"stretch"` - Time-stretch to fit
+  - `"truncate"` - Cut to fit
+- `loop_crossfade_ms` - Crossfade duration (default 120ms, range 2000-20000ms)
+
+**Ducking (Advanced):**
+```json
+"duck": {
+  "threshold": 0.03,
+  "ratio": 8,
+  "attack_ms": 25,
+  "release_ms": 250
+}
+```
+
+**Search Control:**
+- `search.query` - Keywords for Freesound search
+- `search.filter` - Advanced Freesound filters (duration, loop, tags)
+
+#### **2. Via Direct API (If You Have Developer Access):**
+
+You can send a custom cue sheet to Nightingale with all parameters:
+
+```json
+{
+  "cue_sheet": {
+    "episode_id": "podcast/episode-01",
+    "speech_anchor": {
+      "url": "https://cdn.example.com/speech.wav",
+      "duration": 300
+    },
+    "timeline": [
+      {
+        "id": "M01",
+        "kind": "bed",
+        "asset_id": "intro-music",
+        "at": 0,
+        "until": 30,
+        "gain_db": -3,
+        "fade_in_ms": 2000,
+        "fade_out_ms": 3000,
+        "fill_mode": "loop",
+        "loop_crossfade_ms": 5000,
+        "duck": {
+          "threshold": 0.03,
+          "ratio": 8,
+          "attack_ms": 25,
+          "release_ms": 250
+        }
+      }
+    ]
+  }
+}
+```
+
+### Current Limitations (Where You CAN'T Control):
+
+❌ **Global Mix Defaults** - Hardcoded in Nightingale source code
+❌ **Bus-Level Processing** - High-pass filters, compression settings
+❌ **Loudness Targets** - Fixed at -16 LUFS
+❌ **Stem Export Format** - Always 24-bit WAV, 48kHz
+❌ **MP3 Encoding Settings** - Fixed at 320kbps CBR
+
+**See "Opportunities for Improvement" section for solutions!**
+
+---
+
+## Technical Specs & Quality Standards
+
+### Audio Specifications:
+
+**Working Format (Internal Processing):**
+- Format: 24-bit PCM WAV
+- Sample Rate: 48,000 Hz (configurable to 44.1 kHz)
+- Channels: Stereo (2ch) for mix, Mono (1ch) for speech
+
+**Final Mix Output:**
+- Format: MP3 (libmp3lame encoder)
+- Bitrate: 320 kbps CBR (Constant Bit Rate)
+- Loudness: -16 LUFS integrated (streaming standard)
+- True Peak: ≤ -1.0 dBTP (broadcast safe)
+- LRA: 7-15 LU (natural dynamics)
+
+**Stems Output:**
+- Format: 24-bit WAV
+- Sample Rate: 48 kHz
+- Channels: 2 (stereo)
+- Stems Provided:
+  - VO (speech)
+  - MUSIC
+  - AMBIENCE
+  - SFX
+  - STINGER
+
+**Asset Normalization:**
+- All timeline assets normalized to **-16 LUFS** before mixing
+- Prevents level mismatches between different sources
+- Ensures consistent ducking behavior
+
+### Quality Validation (QC Step):
+
+Nightingale automatically validates:
+- ✓ Integrated loudness within ±1 LUFS of target
+- ✓ True peak ≤ -1.0 dBTP (no clipping)
+- ✓ Audio is audible (not silent)
+- ✓ Dynamic range within acceptable bounds
+
+If validation fails, the job is rejected with detailed error message.
+
+---
+
+## Pitfalls & Known Issues
+
+### 1. **Hardcoded Ducking Parameters**
+
+**Issue:** Ducking settings are hardcoded in multiple places in Nightingale source code:
+
+**Location:** `nightingale-service/src/services/planner.ts:306-309`
+```typescript
+duck: {
+  threshold: 0.03,
+  ratio: 8,
+  attack_ms: 25,
+  release_ms: 250
+}
+```
+
+**Also in:** `filtergraph-compiler.ts:279-282`, `sdc-to-cuesheet.ts:151-154`
+
+**Impact:**
+- You can't globally change "we should always duck music at 6:1 instead of 8:1"
+- Each episode's SDC can override, but there's no show-level defaults
+- Developer needs to change code and redeploy to update defaults
+
+**Workaround:**
+- Edit each episode's SDC manually with custom ducking
+- Or: Request developer to add show-level configuration
+
+---
+
+### 2. **Asset Volume Calibration Issues**
+
+**Issue:** ElevenLabs audio has different loudness than Freesound assets.
+
+**Current Mitigation:** Nightingale applies calibration offsets:
+- ElevenLabs music: -16dB offset (they generate loud)
+- ElevenLabs ambience: -25dB offset (way too loud)
+
+**Location:** (Not visible in current code, may be in asset-cache or planner)
+
+**Problem:**
+- These offsets are estimates, not measured
+- Different ElevenLabs prompts can produce different loudness
+- May result in jumps between Freesound and ElevenLabs assets
+
+**Workaround:**
+- Use `gain_db` per-cue to compensate
+- Request stems and manually balance in DAW
+
+---
+
+### 3. **Looping Crossfade Duration**
+
+**Issue:** Default crossfade is 120ms (very short), but recommendation is 10s.
+
+**Location:** `filtergraph-compiler.ts:179-182`
+```typescript
+const crossfade = cue.loop_crossfade_ms || 120; // Default is 120ms
+```
+
+**Impact:**
+- Short crossfades can cause audible "bumps" in music loops
+- Longer crossfades (5-10s) sound more seamless
+- You must specify `loop_crossfade_ms: 10000` for each cue
+
+**Best Practice:**
+- Always set `loop_crossfade_ms` to 5000-10000 for music beds
+- Shorter (1000-2000) for ambiance if it's rhythmic
+
+---
+
+### 4. **No Show-Level Sound Design Defaults**
+
+**Issue:** Each episode's SDC is generated fresh. There's no persistent "show template" for sound design preferences.
+
+**Example:**
+- You want "Briefly Remembered" to ALWAYS use gentle ducking (ratio: 4)
+- You want "Meditation Pod" to ALWAYS use 10s music crossfades
+- Currently: You must edit EVERY episode's SDC manually
+
+**Impact:**
+- Inconsistent sound across episodes if you forget to edit SDC
+- Repetitive manual work
+
+**Needed:**
+- Show-level defaults stored in Airtable
+- AI SDC generation should inherit show defaults
+- Per-episode overrides still allowed
+
+---
+
+### 5. **ElevenLabs Music Always Instrumental**
+
+**Issue:** The system always excludes vocals/lyrics from music searches and generation.
+
+**Location:** `magpie/src/services/elevenlabs.ts` (inferred)
+
+**Hardcoded:** `negative_styles: ["vocals", "lyrics", "singing"]`
+
+**Impact:**
+- Great for most podcast content (you want instrumental beds)
+- But if you WANT a song with vocals, you can't get it from ElevenLabs
+- Must source separately and provide custom asset URL
+
+**Workaround:**
+- Upload vocal music to S3 manually
+- Provide direct URL in cue sheet, bypassing Magpie
+
+---
+
+### 6. **Limited Feedback on Asset Quality**
+
+**Issue:** When Magpie searches Freesound, the scoring algorithm is opaque.
+
+**Scoring Factors (inferred):**
+- Query relevance
+- Duration match
+- Tag match
+- Loop capability
+
+**Problem:**
+- You don't see WHY an asset was chosen
+- You don't see the alternatives that were rejected
+- Hard to improve searches without trial-and-error
+
+**Needed:**
+- Asset preview in Airtable with score explanation
+- "Show me 3 alternatives" option
+- Ability to reject and trigger re-search
+
+---
+
+### 7. **No Mid-Episode Dynamic Changes**
+
+**Issue:** Ducking settings are per-cue, not time-based.
+
+**Example:**
+- You want music to duck heavily during narration
+- But during a "breathing exercise", you want NO ducking
+- Currently: The entire music cue has one ducking setting
+
+**Workaround:**
+- Split music into multiple cues at the transition point
+- Cue 1: Heavy ducking during narration
+- Cue 2: No ducking during breathing (new cue, same music, looped)
+
+**Limitation:**
+- Requires precise timing of transitions
+- Can create audible seams if not careful
+
+---
+
+### 8. **Loudness Normalization Per-Asset**
+
+**Issue:** Timeline assets are normalized to -16 LUFS individually BEFORE mixing.
+
+**Location:** `worker-steps.ts:handlePrepareStep()`
+
+**Impact:**
+- A quiet ambient sound and a loud SFX both become -16 LUFS
+- This destroys the natural loudness relationship
+- You lose the "this SFX should be subtle" intent
+
+**Example:**
+- Freesound asset: gentle rain ambiance at -30 LUFS
+- Nightingale normalizes to: -16 LUFS (now very loud)
+- You must compensate with `gain_db: -20` to get it quiet again
+
+**Better Approach:**
+- Normalize assets to a reference level (like -23 LUFS)
+- Preserve relative loudness differences
+- Apply per-cue gain for creative intent
+
+---
+
+## Opportunities for Improvement
+
+### For Non-Technical Sound Designers:
+
+Here are concrete improvements that would give you more control **without needing to code**:
+
+---
+
+### **1. Show-Level Mix Defaults in Airtable**
+
+**What:** A "Sound Design Template" table in Airtable where you configure defaults per show.
+
+**Fields:**
+```
+Show: "Briefly Remembered"
+Default Music Ducking: { ratio: 6, attack: 30, release: 300 }
+Default Ambience Ducking: { ratio: 4, attack: 20, release: 200 }
+Default Loop Crossfade: 8000ms
+Default Music Gain: -3dB
+Default Ambience Gain: -12dB
+```
+
+**Workflow:**
+1. You set these ONCE per show
+2. AI SDC generation reads these defaults
+3. Each episode inherits show defaults
+4. You can still override per-episode if needed
+
+**Developer Effort:** Medium (2-3 days)
+- Add template table to Airtable
+- Update SDC generation AI prompt to include show defaults
+- Update Nightingale planner to read from SDC
+
+**Impact:** 🎯 **HUGE** - Solves consistency and manual work issues
+
+---
+
+### **2. Global Ducking Presets Library**
+
+**What:** A dropdown menu in Airtable with named ducking presets.
+
+**Example Presets:**
+- **"Gentle Background"** - Ratio: 4, Attack: 30, Release: 400
+- **"Podcast Standard"** - Ratio: 8, Attack: 25, Release: 250  ← Current default
+- **"Heavy Ducking"** - Ratio: 12, Attack: 15, Release: 180
+- **"No Ducking"** - Disabled
+
+**Workflow:**
+1. In SDC, instead of editing JSON, you select "Gentle Background" from dropdown
+2. System translates to correct parameters
+3. You can still use custom JSON if you want precise control
+
+**Developer Effort:** Low (1 day)
+- Add preset mapping in Airtable
+- Update automation script to expand presets
+
+**Impact:** 🎯 **HIGH** - Makes ducking control accessible without JSON editing
+
+---
+
+### **3. Visual Mix Preview in Airtable**
+
+**What:** An embedded waveform view showing speech + cues timeline.
+
+**What You'd See:**
+```
+Speech:  ▂▃▅▇▆▅▃▂ ▂▃▄▅▃▂ ▁▂▃▄▃▂▁
+Music:   ═══════════════════════════ [M01: Intro Music]
+Ambience:        ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ [A01: Coffee Shop]
+SFX:          ▲                     [S01: Door Slam]
+         0s      10s     20s    30s
+```
+
+**Interaction:**
+- Click and drag cues to adjust timing
+- See ducking levels visually (music waveform gets quieter during speech)
+- Preview audio before triggering Nightingale mix
+
+**Developer Effort:** High (1-2 weeks)
+- Build custom Airtable app with waveform library
+- Integrate with SDC JSON
+- Add audio preview player
+
+**Impact:** 🎯 **VERY HIGH** - Transforms experience from "code editing" to "visual DAW-like"
+
+---
+
+### **4. Asset Alternatives & Re-Search**
+
+**What:** When Magpie returns assets, show 2-3 alternatives per cue.
+
+**Workflow:**
+1. Magpie searches and finds top 3 Freesound assets
+2. Webhook delivers all 3 to Airtable
+3. You see:
+   - **Asset A** (selected): Score 0.85, 45s, "ambient-piano-loop.wav"
+   - **Asset B**: Score 0.78, 42s, "contemplative-piano.wav"
+   - **Asset C**: Score 0.72, 50s, "soft-piano-meditation.wav"
+4. You can switch to B or C with one click
+5. Or click "None of these, search again" with different query
+
+**Developer Effort:** Medium (3-4 days)
+- Modify Magpie to return `max_alternates` (already supported in API!)
+- Update Airtable webhook to store alternatives
+- Add selection UI in Airtable
+
+**Impact:** 🎯 **VERY HIGH** - Gives you creative choice without re-running entire pipeline
+
+---
+
+### **5. Per-Bus Global Controls**
+
+**What:** Expose bus-level processing as simple controls.
+
+**What You'd Control:**
+- **Music Bus HPF:** None / 80Hz / 120Hz (remove low end)
+- **Ambience Bus HPF:** 60Hz / 100Hz / 150Hz ← Current default 100Hz
+- **Music Bus Compression:** Light / Medium / Heavy
+- **Final Mix Compression:** Disabled / Light / Standard ← Current default
+
+**Where:** Show-level template or per-episode override
+
+**Developer Effort:** Medium (2-3 days)
+- Modify filtergraph compiler to accept bus config
+- Update API schema
+- Add controls to Airtable
+
+**Impact:** 🎯 **MEDIUM-HIGH** - Pro sound designers want bus-level control
+
+---
+
+### **6. Ducking Curve Visualization**
+
+**What:** Show a graph of how music volume changes over time during speech.
+
+**Example:**
+```
+Music Volume
+100% ┤         ╭─────╮         ╭─────╮
+ 80% ┤         │     │         │     │
+ 60% ┤         │     │         │     │
+ 40% ┤    ╭────╯     ╰────╮────╯     ╰────
+ 20% ┤────╯                ╰───
+  0% ┴────────────────────────────────────
+     0s        10s        20s        30s
+
+Speech: ████      ████████      ████
+```
+
+**Interaction:**
+- Adjust attack/release by dragging curve
+- See threshold as horizontal line
+- Preview different ratio settings visually
+
+**Developer Effort:** High (1 week)
+- Build interactive graph component
+- Integrate with ducking parameters
+- Real-time preview of curve
+
+**Impact:** 🎯 **HIGH** - Makes ducking intuitive for non-engineers
+
+---
+
+### **7. "Sound Design Notes" Field with AI Interpretation**
+
+**What:** Instead of editing JSON, you write plain English notes.
+
+**Example:**
+```
+In the Airtable "Sound Design Notes" field:
+
+"For this episode, I want really gentle music that barely ducks.
+The rain ambiance should be very subtle, almost imperceptible.
+At 2:30, I want a door slam that's startling but not jarring."
+```
+
+**What Happens:**
+1. AI reads your notes + transcript
+2. Generates SDC with interpreted parameters
+3. Shows you preview: "I set music ducking to ratio: 4, ambience gain to -20dB, door slam at 2:30 with +3dB gain"
+4. You approve or refine
+
+**Developer Effort:** Low-Medium (2-3 days)
+- Add notes field to Airtable
+- Enhance AI SDC prompt to include notes
+- Update Bedrock prompt engineering
+
+**Impact:** 🎯 **VERY HIGH** - Lets you work in your language, not JSON
+
+---
+
+### **8. Stem Bounce with Custom Processing**
+
+**What:** Export stems with different processing options.
+
+**Current:** Stems are "bus post-duck" - music stem includes ducking effect
+
+**Improvement:** Let you choose:
+- **Pre-Duck Stems:** Music before ducking is applied (for re-mixing)
+- **Post-Duck Stems:** Music after ducking (current default)
+- **Dry Stems:** Individual cues before bus mixing
+- **Wet Stems:** Individual cues after all processing
+
+**Workflow:**
+1. In Airtable, select "Stem Export Options"
+2. Check boxes: ☑ Pre-Duck ☑ Post-Duck ☑ Dry Cues
+3. Nightingale renders multiple stem sets
+
+**Developer Effort:** Medium (3-4 days)
+- Modify filtergraph to output additional split points
+- Update stem export logic
+- Handle increased S3 storage
+
+**Impact:** 🎯 **HIGH** - Essential for sound designers who want to fine-tune in DAW
+
+---
+
+### **9. Real-Time Ducking Preview**
+
+**What:** Hear the ducking effect before running full Nightingale mix.
+
+**Workflow:**
+1. In Airtable, click "Preview Ducking"
+2. System generates 30-second preview:
+   - Uses first 30s of speech
+   - Applies your ducking settings to music
+   - Returns MP3 preview
+3. You listen and adjust threshold/ratio/attack/release
+4. Re-preview until satisfied
+5. Then run full mix
+
+**Developer Effort:** Medium-High (4-5 days)
+- Add lightweight preview Lambda
+- Implement trimmed mixing (30s only)
+- Add preview UI in Airtable
+
+**Impact:** 🎯 **VERY HIGH** - Eliminates "mix, listen, adjust, re-mix" cycle
+
+---
+
+### **10. Loop Crossfade Library**
+
+**What:** Pre-rendered crossfade examples for different durations.
+
+**Why:** You might not know what "5000ms crossfade" sounds like.
+
+**Workflow:**
+1. In Airtable, click "Crossfade Examples" for a music cue
+2. You see/hear:
+   - **Example A:** 1s crossfade (rhythmic, noticeable)
+   - **Example B:** 5s crossfade (smooth blend)
+   - **Example C:** 10s crossfade (imperceptible loop)
+3. You select the one you like
+4. System applies that crossfade duration
+
+**Developer Effort:** Low (1-2 days)
+- Pre-render example loops
+- Add selector UI
+- Update SDC with chosen duration
+
+**Impact:** 🎯 **MEDIUM** - Educational and practical
+
+---
+
+### Summary of Improvements by Priority:
+
+| Priority | Improvement | Effort | Impact | Non-Tech Friendly? |
+|----------|-------------|--------|--------|-------------------|
+| 🥇 **1** | Show-Level Mix Defaults | Medium | Huge | ✅ Yes |
+| 🥇 **2** | Asset Alternatives & Re-Search | Medium | Very High | ✅ Yes |
+| 🥇 **3** | Sound Design Notes (AI) | Low-Med | Very High | ✅ Yes |
+| 🥈 **4** | Real-Time Ducking Preview | Med-High | Very High | ✅ Yes |
+| 🥈 **5** | Global Ducking Presets | Low | High | ✅ Yes |
+| 🥈 **6** | Visual Mix Preview | High | Very High | ✅ Yes |
+| 🥉 **7** | Stem Bounce Options | Medium | High | ⚠️ Moderate |
+| 🥉 **8** | Per-Bus Global Controls | Medium | Med-High | ⚠️ Moderate |
+| 🥉 **9** | Ducking Curve Visualization | High | High | ✅ Yes |
+| 🥉 **10** | Loop Crossfade Library | Low | Medium | ✅ Yes |
+
+---
+
+## Quick Reference: Current Defaults
+
+### Ducking Defaults (Hardcoded):
+
+**Music:**
+- Threshold: 0.03
+- Ratio: 8:1
+- Attack: 25ms
+- Release: 250ms
+
+**Ambiance:**
+- Threshold: 0.03
+- Ratio: 6:1
+- Attack: 20ms
+- Release: 220ms
+
+**Stingers:**
+- Threshold: 0.03
+- Ratio: 8:1
+- Attack: 10ms
+- Release: 180ms
+
+### Processing Defaults:
+
+**Loop Crossfade:**
+- Default: 120ms (too short for music!)
+- Recommended: 5000-10000ms for music beds
+
+**Ambience High-Pass Filter:**
+- Fixed: 100Hz
+
+**SFX Micro Fades:**
+- Fixed: 10ms in/out
+
+**Final Compression:**
+- Threshold: -18dB
+- Ratio: 4:1
+- Attack: 5ms
+- Release: 50ms
+
+**Loudness Target:**
+- Integrated: -16 LUFS
+- True Peak: ≤ -1.0 dBTP
+- LRA: 7-15 LU
+
+---
+
+## Getting Help
+
+### If You Need To:
+
+**Change ducking for one episode:**
+→ Edit the SDC JSON in Airtable (see "How to Control the Mix")
+
+**Change ducking globally for all future episodes:**
+→ Request developer to update defaults in code OR implement Show-Level Mix Defaults
+
+**Preview an asset before mixing:**
+→ Click the CDN URL in Airtable after Magpie webhook completes
+
+**Re-mix with different settings:**
+→ Edit SDC, trigger Nightingale job again (or request webhook re-send)
+
+**Get different assets:**
+→ Edit `search.query` in SDC and re-trigger Magpie gather
+
+**Export stems for manual mixing:**
+→ Stems are automatically exported with every Nightingale job (check webhook payload for URLs)
+
+---
+
+## Technical Contact Points
+
+**Magpie Issues:**
+- Asset search not finding good results
+- ElevenLabs music doesn't match mood
+- Licensing/attribution questions
+
+**Nightingale Issues:**
+- Ducking too aggressive/gentle
+- Loudness issues (too quiet/loud)
+- Clicks, pops, artifacts in mix
+- Stems missing or corrupted
+
+**Skylark Issues:**
+- (Not audio-related - script generation only)
+
+**Airtable Automation Issues:**
+- SDC generation failing
+- Webhook not updating record
+- Job stuck in "submitted" status
+
+---
+
+## Glossary
+
+**SDC (Sound Design Container):** JSON document containing complete sound design plan (cues, timing, search params)
+
+**Cue:** A single audio element placed at a specific time (music, SFX, ambiance)
+
+**Ducking:** Automatic volume reduction of background audio when speech is present
+
+**Sidechain Compression:** Technical term for ducking (music input is compressed based on speech signal)
+
+**LUFS:** Loudness Units Full Scale - broadcast standard for measuring perceived loudness
+
+**True Peak:** Maximum audio level accounting for inter-sample peaks (prevents digital clipping)
+
+**LRA:** Loudness Range - dynamic range of the audio
+
+**Bus:** A mixing channel that groups multiple audio sources (like a fader in a DAW)
+
+**Stem:** Individual isolated track export (VO, MUSIC, AMBIENCE, SFX, STINGER)
+
+**Crossfade:** Smooth transition where one audio fades out while another fades in
+
+**Fill Mode:** How to handle duration mismatch (loop, stretch, truncate)
+
+**HPF (High-Pass Filter):** Removes low frequencies below a threshold (e.g., 100Hz)
+
+**Attack:** How fast compression/ducking engages
+
+**Release:** How fast compression/ducking releases
+
+**Threshold:** Signal level that triggers compression/ducking
+
+**Ratio:** Amount of volume reduction (8:1 = reduce 8dB for every 1dB over threshold)
+
+---
+
+**Last Updated:** 2025-10-21
+**Version:** 1.0
+**Questions?** Contact the development team or refer to project READMEs in each service folder.
