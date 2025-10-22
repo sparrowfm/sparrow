@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Building This Blog with Claude Code: Why I Skipped WordPress | Building in Public</title>
+    <meta name="title" content="Building This Blog with Claude Code: Why I Skipped WordPress">
+    <meta name="description" content="How I built a custom static blog in hours instead of wrestling with WordPress. From contemporary serif design to bold TV Guide aesthetic, all through conversation with an AI coding assistant.">
+    <meta name="keywords" content="Claude Code, static blog, WordPress alternative, GitHub Pages, AI coding, blog design, TV Guide aesthetic, building in public, no-code">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html">
+    <meta property="og:title" content="Building This Blog with Claude Code: Why I Skipped WordPress">
+    <meta property="og:description" content="How I built a custom static blog in hours instead of wrestling with WordPress. From serif elegance to TV Guide aesthetic, all through conversation.">
+    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/posts/building-blog-og-image.png">
+    <meta property="og:image:secure_url" content="https://sparrowfm.github.io/sparrow/posts/building-blog-og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Building a blog with Claude Code">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="og:article:published_time" content="2025-10-21T00:00:00Z">
+    <meta property="og:article:author" content="Neel Ketkar">
+    <meta property="og:article:tag" content="Claude Code">
+    <meta property="og:article:tag" content="Static Sites">
+    <meta property="og:article:tag" content="Design">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html">
+    <meta name="twitter:title" content="Building This Blog with Claude Code: Why I Skipped WordPress">
+    <meta name="twitter:description" content="How I built a custom static blog in hours instead of wrestling with WordPress, all through conversation with AI.">
+    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/posts/building-blog-og-image.png">
+    <meta name="twitter:image:alt" content="Building a blog with Claude Code">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Building This Blog with Claude Code: Why I Skipped WordPress",
+      "description": "How I built a custom static blog in hours instead of wrestling with WordPress. From contemporary serif design to bold TV Guide aesthetic, all through conversation with an AI coding assistant.",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://sparrowfm.github.io/sparrow/posts/building-blog-og-image.png",
+        "width": 1200,
+        "height": 630
+      },
+      "datePublished": "2025-10-21T00:00:00Z",
+      "dateModified": "2025-10-21T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/building-this-blog-with-claude-code.html"
+      },
+      "keywords": ["Claude Code", "static blog", "WordPress alternative", "GitHub Pages", "AI coding", "design iterations"],
+      "articleBody": "How I built a custom static blog with Claude Code instead of using WordPress or Ghost. Complete design evolution from contemporary serif to bold TV Guide aesthetic, all through conversational AI.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Building This Blog with Claude Code: Why I Skipped WordPress</h1>
+
+            <p><em>How I went from "I should probably use WordPress" to shipping a custom static blog in a few hours</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-21">October 21, 2025</time>
+                <span class="post-category">Claude Code</span>
+                <span class="post-category">Static Sites</span>
+                <span class="post-category">Design</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams at <a href="https://www.amazon.com" target="_blank" rel="noopener">Amazon</a>, <a href="https://www.wondery.com" target="_blank" rel="noopener">Wondery</a>, <a href="https://www.fox.com" target="_blank" rel="noopener">Fox</a>, and the company that became <a href="https://www.tivo.com" target="_blank" rel="noopener">TiVo</a>, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, GitHub Copilot, and ChatGPT). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p><strong>The Decision</strong>: Skip WordPress/Ghost/Medium and build a custom static blog from scratch with Claude Code in one afternoon.</p>
+
+            <p><strong>Why It Worked</strong>:</p>
+            <ul>
+                <li>No WordPress updates, plugins, or security patches</li>
+                <li>Complete design control—changed the entire aesthetic three times</li>
+                <li>Zero hosting costs (GitHub Pages)</li>
+                <li>Everything done through conversation with Claude Code</li>
+                <li>Full SEO/GEO optimization built in from day one</li>
+            </ul>
+
+            <p><strong>Tech Stack</strong>: HTML + CSS + GitHub Pages. That's it.</p>
+
+            <hr>
+
+            <h2>The Initial Dilemma: WordPress vs. Build It Myself</h2>
+
+            <p>I wanted to start writing about my journey building production systems with AI coding assistants. The conventional wisdom was clear: use WordPress, Ghost, or Medium. Don't reinvent the wheel.</p>
+
+            <h3>Why I Almost Chose WordPress</h3>
+
+            <p>The arguments for WordPress were compelling:</p>
+            <ul>
+                <li><strong>It's proven</strong> - Powers 43% of the web</li>
+                <li><strong>Themes and plugins</strong> - Thousands of options</li>
+                <li><strong>No coding required</strong> - Perfect for non-technical folks</li>
+                <li><strong>SEO plugins</strong> - Yoast and others handle optimization</li>
+            </ul>
+
+            <h3>Why I Hesitated</h3>
+
+            <p>But then I thought about what WordPress would actually mean:</p>
+            <ul>
+                <li><strong>Hosting costs</strong> - $5-20/month minimum</li>
+                <li><strong>Plugin hell</strong> - Every feature needs a plugin that might break</li>
+                <li><strong>Security updates</strong> - Constant maintenance</li>
+                <li><strong>Theme limitations</strong> - Never quite what you want</li>
+                <li><strong>Bloat</strong> - Loading a database and PHP for a simple blog?</li>
+            </ul>
+
+            <p>Most importantly: <strong>I'm learning to build things with AI coding assistants.</strong> Why would I use a tool that abstracts away the building process?</p>
+
+            <hr>
+
+            <h2>The Alternative: Build It From Scratch</h2>
+
+            <p>I opened Claude Code and said: "I want to build a simple blog. Just HTML and CSS. No frameworks. Can we do this?"</p>
+
+            <p>The answer: Absolutely.</p>
+
+            <h3>What We Built (Initial Version)</h3>
+
+            <p>In about 2 hours, Claude Code and I created:</p>
+            <ul>
+                <li><strong>Homepage</strong> with blog post listings</li>
+                <li><strong>Post template</strong> for future articles</li>
+                <li><strong>Clean CSS</strong> with CSS custom properties for theming</li>
+                <li><strong>Responsive design</strong> that works on mobile</li>
+                <li><strong>Dark mode support</strong> via system preferences</li>
+                <li><strong>GitHub Pages deployment</strong> with automatic builds</li>
+            </ul>
+
+            <p>Total lines of code: ~600 (HTML + CSS). No JavaScript frameworks. No build tools. No dependencies.</p>
+
+            <hr>
+
+            <h2>The Design Evolution: Three Complete Redesigns</h2>
+
+            <p>Here's where things got interesting. Because I owned the entire codebase and was working with an AI assistant, iterating on design became trivial.</p>
+
+            <h3>Version 1: Contemporary Editorial</h3>
+
+            <p>First attempt was a sophisticated, magazine-style design:</p>
+            <ul>
+                <li><strong>Fonts</strong>: Merriweather serif for headlines, Inter for body</li>
+                <li><strong>Colors</strong>: Warm terracotta accent (#c17d52), cream backgrounds</li>
+                <li><strong>Style</strong>: Soft shadows, large border radius (16px), elegant spacing</li>
+                <li><strong>Vibe</strong>: NPR meets Medium—polished, editorial, refined</li>
+            </ul>
+
+            <p>This looked professional. But it didn't feel right.</p>
+
+            <h3>Version 2: "I Don't Love This Design"</h3>
+
+            <p>After seeing the contemporary design live, I said: "I don't love the design. Can you propose another look and feel? Something inspired by TV Guide magazine from the early 2000s."</p>
+
+            <p>Claude Code responded by completely transforming the aesthetic.</p>
+
+            <h3>Version 3: TV Guide Bold (Current Design)</h3>
+
+            <p>The final design embraced early 2000s media maximalism:</p>
+            <ul>
+                <li><strong>Fonts</strong>: Arial Black for headlines, Arial for body (system fonts—no Google Fonts needed)</li>
+                <li><strong>Colors</strong>: Bold red (#e63946), bright yellow (#ffb703), pure black borders</li>
+                <li><strong>Style</strong>: Zero border radius, thick 4-6px borders everywhere, hard drop shadows</li>
+                <li><strong>Layout</strong>: Boxy, grid-based, information-dense</li>
+                <li><strong>Vibe</strong>: TV Guide meets Y2K web design—loud, colorful, unapologetically bold</li>
+            </ul>
+
+            <p><strong>Time to redesign</strong>: About 45 minutes of conversation.</p>
+
+            <hr>
+
+            <h2>The SEO Deep Dive: GEO for 2025</h2>
+
+            <p>One of my requests was: "Research GEO (Generative Engine Optimization) and tech SEO best practices and update all pages."</p>
+
+            <p>Claude Code came back with a comprehensive SEO strategy optimized for both traditional search engines and AI-powered search (ChatGPT, Perplexity, Gemini).</p>
+
+            <h3>What Got Added to Every Page</h3>
+
+            <h4>1. Primary Meta Tags</h4>
+            <pre><code>&lt;title&gt;[Optimized title under 60 chars]&lt;/title&gt;
+&lt;meta name="description" content="[150-160 char description]"&gt;
+&lt;meta name="keywords" content="[GEO-optimized keywords]"&gt;
+&lt;link rel="canonical" href="[absolute URL]"&gt;</code></pre>
+
+            <h4>2. Open Graph Tags (Facebook, LinkedIn, WhatsApp, Discord, Slack)</h4>
+            <pre><code>&lt;meta property="og:type" content="article"&gt;
+&lt;meta property="og:image" content="[1200x630px image]"&gt;
+&lt;meta property="og:image:width" content="1200"&gt;
+&lt;meta property="og:image:height" content="630"&gt;</code></pre>
+
+            <h4>3. Twitter Card Tags</h4>
+            <pre><code>&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:title" content="[Twitter-optimized title]"&gt;</code></pre>
+
+            <h4>4. JSON-LD Structured Data</h4>
+            <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[Post title]",
+  "author": {
+    "@type": "Person",
+    "name": "Neel Ketkar"
+  }
+}
+&lt;/script&gt;</code></pre>
+
+            <h3>The SEO Validation Checklist</h3>
+
+            <p>Claude Code also created a comprehensive validation checklist document with testing tools:</p>
+            <ul>
+                <li><a href="https://developers.facebook.com/tools/debug/" target="_blank" rel="noopener">Facebook Sharing Debugger</a></li>
+                <li><a href="https://www.linkedin.com/post-inspector/" target="_blank" rel="noopener">LinkedIn Post Inspector</a></li>
+                <li><a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener">Google Rich Results Test</a></li>
+                <li><a href="https://validator.schema.org/" target="_blank" rel="noopener">Schema Markup Validator</a></li>
+            </ul>
+
+            <p>This level of SEO optimization would have required multiple WordPress plugins (Yoast, All in One SEO, etc.) and still might not have covered AI search optimization.</p>
+
+            <hr>
+
+            <h2>The Details: Favicon, Bio Updates, Post Ordering</h2>
+
+            <h3>Favicon Evolution</h3>
+
+            <p>Initially, no favicon. Then I asked Claude Code to create one:</p>
+
+            <p><strong>First version</strong>: Bird-themed (sparrow silhouette) in terracotta<br>
+            <strong>Final version</strong>: Bold "B" in white on red background with yellow border—matching the TV Guide aesthetic</p>
+
+            <p>Both were SVG, both created in seconds through conversation.</p>
+
+            <h3>Bio Hyperlinks</h3>
+
+            <p>I asked: "Can you also add Wondery (Amazon/Wondery) to my bio? And make those company names hyperlinkable."</p>
+
+            <p>Claude Code updated the bio across all pages (homepage, both blog posts, and the template) to include hyperlinked company names. This consistency would have been tedious to maintain manually in WordPress.</p>
+
+            <h3>Reverse Chronological Ordering</h3>
+
+            <p>Me: "Can you also sort the posts in reverse chron order?"</p>
+
+            <p>Done instantly. In WordPress, this would be automatic but inflexible. Here, I can control the exact order if I ever want featured posts or custom sorting.</p>
+
+            <hr>
+
+            <h2>What I Learned About AI-Assisted Development</h2>
+
+            <h3>1. Iteration Speed Is Everything</h3>
+
+            <p>With Claude Code, I could say "I don't love this design" and get a complete redesign in under an hour. No theme shopping, no CSS overrides fighting with a framework, no plugins to configure.</p>
+
+            <h3>2. Conversation > Configuration</h3>
+
+            <p>Instead of learning WordPress admin panels, theme customizers, and plugin settings, I just described what I wanted:</p>
+            <ul>
+                <li>"Make it look like TV Guide magazine from the early 2000s"</li>
+                <li>"Research GEO best practices and update the SEO"</li>
+                <li>"Add Wondery to my bio and make company names clickable"</li>
+            </ul>
+
+            <p>Each request was executed in minutes.</p>
+
+            <h3>3. You Learn the Stack</h3>
+
+            <p>Because Claude Code shows you the code and explains decisions, I now understand:</p>
+            <ul>
+                <li>How CSS custom properties work</li>
+                <li>What Open Graph tags do</li>
+                <li>Why JSON-LD matters for AI search</li>
+                <li>How GitHub Pages deployment works</li>
+            </ul>
+
+            <p>WordPress would have kept all of this hidden behind abstractions.</p>
+
+            <h3>4. Zero Ongoing Maintenance</h3>
+
+            <p>No plugins to update. No security patches. No database to back up. Just static HTML and CSS hosted for free on GitHub Pages.</p>
+
+            <p>If I want to add a post, I copy the template, write in HTML, and push to GitHub. Done.</p>
+
+            <hr>
+
+            <h2>What This Approach Isn't Good For</h2>
+
+            <p>To be fair, this wouldn't work for everyone:</p>
+
+            <h3>Not Ideal If You...</h3>
+            <ul>
+                <li><strong>Need a CMS</strong> - No admin panel for non-technical authors</li>
+                <li><strong>Want comments</strong> - Would need to integrate Disqus or similar</li>
+                <li><strong>Need dynamic features</strong> - Search, tags, filtering all require JavaScript</li>
+                <li><strong>Have 100+ posts</strong> - Manual HTML gets tedious (though could automate with static site generators)</li>
+                <li><strong>Want plugins</strong> - No ecosystem, everything is custom code</li>
+            </ul>
+
+            <h3>Perfect If You...</h3>
+            <ul>
+                <li><strong>Want full control</strong> - Every pixel, every line of code is yours</li>
+                <li><strong>Love iterating</strong> - Design changes are conversation, not configuration</li>
+                <li><strong>Value simplicity</strong> - No frameworks, no build tools, no dependencies</li>
+                <li><strong>Are learning to code</strong> - See exactly how everything works</li>
+                <li><strong>Post infrequently</strong> - 1-2 posts per month, not daily content</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Numbers</h2>
+
+            <p><strong>Development Time</strong>: ~4 hours total (initial build + 2 redesigns + SEO)<br>
+            <strong>Lines of Code</strong>: ~1,200 (HTML + CSS across all files)<br>
+            <strong>Cost</strong>: $0/month (GitHub Pages free tier)<br>
+            <strong>Dependencies</strong>: 0<br>
+            <strong>Build Tools</strong>: None<br>
+            <strong>Maintenance</strong>: Write posts, git push, done</p>
+
+            <p><strong>WordPress Comparison</strong>:<br>
+            Setup time: Same (a few hours)<br>
+            Monthly cost: $5-20 for hosting<br>
+            Ongoing maintenance: Plugin updates, security patches, backups<br>
+            Design flexibility: Limited by theme<br>
+            Learning: Minimal (admin panel clicks)</p>
+
+            <hr>
+
+            <h2>The Tech Stack (Yes, It's This Simple)</h2>
+
+            <h3>Frontend</h3>
+            <pre><code>HTML5 (semantic tags: &lt;article&gt;, &lt;main&gt;, &lt;header&gt;, &lt;footer&gt;)
+CSS3 (custom properties, media queries, no frameworks)
+System fonts (Arial Black, Arial—no font loading)</code></pre>
+
+            <h3>Hosting & Deployment</h3>
+            <pre><code>GitHub Pages (free static site hosting)
+GitHub Actions (automatic deployment on push to main)
+Custom domain support (if needed)</code></pre>
+
+            <h3>Analytics</h3>
+            <pre><code>GoatCounter (privacy-friendly, lightweight, free tier)</code></pre>
+
+            <h3>Tools Used</h3>
+            <pre><code>Claude Code (AI coding assistant)
+Git (version control)
+VS Code / any text editor</code></pre>
+
+            <p>That's the entire stack. No Node.js, no React, no webpack, no Tailwind, no databases.</p>
+
+            <hr>
+
+            <h2>The Design Philosophy: Constraints as Features</h2>
+
+            <p>By limiting myself to static HTML and CSS, I gained:</p>
+
+            <h3>1. Speed</h3>
+            <p>Pages load instantly. No JavaScript bundle. No database queries. Just HTML and CSS served from a CDN.</p>
+
+            <h3>2. Reliability</h3>
+            <p>Nothing can break. No plugins to conflict. No database to corrupt. Static files are bulletproof.</p>
+
+            <h3>3. Portability</h3>
+            <p>Want to move hosting? Copy the <code>public/</code> folder anywhere. No export/import, no database migration.</p>
+
+            <h3>4. Version Control</h3>
+            <p>Every change is tracked in Git. Want to see the design evolution? Check the commit history.</p>
+
+            <hr>
+
+            <h2>How to Replicate This Approach</h2>
+
+            <p>If you want to build your own static blog with Claude Code:</p>
+
+            <h3>Step 1: Open Claude Code and Describe Your Vision</h3>
+            <pre><code>"I want to build a simple blog. Just HTML and CSS.
+Clean design, responsive, with a homepage that lists posts
+and individual post pages. Can you create the initial structure?"</code></pre>
+
+            <h3>Step 2: Iterate on Design</h3>
+            <pre><code>"The design feels too minimal. Can you make it more
+editorial? Think magazine-style with serif fonts and
+elegant spacing."</code></pre>
+
+            <h3>Step 3: Add SEO</h3>
+            <pre><code>"Research GEO and technical SEO best practices for 2025
+and update all pages with comprehensive meta tags, Open Graph,
+Twitter Cards, and JSON-LD structured data."</code></pre>
+
+            <h3>Step 4: Deploy to GitHub Pages</h3>
+            <pre><code>"Can you help me set up GitHub Pages deployment?
+I want automatic builds when I push to main."</code></pre>
+
+            <h3>Step 5: Keep Iterating</h3>
+            <pre><code>"I don't love the design. Can you make it look like
+TV Guide magazine from the early 2000s?"</code></pre>
+
+            <p>Each of these is a conversation, not a tutorial. You're not following documentation—you're describing what you want and the AI assistant builds it.</p>
+
+            <hr>
+
+            <h2>The Meta-Lesson: Building Is Learning</h2>
+
+            <p>Here's what I realized: <strong>Using WordPress would have taught me nothing about web development.</strong></p>
+
+            <p>By building from scratch with an AI assistant, I learned:</p>
+            <ul>
+                <li>How CSS custom properties enable theming</li>
+                <li>Why semantic HTML matters for SEO and accessibility</li>
+                <li>What Open Graph tags do and why social media needs them</li>
+                <li>How JSON-LD helps AI search engines understand content</li>
+                <li>Why static sites are fast and reliable</li>
+                <li>How Git version control works</li>
+                <li>How GitHub Pages deploys automatically</li>
+            </ul>
+
+            <p>WordPress would have given me a blog. Claude Code gave me a blog <em>and</em> an education.</p>
+
+            <hr>
+
+            <h2>Future Improvements</h2>
+
+            <p>Things I might add later:</p>
+            <ul>
+                <li><strong>RSS feed</strong> - Static XML file, easy to generate</li>
+                <li><strong>Tag system</strong> - Could be static pages or client-side filtering</li>
+                <li><strong>Search</strong> - Client-side with lunr.js or similar</li>
+                <li><strong>Newsletter signup</strong> - Integrate with Buttondown or ConvertKit</li>
+                <li><strong>Comments</strong> - Maybe Webmentions for a static-friendly approach</li>
+            </ul>
+
+            <p>But honestly? The blog works great as-is. I can write, publish, and iterate on design faster than I ever could with WordPress.</p>
+
+            <hr>
+
+            <h2>Final Thoughts: The Joy of Full Control</h2>
+
+            <p>There's something deeply satisfying about saying "I don't love this design" and watching an AI assistant completely transform your blog's aesthetic in 45 minutes.</p>
+
+            <p>WordPress gives you options. Claude Code gives you control.</p>
+
+            <p>WordPress hides complexity. Claude Code explains it.</p>
+
+            <p>WordPress has plugins for everything. Claude Code teaches you to build everything.</p>
+
+            <p>For me, as someone learning to build production systems with AI coding assistants, the choice was obvious: <strong>Skip the abstractions. Build from scratch. Learn by doing.</strong></p>
+
+            <p>This blog is now exactly what I want it to be. And when I decide I want something different? I'll just ask Claude Code to change it.</p>
+
+            <hr>
+
+            <h2>Try It Yourself</h2>
+
+            <p><strong>The source code for this blog</strong>: <a href="https://github.com/sparrowfm/sparrow" target="_blank" rel="noopener">github.com/sparrowfm/sparrow</a></p>
+
+            <p>Feel free to fork it, modify it, make it yours. That's the beauty of static sites—they're just files. Copy them, change them, deploy them.</p>
+
+            <p>And if you're on the fence about whether to use WordPress or build your own: <strong>open Claude Code and just ask.</strong> You might be surprised how quickly you can ship something custom.</p>
+
+            <p><em>Questions? Thoughts? Find me on <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a> or check out the code on <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>.</em></p>
+
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Neel Ketkar. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
