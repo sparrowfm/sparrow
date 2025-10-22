@@ -710,9 +710,9 @@ article.post-content a:hover {
     box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.4);
 }
 
-/* Bento Grid Sizes */
+/* Bento Grid Sizes - Intentional Asymmetry */
 .bento-hero {
-    grid-column: span 6;
+    grid-column: span 8;
 }
 
 .bento-large {
@@ -720,15 +720,19 @@ article.post-content a:hover {
 }
 
 .bento-medium {
-    grid-column: span 6;
+    grid-column: span 4;
 }
 
 .bento-small {
-    grid-column: span 6;
+    grid-column: span 3;
 }
 
 .bento-tall {
-    grid-column: span 6;
+    grid-row: span 2;
+}
+
+.bento-wide {
+    grid-column: span 12;
 }
 
 .bento-image {
