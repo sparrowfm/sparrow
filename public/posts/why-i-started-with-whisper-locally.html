@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Why I Started with Whisper Locally (Before Moving to the Cloud) | Building in Public</title>
+    <meta name="title" content="Why I Started with Whisper Locally (Before Moving to the Cloud)">
+    <meta name="description" content="How running OpenAI Whisper locally taught me about transcription, FFmpeg, Python dependencies, and system architecture—before I eventually moved to cloud APIs for good reason.">
+    <meta name="keywords" content="Whisper, OpenAI Whisper, local transcription, speech-to-text, audio processing, FFmpeg, Python, AI coding, learning by building, cloud vs local">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html">
+    <meta property="og:title" content="Why I Started with Whisper Locally (Before Moving to the Cloud)">
+    <meta property="og:description" content="Running OpenAI Whisper locally taught me about transcription, system architecture, and dependencies—before I moved to cloud APIs for production.">
+    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/posts/whisper-local-og-image.png">
+    <meta property="og:image:secure_url" content="https://sparrowfm.github.io/sparrow/posts/whisper-local-og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Local Whisper transcription workflow">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-22T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="Whisper">
+    <meta property="article:tag" content="Transcription">
+    <meta property="article:tag" content="AI Tools">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html">
+    <meta name="twitter:title" content="Why I Started with Whisper Locally (Before Moving to Cloud)">
+    <meta name="twitter:description" content="How running OpenAI Whisper locally taught me about transcription, FFmpeg, and system architecture.">
+    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/posts/whisper-local-og-image.png">
+    <meta name="twitter:image:alt" content="Local Whisper transcription workflow">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Why I Started with Whisper Locally (Before Moving to the Cloud)",
+      "description": "How running OpenAI Whisper locally taught me about transcription, FFmpeg, Python dependencies, and system architecture—before I eventually moved to cloud APIs for good reason.",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://sparrowfm.github.io/sparrow/posts/whisper-local-og-image.png",
+        "width": 1200,
+        "height": 630
+      },
+      "datePublished": "2025-10-22T00:00:00Z",
+      "dateModified": "2025-10-22T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/why-i-started-with-whisper-locally.html"
+      },
+      "keywords": ["Whisper", "transcription", "OpenAI", "local AI", "speech-to-text", "FFmpeg", "Python", "building in public"],
+      "articleBody": "How running OpenAI Whisper locally taught me about transcription, system dependencies, and architecture decisions—and why I eventually moved to cloud APIs for production while being glad I started locally.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Why I Started with Whisper Locally (Before Moving to the Cloud)</h1>
+
+            <p><em>How running OpenAI Whisper on my laptop taught me more about audio processing, dependencies, and system architecture than any cloud API ever could—and why I'm glad I eventually moved to the cloud anyway</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-22">October 22, 2025</time>
+                <span class="post-category">Whisper</span>
+                <span class="post-category">Transcription</span>
+                <span class="post-category">AI Tools</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams at <a href="https://www.amazon.com" target="_blank" rel="noopener">Amazon</a>, <a href="https://web.archive.org/web/20250101000000/wondery.com" target="_blank" rel="noopener">Wondery</a>, <a href="https://web.archive.org/web/20150101000000/fox.com" target="_blank" rel="noopener">Fox</a>, <a href="https://web.archive.org/web/20120101000000/rovicorp.com" target="_blank" rel="noopener">Rovi</a>, and <a href="https://web.archive.org/web/20060101000000/tvguide.com" target="_blank" rel="noopener">TV Guide</a>, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, Codex, and Cursor). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p><strong>The Journey</strong>: I built an entire audio production pipeline using local Whisper transcription on my MacBook. It was free, powerful, and taught me a ton. Then I moved the whole thing to the cloud.</p>
+
+            <p><strong>Key Learnings</strong>:</p>
+            <ul>
+                <li>Local Whisper is the best way to <strong>learn</strong> about transcription, audio processing, and system dependencies</li>
+                <li>It's 100% free and incredibly accurate—no API costs for experimentation</li>
+                <li>You'll learn about FFmpeg, Python environments, model sizes, word-level timestamps, and more</li>
+                <li>Cloud transcription isn't for everyone—local is perfect if you're prototyping or have privacy concerns</li>
+                <li>I eventually moved to cloud APIs (Assembly AI, Deepgram) for production, but starting local was the right choice</li>
+            </ul>
+
+            <p><strong>Who This Is For</strong>:</p>
+            <ul>
+                <li>Developers building audio/podcast tools who want to understand transcription deeply</li>
+                <li>Founders prototyping ideas without burning through API credits</li>
+                <li>Anyone with privacy/data residency requirements</li>
+                <li>People learning AI/ML infrastructure from the ground up</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Problem: I Needed Transcription for Audio Analysis</h2>
+
+            <p>I was building an automated podcast production system. The vision: upload raw audio, get back a professionally mixed episode with music, sound effects, and proper audio engineering—all driven by AI.</p>
+
+            <p><strong>The catch</strong>: To intelligently place sound effects and music, I needed to know <em>exactly</em> what was being said and <em>exactly</em> when. Not just rough timestamps—I needed word-level precision.</p>
+
+            <h3>The Cloud Transcription Path (What I Didn't Take)</h3>
+
+            <p>The obvious choice: use a cloud transcription API like:</p>
+            <ul>
+                <li><strong>OpenAI Whisper API</strong> - $0.006/minute</li>
+                <li><strong>Assembly AI</strong> - $0.00025/second (~$0.015/minute)</li>
+                <li><strong>Deepgram</strong> - $0.0043/minute</li>
+                <li><strong>Rev.ai</strong> - $0.02/minute</li>
+            </ul>
+
+            <p>For a 20-minute podcast:</p>
+            <ul>
+                <li>OpenAI Whisper API: $0.12</li>
+                <li>Assembly AI: $0.30</li>
+                <li>Deepgram: $0.086</li>
+            </ul>
+
+            <p><strong>Not expensive, right?</strong></p>
+
+            <p>But when you're prototyping and running the same 5-minute test clip through your pipeline 50 times a day while debugging...</p>
+
+            <ul>
+                <li>50 iterations × $0.03 = <strong>$1.50/day</strong></li>
+                <li>Over a month of development: <strong>$45</strong></li>
+                <li>Across 3 different test episodes: <strong>$135</strong></li>
+            </ul>
+
+            <p>Plus, every time I wanted to experiment with a new feature, I'd think: "Is this worth another API call?" That friction slowed down my learning.</p>
+
+            <hr>
+
+            <h2>The Solution: OpenAI Whisper Running Locally</h2>
+
+            <p>OpenAI released <a href="https://github.com/openai/whisper" target="_blank" rel="noopener">Whisper</a> as an open-source model in September 2022. You can run it on your own hardware. For free. Forever.</p>
+
+            <h3>What You Get</h3>
+
+            <p><strong>Accuracy</strong>: State-of-the-art transcription. Better than anything else available when I started.</p>
+
+            <p><strong>Word-level timestamps</strong>: Critical for my use case. I could place sound effects at specific words:</p>
+
+            <pre><code>{
+  "text": "In the battle of the ride-share services,",
+  "start": 0.0,
+  "end": 3.2,
+  "words": [
+    {"word": "In", "start": 0.0, "end": 0.12},
+    {"word": "the", "start": 0.12, "end": 0.24},
+    {"word": "battle", "start": 0.24, "end": 0.64},
+    ...
+  ]
+}</code></pre>
+
+            <p><strong>Multiple model sizes</strong>: From tiny (39M params, fast) to large (1550M params, most accurate)</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Parameters</th>
+                        <th>Speed (MacBook M1)</th>
+                        <th>Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>tiny</td>
+                        <td>39M</td>
+                        <td>~32x realtime</td>
+                        <td>Good</td>
+                    </tr>
+                    <tr>
+                        <td>base</td>
+                        <td>74M</td>
+                        <td>~16x realtime</td>
+                        <td>Better</td>
+                    </tr>
+                    <tr>
+                        <td>small</td>
+                        <td>244M</td>
+                        <td>~6x realtime</td>
+                        <td>Great</td>
+                    </tr>
+                    <tr>
+                        <td>medium</td>
+                        <td>769M</td>
+                        <td>~2x realtime</td>
+                        <td>Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>large</td>
+                        <td>1550M</td>
+                        <td>~1x realtime</td>
+                        <td>Best</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Cost</strong>: $0. Zero. Nada. Just electricity and your laptop's fan noise.</p>
+
+            <hr>
+
+            <h2>How I Set It Up (The Easy Way)</h2>
+
+            <h3>Step 1: Install FFmpeg</h3>
+
+            <p>Whisper depends on FFmpeg for audio processing. On macOS:</p>
+
+            <pre><code>brew install ffmpeg</code></pre>
+
+            <p>On Linux:</p>
+
+            <pre><code>sudo apt update
+sudo apt install ffmpeg</code></pre>
+
+            <p><strong>Why this matters</strong>: This was my first encounter with FFmpeg, the Swiss Army knife of audio/video processing. I'd later use it extensively for mixing, format conversion, and loudness normalization.</p>
+
+            <h3>Step 2: Install Whisper</h3>
+
+            <pre><code>pip install openai-whisper</code></pre>
+
+            <p>That's it. Seriously.</p>
+
+            <h3>Step 3: Transcribe Your First File</h3>
+
+            <pre><code>whisper audio.mp3 --model base --language en --output_format json</code></pre>
+
+            <p><strong>What happens</strong>:</p>
+            <ol>
+                <li>Whisper downloads the <code>base</code> model (~140MB) on first run</li>
+                <li>Transcribes your audio</li>
+                <li>Outputs JSON with timestamps</li>
+            </ol>
+
+            <p><strong>Time for a 5-minute podcast</strong>: ~30 seconds on my MacBook Pro M1</p>
+
+            <h3>Step 4: Get Word-Level Timestamps (The Magic)</h3>
+
+            <p>The basic command gives you segment-level timestamps. For word-level precision, use the Python API:</p>
+
+            <pre><code>import whisper
+
+model = whisper.load_model("base")
+result = model.transcribe(
+    "audio.mp3",
+    language="en",
+    word_timestamps=True  # The magic flag!
+)
+
+# Access word-level data
+for segment in result["segments"]:
+    for word in segment["words"]:
+        print(f"{word['word']}: {word['start']}-{word['end']}")</code></pre>
+
+            <p><strong>This unlocked everything</strong>: I could now place a "whoosh" sound effect exactly when the narrator says "battle" at 0.64 seconds.</p>
+
+            <hr>
+
+            <h2>What I Learned by Running Whisper Locally</h2>
+
+            <h3>1. How Transcription Actually Works</h3>
+
+            <p>Using a cloud API, transcription is magic: audio goes in, text comes out. Running locally, I learned:</p>
+
+            <ul>
+                <li><strong>Audio preprocessing</strong>: Whisper resamples to 16kHz mono before processing</li>
+                <li><strong>Model sizes matter</strong>: Larger models = slower but more accurate</li>
+                <li><strong>Language detection</strong>: You can let Whisper auto-detect or specify (specifying is faster)</li>
+                <li><strong>Hallucinations</strong>: Sometimes Whisper hallucinates repeated phrases in silence—you need silence detection</li>
+            </ul>
+
+            <h3>2. The Importance of Dependencies</h3>
+
+            <p>When Whisper broke (and it did), I learned:</p>
+
+            <ul>
+                <li><strong>FFmpeg codecs</strong>: Not all FFmpeg builds support all audio formats</li>
+                <li><strong>Python environments</strong>: Virtual environments saved me from dependency hell</li>
+                <li><strong>System libraries</strong>: PyTorch has specific requirements depending on your hardware</li>
+            </ul>
+
+            <p><strong>Example error I hit</strong>:</p>
+
+            <pre><code>RuntimeError: Couldn't find ffmpeg or avconv</code></pre>
+
+            <p><strong>The fix</strong>: FFmpeg was installed but not in PATH. I learned how PATH works, how to debug "command not found," and how to verify installations.</p>
+
+            <h3>3. Performance Optimization</h3>
+
+            <p>Running locally forced me to care about performance:</p>
+
+            <ul>
+                <li><strong>Model selection</strong>: base was perfect for my needs (fast, good enough accuracy)</li>
+                <li><strong>Batch processing</strong>: I wrote scripts to transcribe multiple files overnight</li>
+                <li><strong>GPU acceleration</strong>: I learned about CUDA, MPS (Metal Performance Shaders on Mac), and CPU fallback</li>
+            </ul>
+
+            <h3>4. Audio Processing Fundamentals</h3>
+
+            <p>Working with Whisper's output taught me:</p>
+
+            <ul>
+                <li><strong>Sample rates</strong>: Why 44.1kHz vs 16kHz matters</li>
+                <li><strong>Silence detection</strong>: How to identify pauses vs speech</li>
+                <li><strong>Audio segmentation</strong>: Breaking long files into chunks</li>
+                <li><strong>Timestamp precision</strong>: Millisecond accuracy for audio alignment</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Audio Cues Project: Whisper in Production (Locally)</h2>
+
+            <p>I built an entire automated podcast production system around local Whisper:</p>
+
+            <h3>The Pipeline</h3>
+
+            <ol>
+                <li><strong>Transcribe</strong> with Whisper (word-level timestamps)</li>
+                <li><strong>Analyze</strong> the transcript with a local LLM (Ollama) to detect:
+                    <ul>
+                        <li>Emotional arcs (tension, triumph, sadness)</li>
+                        <li>Scene changes</li>
+                        <li>Key moments for sound design</li>
+                    </ul>
+                </li>
+                <li><strong>Generate cue sheet</strong> specifying:
+                    <ul>
+                        <li>Music beds (when, what style, how long)</li>
+                        <li>Sound effects (whoosh, door slam, footsteps—placed at specific words)</li>
+                        <li>Ambience (background atmosphere)</li>
+                    </ul>
+                </li>
+                <li><strong>Generate audio</strong> with ElevenLabs API</li>
+                <li><strong>Mix with FFmpeg</strong> using the word-level timestamps from Whisper</li>
+                <li><strong>Quality control</strong> with automated loudness analysis</li>
+            </ol>
+
+            <h3>Why Local Whisper Was Perfect for This</h3>
+
+            <p><strong>Iteration speed</strong>: I ran the same clips hundreds of times while tuning the pipeline. Free transcription meant no friction.</p>
+
+            <p><strong>Debugging</strong>: When sound effects were misaligned, I could re-transcribe instantly to verify timestamps.</p>
+
+            <p><strong>Privacy</strong>: I was working with podcast content that hadn't been released yet. No data left my laptop.</p>
+
+            <p><strong>Learning</strong>: Every error taught me something. Cloud APIs hide the complexity; local Whisper forced me to understand it.</p>
+
+            <hr>
+
+            <h2>When Local Whisper Isn't Enough</h2>
+
+            <p>After building my entire pipeline locally, I hit walls:</p>
+
+            <h3>Problem 1: Scalability</h3>
+
+            <p><strong>Local</strong>: Processing a 60-minute podcast took 3-5 minutes on my M1 MacBook.</p>
+
+            <p><strong>Cloud (Assembly AI)</strong>: Same podcast transcribed in 30-45 seconds. Plus, I could process 10 episodes in parallel.</p>
+
+            <h3>Problem 2: Speaker Diarization</h3>
+
+            <p><strong>Local Whisper</strong>: Doesn't do speaker detection out of the box. I'd need to add pyannote.audio, which is complex.</p>
+
+            <p><strong>Cloud APIs (Assembly AI, Deepgram)</strong>: Built-in speaker diarization with high accuracy.</p>
+
+            <h3>Problem 3: Advanced Features</h3>
+
+            <p><strong>Local Whisper</strong>: Just transcription. Want sentiment analysis? Topic detection? Entity recognition? Build it yourself.</p>
+
+            <p><strong>Cloud APIs</strong>: Assembly AI offers auto-highlights, content moderation, PII redaction, topic detection—all in one API call.</p>
+
+            <h3>Problem 4: Infrastructure Complexity</h3>
+
+            <p>When I wanted to deploy this as a web service:</p>
+
+            <ul>
+                <li><strong>Local Whisper on AWS Lambda</strong>: Impossible. Model too large, inference too slow.</li>
+                <li><strong>Local Whisper on EC2/Fargate</strong>: Possible, but now I'm managing:
+                    <ul>
+                        <li>Docker containers with GPU support</li>
+                        <li>Model downloads and caching</li>
+                        <li>Auto-scaling based on load</li>
+                        <li>Queue management (what if 50 users upload at once?)</li>
+                    </ul>
+                </li>
+                <li><strong>Cloud Transcription API</strong>: One HTTP request. Scales infinitely.</li>
+            </ul>
+
+            <hr>
+
+            <h2>Why I Moved to the Cloud (And Why I'm Glad I Started Local)</h2>
+
+            <h3>The Production Architecture</h3>
+
+            <p>After months of prototyping locally, here's what I deployed to production:</p>
+
+            <ul>
+                <li><strong>Transcription</strong>: Assembly AI (for speaker diarization + speed)</li>
+                <li><strong>Sound design</strong>: LLM analysis (moved from Ollama local to Claude API)</li>
+                <li><strong>Audio generation</strong>: ElevenLabs (already cloud-based)</li>
+                <li><strong>Mixing</strong>: FFmpeg on AWS Fargate (complex multi-track processing)</li>
+            </ul>
+
+            <h3>The Cost Equation Changed</h3>
+
+            <p><strong>Development phase (local Whisper)</strong>:</p>
+            <ul>
+                <li>Cost: $0</li>
+                <li>Time: Fast enough for prototyping</li>
+                <li>Learning: Maximum</li>
+            </ul>
+
+            <p><strong>Production phase (cloud transcription)</strong>:</p>
+            <ul>
+                <li>Cost: $0.015/minute (Assembly AI) × 20 min episode = $0.30/episode</li>
+                <li>Processing 100 episodes/month = $30/month</li>
+                <li>Time: 10x faster</li>
+                <li>Features: Speaker diarization, content safety, highlights</li>
+                <li>Reliability: 99.9% uptime, no GPU management</li>
+            </ul>
+
+            <p><strong>My time</strong> is worth more than $30/month saved. But I wouldn't have known what to ask for from Assembly AI if I hadn't run Whisper locally first.</p>
+
+            <h3>What I Gained by Starting Local</h3>
+
+            <ol>
+                <li><strong>Deep understanding</strong>: I know how transcription works under the hood</li>
+                <li><strong>Better debugging</strong>: When Assembly AI's timestamps seem off, I know how to verify</li>
+                <li><strong>Cost awareness</strong>: I can compare cloud pricing because I know the computational cost</li>
+                <li><strong>Architectural literacy</strong>: I understand trade-offs between local, self-hosted, and cloud</li>
+                <li><strong>FFmpeg skills</strong>: Learned while getting Whisper working, applied everywhere</li>
+            </ol>
+
+            <hr>
+
+            <h2>Who Should Use Local Whisper?</h2>
+
+            <h3>Perfect For:</h3>
+
+            <ul>
+                <li><strong>Learning and prototyping</strong>: Unlimited free transcription while you figure out your product</li>
+                <li><strong>Privacy-sensitive applications</strong>: Medical, legal, or confidential content that can't leave your infrastructure</li>
+                <li><strong>Batch processing</strong>: You have 1,000 old audio files to transcribe once—local is free</li>
+                <li><strong>Custom models</strong>: You want to fine-tune Whisper on domain-specific vocabulary</li>
+                <li><strong>Offline processing</strong>: No internet? No problem</li>
+                <li><strong>Educational projects</strong>: Students learning ML/AI infrastructure</li>
+            </ul>
+
+            <h3>Not Great For:</h3>
+
+            <ul>
+                <li><strong>Production web apps</strong>: Unless you want to manage GPU infrastructure</li>
+                <li><strong>Real-time transcription</strong>: Cloud APIs are faster and simpler</li>
+                <li><strong>Advanced features</strong>: Speaker diarization, sentiment, topics—cloud APIs include these</li>
+                <li><strong>High volume</strong>: Processing 10,000 hours? Cloud providers have better economies of scale</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Hybrid Approach (What I Recommend)</h2>
+
+            <p><strong>Development</strong>: Run Whisper locally</p>
+            <ul>
+                <li>Zero cost for experimentation</li>
+                <li>Learn the fundamentals</li>
+                <li>Test different model sizes</li>
+                <li>Build your intuition for what's possible</li>
+            </ul>
+
+            <p><strong>Production</strong>: Use cloud APIs (Assembly AI, Deepgram, OpenAI)</p>
+            <ul>
+                <li>Better speed and reliability</li>
+                <li>Advanced features included</li>
+                <li>No infrastructure management</li>
+                <li>Pay only for what you use</li>
+            </ul>
+
+            <p><strong>Self-hosted Whisper</strong>: Only if you have:
+            <ul>
+                <li>Strict data residency requirements</li>
+                <li>Very high volume (>100,000 minutes/month)</li>
+                <li>Existing GPU infrastructure</li>
+                <li>Engineers who want to manage it</li>
+            </ul>
+
+            <hr>
+
+            <h2>How to Get Started with Local Whisper</h2>
+
+            <h3>The 5-Minute Quickstart</h3>
+
+            <pre><code># Install FFmpeg (macOS)
+brew install ffmpeg
+
+# Install Whisper
+pip install openai-whisper
+
+# Transcribe your first file
+whisper my_audio.mp3 --model base --language en
+
+# Get JSON output with timestamps
+whisper my_audio.mp3 --model base --language en --output_format json</code></pre>
+
+            <h3>Python Script for Word-Level Timestamps</h3>
+
+            <pre><code>import whisper
+import json
+
+# Load model (downloads on first run)
+model = whisper.load_model("base")
+
+# Transcribe with word-level timestamps
+result = model.transcribe(
+    "your_audio.mp3",
+    language="en",
+    word_timestamps=True,
+    verbose=False
+)
+
+# Save to JSON
+with open("transcript.json", "w") as f:
+    json.dump(result, f, indent=2)
+
+# Print word-level data
+for segment in result["segments"]:
+    print(f"\n[{segment['start']:.2f}s - {segment['end']:.2f}s]")
+    print(segment["text"])
+    for word in segment.get("words", []):
+        print(f"  {word['word']}: {word['start']:.3f}s")</code></pre>
+
+            <h3>Handling Long Files (60+ Minutes)</h3>
+
+            <pre><code># Use the medium model for best accuracy on long content
+whisper long_podcast.mp3 \
+  --model medium \
+  --language en \
+  --output_format json \
+  --fp16 False  # Disable half-precision if you have issues</code></pre>
+
+            <hr>
+
+            <h2>Common Issues and Solutions</h2>
+
+            <h3>Issue 1: "Couldn't find ffmpeg or avconv"</h3>
+
+            <pre><code># Verify FFmpeg is installed
+which ffmpeg
+
+# If not found, install it
+brew install ffmpeg  # macOS
+sudo apt install ffmpeg  # Linux
+
+# Verify it's in PATH
+ffmpeg -version</code></pre>
+
+            <h3>Issue 2: Slow Processing on Older Macs</h3>
+
+            <pre><code># Use the tiny or base model for speed
+whisper audio.mp3 --model tiny  # Fastest, decent accuracy
+
+# Or use fp16 (half precision) for ~2x speedup
+whisper audio.mp3 --model base --fp16 True</code></pre>
+
+            <h3>Issue 3: Repeated Hallucinations in Silence</h3>
+
+            <pre><code># Whisper sometimes hallucinates in silence
+# Use the condition_on_previous_text flag:
+
+result = model.transcribe(
+    "audio.mp3",
+    condition_on_previous_text=False  # Prevents hallucination cascades
+)</code></pre>
+
+            <hr>
+
+            <h2>What's Next: Swift Native Apps vs Web Apps</h2>
+
+            <p>In my next post, I'll dive into another architectural decision I faced: building the audio cues interface as a <strong>local web app (Node.js + Express + HTML)</strong> vs a <strong>native Swift/SwiftUI Mac app</strong>.</p>
+
+            <p><strong>Preview of what I learned</strong>:</p>
+            <ul>
+                <li>Web apps are faster to build (especially with AI assistants)</li>
+                <li>Native apps have better OS integration (file access, menu bar, notifications)</li>
+                <li>Distribution is completely different (web = instant, native = code signing hell)</li>
+                <li>Performance characteristics matter more than you'd think</li>
+            </ul>
+
+            <hr>
+
+            <h2>Final Thoughts</h2>
+
+            <p>Running Whisper locally isn't about saving money (though you will). It's about <strong>learning by building</strong>.</p>
+
+            <p>When you run Whisper locally, you'll learn:</p>
+            <ul>
+                <li>How transcription actually works</li>
+                <li>What dependencies matter and why</li>
+                <li>How to debug audio processing issues</li>
+                <li>What questions to ask when evaluating cloud APIs</li>
+            </ul>
+
+            <p>I eventually moved my transcription workflow to the cloud (Assembly AI for production), but <strong>I'm glad I started local</strong>. The months I spent running Whisper on my laptop taught me more about audio processing, ML infrastructure, and system dependencies than any tutorial could.</p>
+
+            <p>If you're building anything with audio transcription, start with local Whisper. It's free, it's powerful, and it'll teach you more than you expect.</p>
+
+            <p>Then, when you're ready for production, you'll know exactly what to look for in a cloud API—because you've already built it yourself.</p>
+
+            <hr>
+
+            <h2>Resources</h2>
+
+            <ul>
+                <li><a href="https://github.com/openai/whisper" target="_blank" rel="noopener">OpenAI Whisper GitHub</a> - Official repository with documentation</li>
+                <li><a href="https://github.com/sparrowfm/audio-cues-test" target="_blank" rel="noopener">My Audio Cues Project</a> - Full pipeline using local Whisper</li>
+                <li><a href="https://www.assemblyai.com/" target="_blank" rel="noopener">Assembly AI</a> - Cloud transcription API (what I use in production)</li>
+                <li><a href="https://deepgram.com/" target="_blank" rel="noopener">Deepgram</a> - Another excellent cloud alternative</li>
+                <li><a href="https://platform.openai.com/docs/guides/speech-to-text" target="_blank" rel="noopener">OpenAI Whisper API</a> - Cloud version of Whisper</li>
+            </ul>
+
+            <hr>
+
+            <p><em>Questions? Thoughts? Find me on <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a> or check out the code on <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>.</em></p>
+
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Neel Ketkar. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="../about.html">About</a>
+                    <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
