@@ -16,6 +16,21 @@
     <generator>Hand-crafted with Claude Code</generator>
 
     <item>
+      <title>Building a Semantic Search Engine for Music Cues: Local-First AI Without the API Costs</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/building-local-music-cue-search.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/building-local-music-cue-search.html</guid>
+      <description>How I'm planning a natural language search system for hundreds of music cues using local LLMs, audio analysis, and semantic embeddings—without spending a penny on API costs. From librosa feature extraction to Ollama descriptions to sentence-transformers, a complete guide to building local-first AI tools.</description>
+      <pubDate>Tue, 22 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>AI/ML</category>
+      <category>Audio Processing</category>
+      <category>Local LLM</category>
+      <category>Semantic Search</category>
+      <category>Ollama</category>
+      <category>Music Production</category>
+    </item>
+
+    <item>
       <title>Building Airtable + AWS Integrations That Actually Work</title>
       <link>https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html</link>
       <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/airtable-aws-integration-patterns.html</guid>
