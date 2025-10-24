@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Building Merlin: A Word-by-Word Video Caption App with Zero Ongoing Costs | Building in Public</title>
+    <meta name="title" content="Building Merlin: A Word-by-Word Video Caption App with Zero Ongoing Costs">
+    <meta name="description" content="How I built a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs.">
+    <meta name="keywords" content="video captions, Whisper, FFmpeg, Electron, desktop app, zero ongoing costs, word-by-word captions, AI transcription, local-first, ASS subtitles">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/building-merlin-word-by-word-video-captions.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Building in Public RSS Feed" href="https://sparrowfm.github.io/sparrow/feed.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/building-merlin-word-by-word-video-captions.html">
+    <meta property="og:title" content="Building Merlin: Word-by-Word Video Captions with Zero Costs">
+    <meta property="og:description" content="Built a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs.">
+    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/posts/merlin-og-image.png">
+    <meta property="og:image:secure_url" content="https://sparrowfm.github.io/sparrow/posts/merlin-og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Merlin desktop app for word-by-word video captions">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-23T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="Electron">
+    <meta property="article:tag" content="FFmpeg">
+    <meta property="article:tag" content="Whisper">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/building-merlin-word-by-word-video-captions.html">
+    <meta name="twitter:title" content="Building Merlin: Word-by-Word Video Captions with Zero Costs">
+    <meta name="twitter:description" content="Built a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero costs.">
+    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/posts/merlin-og-image.png">
+    <meta name="twitter:image:alt" content="Merlin desktop app screenshot">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Building Merlin: A Word-by-Word Video Caption App with Zero Ongoing Costs",
+      "description": "I built Merlin, a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs. This post covers the technical decisions, challenges solved, and lessons learned building a distributable Electron app in one development sprint.",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://sparrowfm.github.io/sparrow/posts/merlin-og-image.png",
+        "width": 1200,
+        "height": 630
+      },
+      "datePublished": "2025-10-23T00:00:00Z",
+      "dateModified": "2025-10-23T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/building-merlin-word-by-word-video-captions.html"
+      },
+      "keywords": ["video captions", "Whisper", "FFmpeg", "Electron", "desktop app", "zero ongoing costs", "AI transcription", "local-first"],
+      "articleBody": "I built Merlin, a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs. This post covers the technical decisions, challenges solved, and lessons learned.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>Building Merlin: A Word-by-Word Video Caption App with Zero Ongoing Costs</h1>
+
+            <p><em>I built Merlin, a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs. This post covers the technical decisions, challenges solved, and lessons learned building a distributable Electron app in one development sprint.</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-23">October 23, 2025</time>
+                <span class="post-category">Electron</span>
+                <span class="post-category">FFmpeg</span>
+                <span class="post-category">Whisper</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams at <a href="https://www.amazon.com" target="_blank" rel="noopener">Amazon</a>, <a href="https://web.archive.org/web/20250101000000/wondery.com" target="_blank" rel="noopener">Wondery</a>, <a href="https://web.archive.org/web/20150101000000/fox.com" target="_blank" rel="noopener">Fox</a>, <a href="https://web.archive.org/web/20120101000000/rovicorp.com" target="_blank" rel="noopener">Rovi</a>, and <a href="https://web.archive.org/web/20060101000000/tvguide.com" target="_blank" rel="noopener">TV Guide</a>, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, Codex, and Cursor). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p>I built Merlin, a desktop app that adds word-by-word captions to videos using Whisper AI and FFmpeg—all running locally with zero ongoing costs. This post covers the technical decisions, challenges solved, and lessons learned building a distributable Electron app in one development sprint.</p>
+
+            <p><strong>Key Learnings</strong>:</p>
+            <ul>
+                <li>User experience beats technical purity—bundling dependencies eliminates setup frustration</li>
+                <li>ASS subtitles are vastly superior to FFmpeg drawtext filters for word-by-word captions</li>
+                <li>Always test with multiple video resolutions and filenames with special characters</li>
+                <li>Estimated progress is better than no progress when APIs don't provide callbacks</li>
+                <li>Ship with constraints—limiting features helps you ship faster</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Problem: Expensive SaaS for Simple Video Captions</h2>
+
+            <p>Video captions have become table stakes for content creators. Word-by-word captions (where each word appears precisely when spoken) are especially popular on social media, but the existing solutions have major drawbacks:</p>
+
+            <ul>
+                <li><strong>Expensive SaaS subscriptions</strong> - $20-50/month for services like Descript, Kapwing, or VEED</li>
+                <li><strong>Privacy concerns</strong> - Uploading videos to cloud servers</li>
+                <li><strong>Usage limits</strong> - Pay-per-minute or monthly quotas</li>
+                <li><strong>Vendor lock-in</strong> - Can't export your workflow</li>
+            </ul>
+
+            <p>I wanted something different: a tool that runs entirely on your machine, with zero ongoing costs, that anyone can download and use immediately.</p>
+
+            <hr>
+
+            <h2>The Solution: Local-First Desktop App</h2>
+
+            <p><strong>Merlin</strong> is an Electron app that combines three powerful open-source tools:</p>
+
+            <ol>
+                <li><strong>Whisper</strong> (OpenAI) - AI transcription with word-level timestamps</li>
+                <li><strong>FFmpeg</strong> - Video processing and caption rendering</li>
+                <li><strong>Electron</strong> - Cross-platform desktop app framework</li>
+            </ol>
+
+            <p>The entire workflow runs locally:</p>
+            <ol>
+                <li>Upload your video</li>
+                <li>Whisper transcribes with word-level precision</li>
+                <li>Style your captions in real-time preview</li>
+                <li>FFmpeg burns captions into the video</li>
+                <li>Download your captioned video</li>
+            </ol>
+
+            <p>No cloud. No subscriptions. No ongoing costs.</p>
+
+            <hr>
+
+            <h2>Architecture Decisions</h2>
+
+            <h3>Decision 1: Electron vs. Web-Only</h3>
+
+            <p><strong>The Question:</strong> Should I build a web app or a desktop app?</p>
+
+            <p><strong>Web App Approach:</strong></p>
+            <ul>
+                <li>User installs FFmpeg manually (complex on Windows)</li>
+                <li>User installs Python + Whisper (pip install)</li>
+                <li>Configure PATH variables</li>
+                <li>Build a local web server or Electron wrapper anyway</li>
+            </ul>
+
+            <p><strong>Desktop App Approach:</strong></p>
+            <ul>
+                <li>Bundle everything in one installer</li>
+                <li>User downloads DMG, drags to Applications</li>
+                <li>Everything just works</li>
+            </ul>
+
+            <p><strong>Verdict:</strong> Electron was the clear winner for user experience. Yes, the bundle is larger (~250MB), but the alternative requires 30+ minutes of terminal commands for non-technical users.</p>
+
+            <p><strong>Trade-offs:</strong></p>
+            <ul>
+                <li><strong>Pros:</strong> One-click install, offline-first, native file access</li>
+                <li><strong>Cons:</strong> Larger download, platform-specific builds required</li>
+                <li><strong>Decision:</strong> Worth it—user experience is priority #1</li>
+            </ul>
+
+            <hr>
+
+            <h3>Decision 2: ASS Subtitles vs. FFmpeg Drawtext</h3>
+
+            <p><strong>The Question:</strong> How should I render word-by-word captions?</p>
+
+            <p>I tested two approaches:</p>
+
+            <p><strong>Option A: FFmpeg drawtext filter</strong></p>
+            <ul>
+                <li>Build complex filter chains for each word</li>
+                <li>Calculate positions, timing, and fades manually</li>
+                <li>Extremely difficult to debug</li>
+            </ul>
+
+            <p><strong>Option B: ASS (Advanced SubStation Alpha) subtitles</strong></p>
+            <ul>
+                <li>Professional subtitle format with karaoke effects</li>
+                <li>Built-in support for styling, timing, and positioning</li>
+                <li>FFmpeg's <code>subtitles</code> filter handles rendering</li>
+            </ul>
+
+            <p><strong>Example ASS subtitle for karaoke effect:</strong></p>
+            <pre><code>Dialogue: 0,0:00:01.20,0:00:01.45,Default,,0,0,0,,{\k25}Hello
+Dialogue: 0,0:00:01.45,0:00:01.89,Default,,0,0,0,,{\k44}world</code></pre>
+
+            <p>The <code>{\k25}</code> syntax creates the precise timing—Whisper provides start/end times, and ASS handles the rest.</p>
+
+            <p><strong>Verdict:</strong> ASS subtitles won by a landslide. Cleaner code, better debugging, industry-standard format.</p>
+
+            <hr>
+
+            <h3>Decision 3: Native Whisper vs. Whisper.cpp</h3>
+
+            <p><strong>The Question:</strong> Should I bundle Python Whisper or use whisper.cpp (C++ port)?</p>
+
+            <p><strong>Python Whisper:</strong></p>
+            <ul>
+                <li>Official OpenAI implementation</li>
+                <li>Requires Python runtime (~200MB)</li>
+                <li>Proven, stable, well-documented</li>
+            </ul>
+
+            <p><strong>whisper.cpp:</strong></p>
+            <ul>
+                <li>Faster C++ port</li>
+                <li>No Python dependency</li>
+                <li>Less mature, harder to integrate</li>
+            </ul>
+
+            <p><strong>Verdict:</strong> I chose Python Whisper for v0.1. It's battle-tested, and since we're already bundling Electron (~200MB), the Python dependency is acceptable. whisper.cpp would be a great optimization for v2.</p>
+
+            <hr>
+
+            <h2>Technical Challenges</h2>
+
+            <h3>Challenge 1: Caption Size Mismatch Between Preview and Export</h3>
+
+            <p><strong>Problem:</strong> Captions looked perfect in the preview but appeared tiny in the exported video.</p>
+
+            <p><strong>Root Cause:</strong> ASS subtitles have a reference resolution (<code>PlayResX</code> and <code>PlayResY</code>) that must match the video resolution. I had hardcoded these to 1920x1080, but the test video was 640x360.</p>
+
+            <p><strong>Solution:</strong></p>
+
+            <p>1. Use <code>ffprobe</code> to detect video resolution:</p>
+            <pre><code>const probeOutput = execSync(
+    `${ffprobePath} -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "${videoPath}"`,
+    { encoding: 'utf8' }
+);
+const [width, height] = probeOutput.trim().split(',').map(Number);</code></pre>
+
+            <p>2. Set ASS resolution dynamically:</p>
+            <pre><code>PlayResX: ${videoWidth}
+PlayResY: ${videoHeight}</code></pre>
+
+            <p><strong>Time Spent:</strong> 2 hours of debugging, 10 minutes to fix once I understood the issue.</p>
+
+            <p><strong>Learning:</strong> Always test with multiple video resolutions. What works on 1080p might break on 360p.</p>
+
+            <hr>
+
+            <h3>Challenge 2: FFmpeg Path Escaping for Special Characters</h3>
+
+            <p><strong>Problem:</strong> Export failed with error: <code>No such filter: 'Pal - YMH Studios (360p'</code></p>
+
+            <p>The filename was: <code>Can AI Satisfy My Girlfriend  Not Today, Pal - YMH Studios (360p, h264).mp4</code></p>
+
+            <p><strong>Root Cause:</strong> FFmpeg's <code>subtitles</code> filter requires special character escaping. Spaces, colons, and backslashes break the filter string.</p>
+
+            <p><strong>Solution:</strong> Escape the ASS file path before passing to FFmpeg:</p>
+            <pre><code>const escapedAssPath = assPath
+    .replace(/\\/g, '\\\\')  // Escape backslashes
+    .replace(/:/g, '\\:');    // Escape colons
+
+const ffmpeg = spawn(ffmpegPath, [
+    '-i', videoPath,
+    '-vf', `subtitles='${escapedAssPath}'`,  // Wrap in single quotes
+    '-c:a', 'copy',
+    '-y',
+    outputPath
+]);</code></pre>
+
+            <p><strong>Time Spent:</strong> 1 hour of frustration, 5 minutes to fix.</p>
+
+            <p><strong>Learning:</strong> Always test with filenames containing spaces, special characters, and Unicode. Users will upload videos named "My Trip to São Paulo! (2025).mp4" and expect it to work.</p>
+
+            <hr>
+
+            <h3>Challenge 3: Progress Tracking Without Whisper API</h3>
+
+            <p><strong>Problem:</strong> Whisper doesn't provide progress callbacks—it just runs and outputs the result.</p>
+
+            <p><strong>Solution:</strong> I estimated progress based on audio duration:</p>
+            <ul>
+                <li>Extract audio with FFmpeg (0-25% progress)</li>
+                <li>Run Whisper (~30-95% progress, estimated at 0.5x realtime)</li>
+                <li>Complete transcription (100%)</li>
+            </ul>
+
+            <pre><code>// Estimate Whisper processing time (base model ~0.5x realtime)
+const estimatedTime = audioDuration * 2;  // 2 seconds per 1 second of audio
+const progressPerUpdate = 65 / (estimatedTime / (progressInterval / 1000));
+
+progressTimer = setInterval(() => {
+    if (lastProgress < 95) {
+        lastProgress = Math.min(95, lastProgress + progressPerUpdate);
+        event.sender.send('transcription-progress', {
+            progress: Math.round(lastProgress),
+            message: 'Transcribing with Whisper...'
+        });
+    }
+}, progressInterval);</code></pre>
+
+            <p><strong>Verdict:</strong> Not perfect, but good enough for v0.1. Users get visual feedback instead of a frozen UI.</p>
+
+            <p><strong>Learning:</strong> When you can't get real progress, estimate it. A slightly inaccurate progress bar is better than no progress bar.</p>
+
+            <hr>
+
+            <h2>What Worked Well</h2>
+
+            <h3>1. Test-Driven Development with Puppeteer</h3>
+
+            <p>I wrote 10 Puppeteer tests before building the UI, then implemented the UI to pass the tests. Benefits:</p>
+
+            <ul>
+                <li>Caught async/sync bugs early (wrong <code>expect()</code> helper function)</li>
+                <li>Verified Sparrow aesthetic programmatically (colors, borders, fonts)</li>
+                <li>Screenshots provide visual proof of design</li>
+                <li>Regression testing for free</li>
+            </ul>
+
+            <p><strong>Example test:</strong></p>
+            <pre><code>test('Caption styling controls exist and have correct defaults', async () => {
+    const fontSize = await page.$eval('#fontSize', el => el.value);
+    const fontColor = await page.$eval('#fontColor', el => el.value);
+    expect(fontSize).toBe('32');
+    expect(fontColor).toBe('#ffffff');
+});</code></pre>
+
+            <p><strong>Verdict:</strong> TDD worked brilliantly for UI development. 100% of tests passed on first try after fixing the expect helper.</p>
+
+            <hr>
+
+            <h3>2. KISS Principle: Only 5 Styling Controls</h3>
+
+            <p>I resisted the temptation to add 15+ controls (outline, shadow, rotation, animation, etc.) and stuck with exactly 5:</p>
+
+            <ol>
+                <li>Font size</li>
+                <li>Font color</li>
+                <li>Background color</li>
+                <li>Background opacity</li>
+                <li>Position</li>
+            </ol>
+
+            <p><strong>Result:</strong> Clean, uncluttered UI. Advanced users can export the ASS file and edit it manually if needed.</p>
+
+            <p><strong>Learning:</strong> Constraints breed creativity. Limiting controls forced me to choose sensible defaults.</p>
+
+            <hr>
+
+            <h3>3. Quick Style Templates</h3>
+
+            <p>Instead of making users fiddle with controls, I added 6 one-click templates:</p>
+            <ul>
+                <li>Social Bold</li>
+                <li>YouTube</li>
+                <li>TikTok</li>
+                <li>Podcast</li>
+                <li>Minimalist</li>
+                <li>Pro Clean</li>
+            </ul>
+
+            <p>Each template is just a preset object:</p>
+            <pre><code>const templates = {
+    'social-bold': {
+        fontSize: 48,
+        fontFamily: 'Impact',
+        fontColor: '#ffffff',
+        bgColor: '#000000',
+        bgOpacity: 90,
+        position: 'bottom'
+    },
+    // ...
+};</code></pre>
+
+            <p><strong>User feedback:</strong> "I just clicked TikTok and it looked perfect immediately."</p>
+
+            <hr>
+
+            <h2>Performance Results</h2>
+
+            <p><strong>Tested on MacBook Pro M1 with 5-minute video (640x360):</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Time</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Audio extraction</td>
+                        <td>~2 seconds</td>
+                        <td>FFmpeg <code>-c copy</code> for speed</td>
+                    </tr>
+                    <tr>
+                        <td>Whisper transcription</td>
+                        <td>~2.5 minutes</td>
+                        <td>Base model, ~0.5x realtime</td>
+                    </tr>
+                    <tr>
+                        <td>Caption rendering</td>
+                        <td>~5 minutes</td>
+                        <td>FFmpeg burns captions to video</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong>~7.5 minutes</strong></td>
+                        <td>For 5-minute video</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Accuracy:</strong> ~95% word-level timestamp precision (Whisper base model)</p>
+
+            <p><strong>Scaling:</strong> Linear. 10-minute video = ~15 minutes processing time.</p>
+
+            <hr>
+
+            <h2>Lessons Learned</h2>
+
+            <h3>For Technical Founders</h3>
+
+            <ol>
+                <li><strong>User experience beats technical purity</strong><br>Bundling dependencies is "wasteful" but eliminates 30 minutes of setup frustration.</li>
+
+                <li><strong>Ship with constraints</strong><br>Only 5 controls, Apple Silicon only, no code signing—these constraints let me ship v0.1 in days instead of months.</li>
+
+                <li><strong>Estimate when you can't measure</strong><br>Whisper doesn't report progress, so I estimated it. Close enough is good enough for v0.1.</li>
+
+                <li><strong>Test with real-world data</strong><br>Filenames with spaces, emojis, special characters—users will break your assumptions.</li>
+
+                <li><strong>Optimize later, if ever</strong><br>7.5 minutes for a 5-minute video is acceptable. Don't optimize prematurely.</li>
+            </ol>
+
+            <hr>
+
+            <h3>For AI-Assisted Development</h3>
+
+            <p>I built Merlin with Claude Code as my pair programmer. What worked:</p>
+
+            <ul>
+                <li><strong>Structured prompts:</strong> "Write tests first, then implement"</li>
+                <li><strong>Incremental changes:</strong> Small commits, frequent testing</li>
+                <li><strong>Code reviews:</strong> I reviewed every line Claude wrote</li>
+                <li><strong>Domain knowledge:</strong> I understood FFmpeg, ASS, Electron—Claude accelerated implementation</li>
+            </ul>
+
+            <p><strong>What didn't work:</strong></p>
+            <ul>
+                <li>Asking Claude to "figure out" complex FFmpeg filter chains (too many edge cases)</li>
+                <li>Blindly accepting code without testing</li>
+            </ul>
+
+            <p><strong>Verdict:</strong> AI is a force multiplier, not a replacement. I still needed to understand the domain deeply.</p>
+
+            <hr>
+
+            <h2>What's Next (If I Build V2)</h2>
+
+            <h3>Features I'd Add</h3>
+
+            <ol>
+                <li><strong>Batch processing</strong> - Queue multiple videos</li>
+                <li><strong>Animation effects</strong> - Fade in/out, slide, bounce</li>
+                <li><strong>Multi-language support</strong> - Whisper supports 99 languages</li>
+                <li><strong>Cloud sync</strong> - Optional backup to S3/Dropbox</li>
+                <li><strong>Intel Mac builds</strong> - Currently Apple Silicon only</li>
+            </ol>
+
+            <h3>Optimizations</h3>
+
+            <ol>
+                <li><strong>whisper.cpp integration</strong> - Faster transcription without Python</li>
+                <li><strong>GPU acceleration</strong> - Use CUDA/Metal for rendering</li>
+                <li><strong>Streaming preview</strong> - Real-time caption preview without full render</li>
+                <li><strong>Code signing</strong> - Remove macOS Gatekeeper warning</li>
+            </ol>
+
+            <hr>
+
+            <h2>Try Merlin</h2>
+
+            <p><strong>Download:</strong> <a href="https://github.com/sparrowfm/merlin/releases" target="_blank" rel="noopener">github.com/sparrowfm/merlin/releases</a><br>
+            <strong>Source Code:</strong> <a href="https://github.com/sparrowfm/merlin" target="_blank" rel="noopener">github.com/sparrowfm/merlin</a><br>
+            <strong>License:</strong> MIT (free forever)</p>
+
+            <p><strong>Prerequisites:</strong></p>
+            <pre><code># macOS
+brew install ffmpeg
+pip install openai-whisper</code></pre>
+
+            <p>Then download Merlin-0.1.0-arm64.dmg, drag to Applications, and start captioning.</p>
+
+            <hr>
+
+            <h2>Closing Thoughts</h2>
+
+            <p>Building Merlin taught me that "zero ongoing costs" is a viable business model for desktop apps. Not everything needs a subscription. Sometimes, a one-time download solves the problem better than a cloud service.</p>
+
+            <p>The tech stack (Whisper + FFmpeg + Electron) is accessible to any developer who can write JavaScript. The hard parts aren't the code—they're understanding user needs, making smart trade-offs, and shipping something imperfect but useful.</p>
+
+            <p>If you're building a similar tool, <strong>ship v0.1 quickly</strong>. Get it in users' hands. Learn what actually matters. Optimize later, if ever.</p>
+
+            <hr>
+
+            <p><strong>Questions? Feedback?</strong> Open an issue on <a href="https://github.com/sparrowfm/merlin/issues" target="_blank" rel="noopener">GitHub</a> or reach out at <a href="https://sparrowfm.github.io/sparrow/" target="_blank" rel="noopener">sparrowfm.github.io/sparrow</a>.</p>
+
+            <p><em>Precision captioning, frame by frame.</em></p>
+
+        </article>
+
+        <section class="newsletter">
+            <div class="newsletter-content">
+                <h2>Follow the Journey</h2>
+                <p>Get notified when I publish new posts about building with AI, desktop apps, and shipping production systems as a non-technical founder.</p>
+                <form class="newsletter-form" action="#" method="post">
+                    <input type="email" placeholder="your@email.com" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+                <p class="newsletter-note">No spam. Unsubscribe anytime. Usually 1-2 posts per month.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Neel Ketkar. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="../about.html">About</a>
+                    <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
+                    <a href="../feed.xml" target="_blank" rel="noopener" title="Subscribe via RSS">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+                            <rect width="24" height="24" rx="4" fill="#FF6600"/>
+                            <circle cx="6" cy="18" r="2" fill="white"/>
+                            <path d="M4 11C9.52 11 14 15.48 14 21" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                            <path d="M4 4C13.94 4 22 12.06 22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        RSS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
