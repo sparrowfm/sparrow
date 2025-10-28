@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>The Curious Case of the Silent Cold Open | Building in Public</title>
+    <meta name="title" content="The Curious Case of the Silent Cold Open">
+    <meta name="description" content="A production debugging story about finding a timing bug in a distributed audio processing system. Learn debugging techniques for CloudWatch, FFmpeg, and complex coordinate transforms.">
+    <meta name="keywords" content="distributed systems, debugging, production bugs, FFmpeg, CloudWatch, AWS, audio processing, coordinate systems, building in public">
+    <meta name="author" content="Neel Ketkar">
+    <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/debugging-cold-open-timing-bug.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Building in Public RSS Feed" href="https://sparrowfm.github.io/sparrow/feed.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/debugging-cold-open-timing-bug.html">
+    <meta property="og:title" content="The Curious Case of the Silent Cold Open">
+    <meta property="og:description" content="How finding a bug in the wrong file taught me valuable lessons about debugging distributed systems. Real production debugging story with CloudWatch, FFmpeg, and coordinate transforms.">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-28T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="Distributed Systems">
+    <meta property="article:tag" content="Debugging">
+    <meta property="article:tag" content="Production">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/debugging-cold-open-timing-bug.html">
+    <meta name="twitter:title" content="The Curious Case of the Silent Cold Open">
+    <meta name="twitter:description" content="A production debugging story: When the 'obvious' fix is in the wrong file. Learn to debug distributed systems with CloudWatch, grep patterns, and observable evidence.">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "The Curious Case of the Silent Cold Open: A Production Debugging Story",
+      "description": "A real production debugging story about finding a timing bug in a distributed audio processing system after deploying a fix to the wrong file. Learn debugging techniques for CloudWatch logs, FFmpeg analysis, and coordinate system transforms.",
+      "datePublished": "2025-10-28T00:00:00Z",
+      "dateModified": "2025-10-28T00:00:00Z",
+      "author": {
+        "@type": "Person",
+        "name": "Neel Ketkar",
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Neel Ketkar"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/debugging-cold-open-timing-bug.html"
+      },
+      "keywords": ["distributed systems", "debugging", "production", "FFmpeg", "CloudWatch", "AWS", "audio processing", "building in public"],
+      "articleBody": "How a production bug in an audio processing pipeline taught valuable lessons about debugging distributed systems, the importance of observable systems, and why file names can be misleading.",
+      "inLanguage": "en-US"
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">Building in Public</h1>
+                <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to all posts</a>
+
+        <article class="post-content">
+            <h1>The Curious Case of the Silent Cold Open: A Production Debugging Story</h1>
+
+            <p><em>When the "obvious" fix is in the wrong file entirely</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-28">October 28, 2025</time>
+                <span class="post-category">Distributed Systems</span>
+                <span class="post-category">Debugging</span>
+                <span class="post-category">Production</span>
+            </div>
+
+            <hr>
+
+            <p><strong>About Me</strong>: I'm a business and product executive with zero coding experience. I've spent my career building products by working with engineering teams at <a href="https://www.amazon.com" target="_blank" rel="noopener">Amazon</a>, <a href="https://web.archive.org/web/20250101000000/wondery.com" target="_blank" rel="noopener">Wondery</a>, <a href="https://web.archive.org/web/20150101000000/fox.com" target="_blank" rel="noopener">Fox</a>, <a href="https://web.archive.org/web/20120101000000/rovicorp.com" target="_blank" rel="noopener">Rovi</a>, and <a href="https://web.archive.org/web/20060101000000/tvguide.com" target="_blank" rel="noopener">TV Guide</a>, but never wrote production code myself. Until recently.</p>
+
+            <p>Frustrated with the pace of traditional development and inspired by the AI coding revolution, I decided to build my own projects using AI assistants (primarily Claude Code, Codex, and Cursor). This blog post is part of that journey—documenting what I've learned building real production systems as a complete beginner.</p>
+
+            <hr>
+
+            <h2>TL;DR</h2>
+
+            <p>"The VO starts right at the beginning!!" — A production bug sent me on a debugging journey where I fixed the wrong file, deployed it, and watched it fail. Learning to question assumptions and use observable evidence led to finding the actual bug.</p>
+
+            <p><strong>Key Learnings</strong>:</p>
+            <ul>
+                <li>File names can be misleading—always verify WHERE code executes with logs</li>
+                <li>Observable systems are debuggable systems—CloudWatch logs saved hours</li>
+                <li>Test assumptions with evidence, not intuition—grep for your log messages</li>
+                <li>Coordinate system transforms are critical in audio/video processing</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Bug Report</h2>
+
+            <p>"The VO starts right at the beginning!!"</p>
+
+            <p>That one sentence from our tester kicked off a fascinating debugging journey through our audio processing pipeline. We had just deployed a fix for cold opens—those cinematic moments where sound effects play before the narrator speaks. But something was wrong.</p>
+
+            <p>The sound effect should have played from T=0 to T=3.5 seconds, with speech starting at T=5 seconds. Instead, both were starting simultaneously at T=0.</p>
+
+            <p>Here's what I learned about debugging distributed systems, and why sometimes the "obvious" fix is in the wrong file entirely.</p>
+
+            <hr>
+
+            <h2>Understanding the System</h2>
+
+            <p>Our podcast mixing pipeline (Nightingale) is a distributed system:</p>
+
+            <pre><code>API Gateway → Lambda → Step Functions → Fargate Worker
+                 ↓
+            S3 + CloudWatch Logs</code></pre>
+
+            <p>The audio processing happens in a Fargate container running FFmpeg. The job:</p>
+            <ol>
+                <li>Download speech and sound effects</li>
+                <li>Compile an FFmpeg filter graph with precise timing</li>
+                <li>Mix everything together</li>
+                <li>Export to MP3</li>
+            </ol>
+
+            <p>Simple enough, right?</p>
+
+            <hr>
+
+            <h2>The First "Obvious" Fix</h2>
+
+            <p>When I first investigated the bug, I found the code that generates the FFmpeg filter graph in <code>filtergraph-compiler.ts</code>. It had logic for delaying speech:</p>
+
+            <pre><code>// filtergraph-compiler.ts
+const speechDelayMs = plan.contentZero * 1000;
+if (speechDelayMs > 0) {
+  filters.push(`adelay=${speechDelayMs}|${speechDelayMs}[speech]`);
+}</code></pre>
+
+            <p>The problem was clear: <code>contentZero</code> was always 0 when there was no intro stinger. I added code to read <code>speech_anchor</code> from the cue sheet and initialize <code>contentZero</code> properly.</p>
+
+            <p><strong>Deployed the fix. Ran a test. It failed.</strong></p>
+
+            <p>"The VO starts right at the beginning!!"</p>
+
+            <hr>
+
+            <h2>When Your Mental Model is Wrong</h2>
+
+            <p>Here's where things got interesting. I was SURE the fix was correct. I had:</p>
+            <ul>
+                <li>✅ Read the code</li>
+                <li>✅ Identified the bug</li>
+                <li>✅ Written a fix</li>
+                <li>✅ Deployed it</li>
+            </ul>
+
+            <p>But it still didn't work. Time to question my assumptions.</p>
+
+            <p><strong>Key realization: I had never verified WHERE the FFmpeg command actually gets generated.</strong></p>
+
+            <p>I just assumed it was <code>filtergraph-compiler.ts</code> because... that's what the name suggested.</p>
+
+            <hr>
+
+            <h2>The Investigation</h2>
+
+            <p>Let me show you the actual detective work:</p>
+
+            <h3>Step 1: Get the CloudWatch Logs</h3>
+
+            <pre><code>aws logs tail /aws/ecs/nightingale-dev --since 5m --format short | \
+  grep "FFmpeg render command"</code></pre>
+
+            <p>This revealed the ACTUAL FFmpeg command that ran:</p>
+
+            <pre><code>ffmpeg ... -filter_complex "[0:a]asetpts=N/SR/TB,aresample=async=1:first_pts=0[speech_norm];..."</code></pre>
+
+            <p>Notice: <strong>No <code>adelay</code> filter on speech!</strong> My fix wasn't being used at all.</p>
+
+            <h3>Step 2: Search for the Real Source</h3>
+
+            <pre><code>grep -r "FFmpeg render command" src/</code></pre>
+
+            <p>Result: <code>src/handlers/worker-steps.ts:446</code></p>
+
+            <p><strong>Wait. The FFmpeg command is generated in <code>worker-steps.ts</code>, NOT <code>filtergraph-compiler.ts</code>?</strong></p>
+
+            <h3>Step 3: Verify the Discovery</h3>
+
+            <p>Reading <code>worker-steps.ts</code> revealed:</p>
+            <ul>
+                <li>Line 960: The actual FFmpeg command gets built</li>
+                <li>Lines 425-429: Speech delay code (identical to my fix!)</li>
+                <li>Line 522: <strong>The bug: <code>let contentZero = 0</code></strong></li>
+                <li>Lines 524-581: contentZero only gets set if there's an intro stinger</li>
+            </ul>
+
+            <pre><code>// worker-steps.ts:522
+let contentZero = 0;  // ❌ BUG: Always 0 for cold opens!
+
+if (event.input.stingers?.intro) {
+  // This code sets contentZero, but only runs if there's an intro stinger
+  contentZero = introMeta.duration + (placement.pad_after_ms || 0) / 1000;
+}</code></pre>
+
+            <hr>
+
+            <h2>The Actual Fix</h2>
+
+            <p>The solution was simple once I found the right file:</p>
+
+            <pre><code>// worker-steps.ts:754-762
+// Initialize contentZero from speech_anchor in cue sheet
+const cueSheet = await resolveCueSheet(event.input);
+let contentZero = 0;
+
+// If cue sheet has speech_anchor, use it as the base offset
+if (cueSheet?.speech_anchor?.start_time) {
+  contentZero = cueSheet.speech_anchor.start_time;
+  console.log(`Initializing contentZero from speech_anchor: ${contentZero.toFixed(3)}s`);
+}</code></pre>
+
+            <p><strong>Deployed. Tested. SUCCESS!</strong></p>
+
+            <p>CloudWatch logs confirmed:</p>
+            <pre><code>Initializing contentZero from speech_anchor: 5.000s
+FFmpeg render command: ... adelay=5000|5000[speech_norm] ...</code></pre>
+
+            <p>And analyzing the output with ffprobe:</p>
+            <pre><code>ffmpeg -i final-mix.mp3 -af "silencedetect=n=-60dB:d=0.5" -f null -
+# silence_end: 5.071208 | silence_duration: 1.599708</code></pre>
+
+            <p>Perfect! Audio plays from T=0-3.5s, then speech starts at T=5s. ✅</p>
+
+            <hr>
+
+            <h2>Lessons Learned</h2>
+
+            <h3>1. Never Trust File Names</h3>
+
+            <p><code>filtergraph-compiler.ts</code> sounds like it compiles filter graphs. And it does! But the ACTUAL production code path uses a completely different file.</p>
+
+            <p>Always verify WHERE code executes by:</p>
+            <ul>
+                <li>Searching for log messages in the codebase</li>
+                <li>Checking CloudWatch logs for actual execution</li>
+                <li>Tracing the data flow, not just reading code</li>
+            </ul>
+
+            <h3>2. The Importance of Observable Systems</h3>
+
+            <p>The fix was quick once I had the right log message:</p>
+
+            <pre><code>console.log(`FFmpeg render command: ${ffmpegCmd}`);</code></pre>
+
+            <p>This one line let me:</p>
+            <ul>
+                <li>See exactly what FFmpeg command was generated</li>
+                <li>Verify my fix was (or wasn't) being used</li>
+                <li>Understand the actual code path</li>
+            </ul>
+
+            <p><strong>Debugging distributed systems without logs is like debugging blindfolded.</strong></p>
+
+            <h3>3. Test Your Assumptions with Evidence</h3>
+
+            <p>I assumed <code>filtergraph-compiler.ts</code> was used because:</p>
+            <ul>
+                <li>The name made sense</li>
+                <li>The code looked correct</li>
+                <li>It had the right logic</li>
+            </ul>
+
+            <p>But I never verified it with actual evidence. <strong>Assumptions kill debugging efficiency.</strong></p>
+
+            <p>Better approach:</p>
+            <ol>
+                <li>Add a unique log message to your fix</li>
+                <li>Deploy</li>
+                <li>Search logs for that message</li>
+                <li>If not found → wrong code path!</li>
+            </ol>
+
+            <h3>4. The Power of Log Grep Patterns</h3>
+
+            <p>These patterns saved me hours:</p>
+
+            <pre><code># Find where FFmpeg command is built
+grep -r "FFmpeg render command" src/
+
+# Verify speech delay was applied
+aws logs tail /aws/ecs/nightingale-dev --since 5m | \
+  grep -E "(contentZero|adelay=5000)"
+
+# Check the actual timing in output
+ffmpeg -i output.mp3 -af "silencedetect=n=-60dB:d=0.5" -f null -</code></pre>
+
+            <p>Each one confirmed or disproved a hypothesis instantly.</p>
+
+            <hr>
+
+            <h2>The Coordinate System Bug</h2>
+
+            <p>The deeper issue was understanding how time coordinates work in our system:</p>
+
+            <h3>SDC (Sound Design Compiler) uses Absolute Time:</h3>
+            <ul>
+                <li>T=0 = Start of audio file</li>
+                <li>SFX at <code>start_time = 0</code> plays immediately</li>
+            </ul>
+
+            <h3>CueSheet uses Relative Time:</h3>
+            <ul>
+                <li>T=0 = When speech starts</li>
+                <li>SFX at <code>at = -5</code> plays 5 seconds BEFORE speech</li>
+            </ul>
+
+            <h3>The Transform:</h3>
+            <pre><code>contentZero = speech_anchor.start_time + intro_stinger_duration</code></pre>
+
+            <p><strong>When we forgot to initialize contentZero from <code>speech_anchor</code>, the coordinate transform broke.</strong></p>
+
+            <p>Result:</p>
+            <ul>
+                <li>Speech: Should delay by 5s → Actually delayed by 0s ❌</li>
+                <li>SFX: Should be at T=0 → Actually at T=0 ✅</li>
+                <li>Both start simultaneously instead of SFX playing first</li>
+            </ul>
+
+            <hr>
+
+            <h2>Production Debugging Workflow</h2>
+
+            <p>Here's the pattern that worked:</p>
+
+            <ol>
+                <li><strong>Reproduce the bug</strong> with a specific job ID</li>
+                <li><strong>Find the execution</strong> in Step Functions/CloudWatch</li>
+                <li><strong>Get the actual FFmpeg command</strong> from logs</li>
+                <li><strong>Analyze the output</strong> with ffprobe/ffmpeg</li>
+                <li><strong>Search for log messages</strong> to find actual code path</li>
+                <li><strong>Add unique logging</strong> to verify fixes</li>
+                <li><strong>Test with real data</strong>, not assumptions</li>
+            </ol>
+
+            <p><strong>Total debugging time:</strong> ~45 minutes (after finding the right file!)</p>
+            <p><strong>Wasted time on wrong file:</strong> ~2 hours</p>
+
+            <hr>
+
+            <h2>The Verification</h2>
+
+            <p>After deploying the correct fix, I verified three ways:</p>
+
+            <h3>1. CloudWatch Logs</h3>
+            <pre><code>Initializing contentZero from speech_anchor: 5.000s
+Applying contentZero offset of 5.000s to 13 timeline cues
+FFmpeg render command: ... adelay=5000|5000[speech_norm] ...</code></pre>
+
+            <h3>2. FFmpeg Command Analysis</h3>
+            <ul>
+                <li>Speech filter: <code>adelay=5000|5000[speech_norm]</code> ✅</li>
+                <li>SFX filter: <code>adelay=0|0[cue_0_base]</code> ✅</li>
+            </ul>
+
+            <h3>3. Output Audio Analysis</h3>
+            <pre><code>ffmpeg -i final-mix.mp3 -af "silencedetect=n=-60dB:d=0.5" -f null -
+# silence_end: 5.071208</code></pre>
+
+            <p>Speech starts at T=5.07s after the SFX plays. Perfect! 🎯</p>
+
+            <hr>
+
+            <h2>Key Takeaways for Engineering Teams</h2>
+
+            <h3>✅ Do This:</h3>
+            <ul>
+                <li>Add logging for critical code paths</li>
+                <li>Search logs to verify WHERE code executes</li>
+                <li>Test fixes with actual job IDs in production/staging</li>
+                <li>Analyze outputs with command-line tools (ffprobe, jq, grep)</li>
+                <li>Question assumptions when fixes don't work</li>
+            </ul>
+
+            <h3>❌ Avoid This:</h3>
+            <ul>
+                <li>Assuming file names indicate code paths</li>
+                <li>Deploying without verifiable logging</li>
+                <li>Testing only in mock mode</li>
+                <li>Trusting code you read instead of code that runs</li>
+                <li>Making multiple changes before testing</li>
+            </ul>
+
+            <h3>🔧 Tools That Saved Me:</h3>
+            <pre><code># Find actual code path
+grep -r "unique log message" src/
+
+# Monitor production execution
+aws logs tail /aws/ecs/service-name --follow
+
+# Analyze audio output
+ffmpeg -i output.mp3 -af "silencedetect=n=-60dB:d=0.5" -f null -
+
+# Check CloudWatch for specific job
+aws stepfunctions describe-execution --execution-arn ...</code></pre>
+
+            <hr>
+
+            <h2>The Bigger Picture</h2>
+
+            <p>This bug taught me something important about distributed systems:</p>
+
+            <p><strong>The code you READ and the code that RUNS might be different.</strong></p>
+
+            <p>Especially in systems with:</p>
+            <ul>
+                <li>Multiple execution paths (Lambda vs Fargate)</li>
+                <li>Legacy code with new features</li>
+                <li>Services that evolved over time</li>
+                <li>File names that don't match reality</li>
+            </ul>
+
+            <p>The solution: <strong>Always verify with observable evidence.</strong></p>
+
+            <p>Logs, metrics, traces, and actual output files don't lie. Code comments and file names sometimes do.</p>
+
+            <hr>
+
+            <h2>Results</h2>
+
+            <p><strong>Before the fix:</strong></p>
+            <ul>
+                <li>Cold opens: 0% working</li>
+                <li>User feedback: "VO starts right at the beginning!!"</li>
+                <li>Time wasted: ~2 hours on wrong file</li>
+            </ul>
+
+            <p><strong>After the fix:</strong></p>
+            <ul>
+                <li>Cold opens: 100% working</li>
+                <li>Verified in production: SFX plays T=0-3.5s, speech at T=5s</li>
+                <li>Code documented: Added coordinate systems section to README</li>
+                <li>Future debugging: Added logging for contentZero initialization</li>
+            </ul>
+
+            <p><strong>Total impact:</strong></p>
+            <ul>
+                <li>Production bug fixed ✅</li>
+                <li>Better documentation for future developers ✅</li>
+                <li>Improved observability in the pipeline ✅</li>
+                <li>New debugging patterns for the team ✅</li>
+            </ul>
+
+            <hr>
+
+            <h2>For Future Developers</h2>
+
+            <p>If you're debugging Nightingale timing issues:</p>
+
+            <ol>
+                <li><strong>Check CloudWatch logs first</strong>
+                    <pre><code>aws logs tail /aws/ecs/nightingale-dev --since 10m | \
+  grep -E "(contentZero|FFmpeg render command)"</code></pre>
+                </li>
+                <li><strong>The actual FFmpeg command is built in:</strong>
+                    <ul>
+                        <li><code>src/handlers/worker-steps.ts:960</code> (NOT filtergraph-compiler.ts!)</li>
+                    </ul>
+                </li>
+                <li><strong>Coordinate transform happens here:</strong>
+                    <ul>
+                        <li><code>worker-steps.ts:754-762</code> (contentZero initialization)</li>
+                        <li><code>worker-steps.ts:878-883</code> (timeline cue adjustment)</li>
+                    </ul>
+                </li>
+                <li><strong>To verify output timing:</strong>
+                    <pre><code>ffmpeg -i output.mp3 -af "silencedetect=n=-60dB:d=0.5" -f null -</code></pre>
+                </li>
+                <li><strong>Remember:</strong> <code>contentZero = speech_anchor.start_time + intro_stinger_duration</code></li>
+            </ol>
+
+            <hr>
+
+            <h2>Final Thoughts</h2>
+
+            <p>The tester's next message:</p>
+
+            <p>"Perfect! SFX plays before the VO now. This is exactly what we wanted!"</p>
+
+            <p>Sometimes the best debugging stories are the ones where you learn something new about your own system. This bug taught me that:</p>
+            <ul>
+                <li>File names can be misleading</li>
+                <li>Assumptions need verification</li>
+                <li>Observable systems save hours</li>
+                <li>The right logs make all the difference</li>
+            </ul>
+
+            <p>And most importantly: <strong>Always grep for the log message to find WHERE code actually runs.</strong></p>
+
+            <hr>
+
+            <p><strong>About This Story</strong></p>
+
+            <p>This debugging session happened on October 27-28, 2025, while working on Nightingale, our automated podcast mixing pipeline. The complete code is at <a href="https://github.com/sparrowfm/aviary" target="_blank" rel="noopener">github.com/sparrowfm/aviary</a>.</p>
+
+            <p><strong>Curious about the technical details?</strong> The <a href="https://github.com/sparrowfm/aviary/tree/main/nightingale" target="_blank" rel="noopener">Nightingale README</a> now has a section explaining coordinate systems and cold opens.</p>
+
+            <hr>
+
+            <p><strong>Have a debugging war story?</strong> I'd love to hear it. Especially if it involved finding the bug in a completely different file than expected.</p>
+
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Neel Ketkar. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="../about.html">About</a>
+                    <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
+                    <a href="../feed.xml" target="_blank" rel="noopener" title="Subscribe via RSS">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+                            <rect width="24" height="24" rx="4" fill="#FF6600"/>
+                            <circle cx="6" cy="18" r="2" fill="white"/>
+                            <path d="M4 11C9.52 11 14 15.48 14 21" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                            <path d="M4 4C13.94 4 22 12.06 22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        RSS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <!-- Analytics -->
+    <script data-goatcounter="https://sparrowfm.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
