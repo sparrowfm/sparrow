@@ -31,6 +31,21 @@
     </item>
 
     <item>
+      <title>When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html</guid>
+      <description>Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time (probabilistic) versus using AI once to write code (deterministic), with real cost comparisons showing how the right approach saves thousands of dollars per year while improving reliability.</description>
+      <pubDate>Mon, 27 Oct 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>AI Strategy</category>
+      <category>Cost Optimization</category>
+      <category>System Design</category>
+      <category>Probabilistic AI</category>
+      <category>Deterministic Code</category>
+      <category>Hybrid Systems</category>
+    </item>
+
+    <item>
       <title>Building a Semantic Search Engine for Music Cues: Local-First AI Without the API Costs</title>
       <link>https://sparrowfm.github.io/sparrow/posts/building-local-music-cue-search.html</link>
       <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/building-local-music-cue-search.html</guid>
