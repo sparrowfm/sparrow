@@ -56,35 +56,35 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/post.css">
 </head>
 <body>
     <header class="site-header">
         <div class="container">
             <div class="header-content">
-                <h1 class="site-title"><a href="../index.html">Building in Public</a></h1>
+                <h1 class="site-title">Building in Public</h1>
                 <p class="site-tagline">A non-technical founder building audio & media tech with AI</p>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <article class="post">
-            <header class="post-header">
-                <div class="post-meta">
-                    <time datetime="2025-10-27">October 27, 2025</time>
-                    <span class="post-category">AI Strategy</span>
-                    <span class="post-category">Cost Optimization</span>
-                    <span class="post-category">System Design</span>
-                </div>
-                <h1 class="post-title">When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders</h1>
-                <p class="post-excerpt">
-                    Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time versus using AI once to write code, with real cost comparisons and decision frameworks.
-                </p>
-            </header>
+        <a href="../index.html" class="back-link">← Back to all posts</a>
 
-            <div class="post-content">
-                <h2>The Question Everyone's Asking</h2>
+        <article class="post-content">
+            <h1>When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders</h1>
+
+            <p><em>Sometimes using AI costs 1000x more than it should</em></p>
+
+            <div class="post-meta">
+                <time datetime="2025-10-27">October 27, 2025</time>
+                <span class="post-category">AI Strategy</span>
+                <span class="post-category">Cost Optimization</span>
+                <span class="post-category">System Design</span>
+            </div>
+
+            <hr>
+
+            <h2>The Question Everyone's Asking</h2>
                 <p>"Can we just use AI for everything?"</p>
                 <p>I've been experimenting with automating sound design for podcast scripts, and this question kept coming up. The answer surprised me: <strong>Sometimes using AI costs 1000x more than it should.</strong></p>
                 <p>Here's what I learned about when AI is the right tool—and when it's an expensive mistake.</p>
@@ -459,27 +459,7 @@ narration"</code></pre>
                 <p>These lessons come from building an automated podcast production pipeline that processes thousands of episodes. We started with "AI for everything" and learned that hybrid systems are smarter, faster, and cheaper.</p>
                 <p>The complete implementation is open source at <a href="https://github.com/sparrowfm/aviary" target="_blank" rel="noopener">github.com/sparrowfm/aviary</a>.</p>
 
-                <p><em>Last updated: October 27, 2025</em></p>
-            </div>
-
-            <footer class="post-footer">
-                <div class="post-tags">
-                    <span class="tag">AI Strategy</span>
-                    <span class="tag">Cost Optimization</span>
-                    <span class="tag">Probabilistic AI</span>
-                    <span class="tag">Deterministic Code</span>
-                    <span class="tag">Hybrid Systems</span>
-                    <span class="tag">System Design</span>
-                </div>
-                <div class="post-author">
-                    <p>Written by <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">Neel Ketkar</a></p>
-                </div>
-            </footer>
         </article>
-
-        <nav class="post-navigation">
-            <a href="../index.html" class="nav-back">← Back to all posts</a>
-        </nav>
     </main>
 
     <footer class="site-footer">
@@ -490,7 +470,15 @@ narration"</code></pre>
                     <a href="../about.html">About</a>
                     <a href="https://linkedin.com/in/ketkar" target="_blank" rel="noopener">LinkedIn</a>
                     <a href="https://github.com/sparrowfm" target="_blank" rel="noopener">GitHub</a>
-                    <a href="../feed.xml">RSS</a>
+                    <a href="../feed.xml" target="_blank" rel="noopener" title="Subscribe via RSS">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+                            <rect width="24" height="24" rx="4" fill="#FF6600"/>
+                            <circle cx="6" cy="18" r="2" fill="white"/>
+                            <path d="M4 11C9.52 11 14 15.48 14 21" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                            <path d="M4 4C13.94 4 22 12.06 22 22" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        RSS
+                    </a>
                 </div>
             </div>
         </div>
