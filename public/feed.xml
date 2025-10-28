@@ -31,17 +31,17 @@
     </item>
 
     <item>
-      <title>When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders</title>
+      <title>When AI Makes Sense vs When You Need Deterministic Code: A Business Decision Framework</title>
       <link>https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html</link>
       <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html</guid>
-      <description>Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time (probabilistic) versus using AI once to write code (deterministic), with real cost comparisons showing how the right approach saves thousands of dollars per year while improving reliability.</description>
+      <description>A business decision framework for when to use AI's judgment versus deterministic precision. Learn when AI costs 1000x more than it should and introduces unnecessary risk—with examples from clinical trials, finance, legal, and marketing across industries.</description>
       <pubDate>Mon, 27 Oct 2025 00:00:00 +0000</pubDate>
       <dc:creator>Neel Ketkar</dc:creator>
       <category>AI Strategy</category>
+      <category>Data Governance</category>
       <category>Cost Optimization</category>
-      <category>System Design</category>
-      <category>Probabilistic AI</category>
-      <category>Deterministic Code</category>
+      <category>Regulatory Compliance</category>
+      <category>Precision vs Direction</category>
       <category>Hybrid Systems</category>
     </item>
 

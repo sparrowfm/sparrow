@@ -5,52 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Primary Meta Tags -->
-    <title>When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders | Building in Public</title>
-    <meta name="title" content="When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders">
-    <meta name="description" content="Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time (probabilistic) versus using AI once to write code (deterministic), with real cost comparisons and a practical decision framework for stakeholders.">
-    <meta name="keywords" content="AI strategy, cost optimization, probabilistic vs deterministic, hybrid systems, AI architecture, when to use AI, code vs AI, system design, AI ROI">
+    <title>When AI Makes Sense vs When You Need Deterministic Code | Building in Public</title>
+    <meta name="title" content="When AI Makes Sense vs When You Need Deterministic Code">
+    <meta name="description" content="A business decision framework for when to use AI's judgment versus deterministic code. Learn when AI costs 1000x more than it should and introduces unnecessary risk.">
+    <meta name="keywords" content="AI strategy, cost optimization, data governance, deterministic systems, probabilistic AI, business decision framework, regulatory compliance">
     <meta name="author" content="Neel Ketkar">
     <link rel="canonical" href="https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="alternate icon" href="../favicon.ico">
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Building in Public RSS Feed" href="https://sparrowfm.github.io/sparrow/feed.xml">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html">
-    <meta property="og:title" content="When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders">
-    <meta property="og:description" content="Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time versus using AI once to write code, with real cost comparisons and decision frameworks.">
-    <meta property="og:image" content="https://sparrowfm.github.io/sparrow/og-image.png">
-    <meta property="og:article:published_time" content="2025-10-27T00:00:00Z">
-    <meta property="og:article:author" content="Neel Ketkar">
-    <meta property="og:article:tag" content="AI Strategy">
-    <meta property="og:article:tag" content="Cost Optimization">
-    <meta property="og:article:tag" content="System Design">
+    <meta property="og:title" content="When AI Makes Sense vs When You Need Deterministic Code">
+    <meta property="og:description" content="A business decision framework for understanding when to use AI's judgment versus deterministic precision. Sometimes using AI costs 1000x more than it should.">
+    <meta property="og:site_name" content="Building in Public">
+    <meta property="article:published_time" content="2025-10-27T00:00:00Z">
+    <meta property="article:author" content="Neel Ketkar">
+    <meta property="article:tag" content="AI Strategy">
+    <meta property="article:tag" content="Data Governance">
+    <meta property="article:tag" content="Cost Optimization">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html">
-    <meta name="twitter:title" content="When to Use AI vs When to Use Code">
-    <meta name="twitter:description" content="Sometimes using AI costs 1000x more than it should. Real cost comparisons and a practical decision framework.">
-    <meta name="twitter:image" content="https://sparrowfm.github.io/sparrow/og-image.png">
+    <meta name="twitter:title" content="When AI Makes Sense vs When You Need Deterministic Code">
+    <meta name="twitter:description" content="Business decision framework: When to use AI vs deterministic code. Learn when AI costs 1000x more and introduces unnecessary risk.">
 
-    <!-- JSON-LD Structured Data -->
+    <!-- Structured Data / JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "TechArticle",
-      "headline": "When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders",
-      "description": "Sometimes using AI costs 1000x more than it should. Learn when to use AI in real-time (probabilistic) versus using AI once to write code (deterministic), with real cost comparisons and a practical decision framework for stakeholders.",
+      "@type": "BlogPosting",
+      "headline": "When AI Makes Sense vs When You Need Deterministic Code: A Business Decision Framework",
+      "description": "A comprehensive framework for business leaders to decide when to use AI's probabilistic judgment versus deterministic code precision. Covers real examples across healthcare, finance, legal, and marketing with ROI calculations and implementation guidance.",
+      "datePublished": "2025-10-27T00:00:00Z",
+      "dateModified": "2025-10-27T00:00:00Z",
       "author": {
         "@type": "Person",
         "name": "Neel Ketkar",
-        "url": "https://linkedin.com/in/ketkar"
+        "url": "https://linkedin.com/in/ketkar",
+        "sameAs": [
+          "https://linkedin.com/in/ketkar",
+          "https://github.com/sparrowfm"
+        ]
       },
-      "datePublished": "2025-10-27",
-      "dateModified": "2025-10-27",
       "publisher": {
         "@type": "Person",
         "name": "Neel Ketkar"
       },
-      "keywords": ["AI strategy", "cost optimization", "probabilistic AI", "deterministic code", "hybrid systems", "AI architecture", "system design"],
-      "articleSection": "AI Strategy"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://sparrowfm.github.io/sparrow/posts/when-to-use-ai-vs-code.html"
+      },
+      "keywords": ["AI strategy", "cost optimization", "data governance", "business decisions", "regulatory compliance", "deterministic systems", "probabilistic AI"],
+      "articleBody": "A business decision framework explaining when to use AI's judgment versus deterministic code, including real examples from healthcare, finance, legal, and marketing domains.",
+      "inLanguage": "en-US"
     }
     </script>
 
@@ -71,393 +86,788 @@
         <a href="../index.html" class="back-link">← Back to all posts</a>
 
         <article class="post-content">
-            <h1>When to Use AI vs When to Use Code: A Guide for Non-Technical Stakeholders</h1>
+            <h1>When AI Makes Sense vs When You Need Deterministic Code: A Business Decision Framework</h1>
 
-            <p><em>Sometimes using AI costs 1000x more than it should</em></p>
+            <p><em>Understanding when AI's judgment beats deterministic precision—and when it costs 1000x more than it should</em></p>
 
             <div class="post-meta">
                 <time datetime="2025-10-27">October 27, 2025</time>
                 <span class="post-category">AI Strategy</span>
+                <span class="post-category">Data Governance</span>
                 <span class="post-category">Cost Optimization</span>
-                <span class="post-category">System Design</span>
             </div>
 
             <hr>
 
-            <h2>The Question Everyone's Asking</h2>
-                <p>"Can we just use AI for everything?"</p>
-                <p>I've been experimenting with automating sound design for podcast scripts, and this question kept coming up. The answer surprised me: <strong>Sometimes using AI costs 1000x more than it should.</strong></p>
-                <p>Here's what I learned about when AI is the right tool—and when it's an expensive mistake.</p>
+            <h2>The Question Every Business Leader is Asking</h2>
 
-                <hr>
+            <p>"Should we use AI for this?"</p>
 
-                <h2>Two Ways AI Can Work For You</h2>
-                <p>There are two fundamentally different ways to use AI in production:</p>
+            <p>As AI capabilities expand, this question comes up in every department: Finance wants to use AI for reconciliation. Marketing wants AI-powered analytics. Operations wants AI to optimize workflows. Clinical research teams want AI to review trial data.</p>
 
-                <h3>1. Probabilistic (AI in Real-Time)</h3>
-                <p>AI makes decisions on the fly, every single time you run it.</p>
-                <p><strong>When you need this:</strong></p>
-                <ul>
-                    <li>Creative interpretation that changes based on context</li>
-                    <li>Understanding messy, unstructured human input</li>
-                    <li>Making judgment calls with no single "right" answer</li>
-                </ul>
-                <p><strong>Example:</strong> "Read this podcast script and decide where dramatic music should start"</p>
+            <p>But here's what I've learned building AI systems across different domains: <strong>Sometimes using AI costs 1000x more than it should—and introduces unnecessary risk.</strong></p>
 
-                <h3>2. Deterministic (AI Writes Code Once, Code Runs Forever)</h3>
-                <p>AI helps you write the logic once, then that logic runs reliably without AI.</p>
-                <p><strong>When you need this:</strong></p>
-                <ul>
-                    <li>The same input should always give the same output</li>
-                    <li>Mathematical calculations with exact answers</li>
-                    <li>Data validation and transformations</li>
-                    <li>Anything you'd want to test and debug</li>
-                </ul>
-                <p><strong>Example:</strong> "Calculate when speech starts by adding up sound effect durations"</p>
-                <p>The key difference: <strong>Probabilistic means running AI over and over. Deterministic means using AI once to write code, then running that code millions of times.</strong></p>
+            <p>The key is understanding when you need <strong>AI's judgment</strong> versus when you need <strong>deterministic precision</strong>.</p>
 
-                <hr>
+            <hr>
 
-                <h2>The Real-World Cost Difference</h2>
-                <p>Let me show you actual numbers from our podcast automation system.</p>
+            <h2>The Two Fundamentally Different Approaches</h2>
 
-                <h3>Scenario: Converting Sound Design Plans to Audio Instructions</h3>
-                <p>We need to process 1,000 podcast episodes per month.</p>
+            <h3>1. <strong>Probabilistic AI (Real-Time Interpretation)</strong></h3>
 
-                <p><strong>Option 1: Use AI Every Single Time (Probabilistic)</strong></p>
-                <ul>
-                    <li>AI call cost: $0.0008 per episode</li>
-                    <li>Latency: 2 seconds per episode</li>
-                    <li>Monthly cost: <strong>$0.80</strong></li>
-                    <li>Total processing time: <strong>33 minutes</strong></li>
-                    <li>Reliability: ~95% (AI occasionally makes mistakes)</li>
-                </ul>
+            <p>AI analyzes each input fresh, making contextual judgments. Think of it like asking a smart consultant to review every single case.</p>
 
-                <p><strong>Option 2: Use AI Once to Write Code, Run Code Forever (Deterministic)</strong></p>
-                <ul>
-                    <li>One-time AI cost to write code: ~$5 (via Claude/ChatGPT)</li>
-                    <li>Code execution cost: $0 per episode</li>
-                    <li>Latency: 0.002 seconds per episode (1000x faster)</li>
-                    <li>Monthly cost: <strong>$0</strong></li>
-                    <li>Total processing time: <strong>2 seconds</strong></li>
-                    <li>Reliability: 100% (same input = same output)</li>
-                </ul>
+            <p><strong>Characteristics:</strong></p>
+            <ul>
+                <li>Each run might produce slightly different results</li>
+                <li>Great for pattern recognition and interpretation</li>
+                <li>Excellent at handling ambiguity</li>
+                <li>Costs accumulate with every use</li>
+                <li>~90-99% reliable (good enough for many tasks)</li>
+            </ul>
 
-                <p><strong>Annual savings:</strong> $9.60 + faster processing + better reliability</p>
-                <p>That's just ONE function in our system. Scale this across dozens of operations, and suddenly you're saving thousands of dollars and getting better results.</p>
+            <p><strong>Best for:</strong></p>
+            <ul>
+                <li>"What's the sentiment of this customer feedback?"</li>
+                <li>"Does this X-ray show signs of concern?" (screening, not diagnosis)</li>
+                <li>"What category does this transaction belong to?"</li>
+                <li>"Is this email spam or legitimate?"</li>
+            </ul>
 
-                <hr>
+            <h3>2. <strong>Deterministic Code (Precise, Repeatable)</strong></h3>
 
-                <h2>Real-World Case Study: The $1,000/Year Bug</h2>
-                <p>Here's what happened when we used AI for the wrong task.</p>
+            <p>Rules-based logic that executes the same way every time. Like a calculator: same input always gives same output.</p>
 
-                <h3>The Problem</h3>
-                <p>We're building a system that automatically adds sound effects and music to podcast scripts. One feature is "cold opens"—where sound effects play for a few seconds before the narrator starts speaking.</p>
-                <p><strong>Initial approach:</strong> Ask AI to calculate timing</p>
-                <p>We gave the AI this task:</p>
-                <blockquote>"Look at these sound effects and calculate when speech actually starts"</blockquote>
+            <p><strong>Characteristics:</strong></p>
+            <ul>
+                <li>100% consistent and reproducible</li>
+                <li>Can be audited, tested, and validated</li>
+                <li>Runs essentially for free after initial development</li>
+                <li>Perfect for compliance and regulatory requirements</li>
+                <li>Can be AI-generated, then runs without AI</li>
+            </ul>
 
-                <h3>What Went Wrong</h3>
-                <p>The AI's response was beautiful:</p>
-                <pre><code>AI Summary: "The episode opens with a cold start at 0s - just footsteps
-playing from 0-2.5s. The sparse piano doesn't enter until 8.5s,
-after the opening hook."</code></pre>
+            <p><strong>Best for:</strong></p>
+            <ul>
+                <li>Financial calculations</li>
+                <li>Regulatory compliance checks</li>
+                <li>Clinical trial data validation</li>
+                <li>Tax computations</li>
+                <li>Inventory reconciliation</li>
+            </ul>
 
-                <p>Perfect description! The AI understood the concept completely.</p>
-                <p>But then we checked the actual calculation it produced:</p>
+            <hr>
 
-                <pre><code>{
-  "speech_start_time": 0    // ❌ WRONG! Should be 4.0 seconds
-}</code></pre>
+            <h2>The Critical Tradeoff: Precision vs Directional Accuracy</h2>
 
-                <p>The AI understood that:</p>
-                <ul>
-                    <li>Footsteps play from 0 to 2.5 seconds</li>
-                    <li>There's a 1.5 second silence</li>
-                    <li>Speech starts at 4.0 seconds</li>
-                </ul>
+            <p>Understanding when you need which type of accuracy is crucial:</p>
 
-                <p>But it output <code>0</code> anyway. <strong>Why?</strong></p>
-                <p>Because <strong>AI is great at understanding language patterns, but unreliable at arithmetic.</strong> It's probabilistic, not deterministic.</p>
+            <h3>When You Need 100% Precision (Use Code)</h3>
 
-                <h3>The Fix: Let AI Decide, Let Code Calculate</h3>
-                <p>We split the task in two:</p>
+            <p><strong>Regulatory & Compliance:</strong></p>
+            <ul>
+                <li>Clinical trial adverse event reporting</li>
+                <li>Financial audit trails</li>
+                <li>Tax calculations</li>
+                <li>Safety-critical systems</li>
+                <li>Chain of custody tracking</li>
+            </ul>
 
-                <p><strong>Step 1: AI Makes Creative Decisions (Probabilistic)</strong></p>
-                <pre><code>AI Task: "Read this script and decide what sound effects should play
-and roughly when they should happen"
+            <p><strong>Example: Clinical Trial Data Auditing</strong></p>
 
-AI Output: "Put footsteps from 0-2.5s, add 1.5s silence, then start
-narration"</code></pre>
+            <p>My wife audits clinical trial data. When checking if a participant's lab values fall within protocol-defined ranges, the calculation MUST be identical every time:</p>
 
-                <p>This is what AI is GREAT at—understanding creative intent from messy human descriptions.</p>
-
-                <p><strong>Step 2: Code Does Math (Deterministic)</strong></p>
-                <p>We used AI once (via ChatGPT) to write this function:</p>
-
-                <pre><code>function calculateSpeechStart(soundEffects) {
-  // Find all effects that start at the beginning
-  const coldOpenEffects = soundEffects.filter(sfx =>
-    sfx.startTime <= 0.5
-  );
-
-  // Find when the last effect ends
-  const lastEffectEnds = Math.max(...coldOpenEffects.map(sfx => sfx.endTime));
-
-  // Add transition gap
-  return lastEffectEnds + 1.5;
+            <pre><code>✅ Code approach:
+if (labValue < protocol.lowerBound || labValue > protocol.upperBound) {
+  flagAsOutOfRange(participantId, labValue, timestamp);
 }
 
-// Result: 2.5 + 1.5 = 4.0 seconds ✅ Always correct!</code></pre>
+❌ AI approach:
+"Is this lab value of 142 within the normal range of 70-140?"
+AI might say "yes" (close enough!) when regulatory requires exact boundaries</code></pre>
 
-                <p><strong>Now:</strong></p>
-                <ul>
-                    <li>AI made ONE creative decision: "use footsteps for the cold open"</li>
-                    <li>Code calculates timing correctly EVERY time</li>
-                    <li>Total cost: $0 per episode (vs $0.0008 with AI)</li>
-                    <li>Reliability: 100% (vs ~95% with AI)</li>
-                </ul>
+            <p><strong>The stakes:</strong> Incorrect flagging could mean:</p>
+            <ul>
+                <li>Unreported safety signals</li>
+                <li>Protocol deviations missed</li>
+                <li>Regulatory audit failures</li>
+                <li>Patient safety risks</li>
+            </ul>
 
-                <hr>
+            <p><strong>Financial Reconciliation:</strong></p>
 
-                <h2>Simple Decision Framework for Stakeholders</h2>
-                <p>When someone proposes using AI for a task, ask these questions:</p>
+            <p>When reconciling accounts, $0.01 discrepancies matter:</p>
 
-                <h3>Use AI in Real-Time (Probabilistic) When:</h3>
-                <ul>
-                    <li>✅ <strong>The answer changes based on context</strong>
-                        <ul>
-                            <li>"What mood should this music have?"</li>
-                            <li>"Is this customer email angry or confused?"</li>
-                            <li>"Should this sound effect be loud or subtle?"</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>There's no single 'correct' answer</strong>
-                        <ul>
-                            <li>Creative interpretations</li>
-                            <li>Subjective judgments</li>
-                            <li>Pattern recognition in unstructured data</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>You're okay with occasional variance</strong>
-                        <ul>
-                            <li>The AI might make slightly different choices each time</li>
-                            <li>95% accuracy is acceptable</li>
-                        </ul>
-                    </li>
-                </ul>
+            <pre><code>✅ Code: totalDebits === totalCredits (exact match required)
+❌ AI: "These numbers look pretty close" (unacceptable for accounting)</code></pre>
 
-                <h3>Use AI Once to Write Code (Deterministic) When:</h3>
-                <ul>
-                    <li>✅ <strong>The same input should ALWAYS give the same output</strong>
-                        <ul>
-                            <li>Mathematical calculations</li>
-                            <li>Data transformations</li>
-                            <li>Format conversions</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>You need 100% reliability</strong>
-                        <ul>
-                            <li>Financial calculations</li>
-                            <li>Time-sensitive operations</li>
-                            <li>Anything involving safety or compliance</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>You'll run this thousands of times</strong>
-                        <ul>
-                            <li>The one-time cost of writing code pays off quickly</li>
-                            <li>Example: $5 to write code vs $0.0008 × 10,000 runs = $8/month</li>
-                        </ul>
-                    </li>
-                </ul>
+            <h3>When Directional Accuracy is Fine (AI Can Help)</h3>
 
-                <h3>The Golden Rule</h3>
-                <p><strong>If you can describe the task as a clear step-by-step process, use code. If you need judgment and interpretation, use AI in real-time.</strong></p>
+            <p><strong>Strategic Insights:</strong></p>
+            <ul>
+                <li>Market trend analysis</li>
+                <li>Customer sentiment scoring</li>
+                <li>Content categorization</li>
+                <li>Preliminary screening</li>
+            </ul>
 
-                <hr>
+            <p><strong>Example: Customer Support Routing</strong></p>
 
-                <h2>The Winning Pattern: Hybrid Systems</h2>
-                <p>The best systems use both approaches:</p>
+            <p>AI routing 95% of tickets correctly is excellent—the 5% can be manually corrected:</p>
 
-                <pre><code>1. AI Makes Creative Decisions (Probabilistic) ← Run every time
+            <pre><code>✅ AI approach: "This seems like a billing question" → route to billing team
+   If wrong: Human corrects routing, no harm done
+
+❌ Would be overkill to code every possible customer question variant</code></pre>
+
+            <hr>
+
+            <h2>Real Business Examples Across Domains</h2>
+
+            <h3>Example 1: Clinical Research (Precision Required)</h3>
+
+            <p><strong>Scenario:</strong> Validating that informed consent was obtained before any study procedures</p>
+
+            <p><strong>Wrong approach (Probabilistic AI):</strong></p>
+            <pre><code>AI Task: "Review these documents and tell me if consent was properly obtained"
+Problem: AI might miss subtle protocol violations
+- Consent dated after blood draw
+- Wrong version of consent form used
+- Signature witness requirements not met</code></pre>
+
+            <p><strong>Right approach (Deterministic Code):</strong></p>
+            <pre><code>def validateConsent(participant):
+    consentDate = participant.consentForm.signedDate
+    firstProcedure = participant.procedures.min(date)
+
+    errors = []
+
+    if consentDate > firstProcedure:
+        errors.append("Procedure before consent")
+
+    if participant.consentForm.version != requiredVersion:
+        errors.append("Wrong consent version")
+
+    if not participant.consentForm.witnessSignature:
+        errors.append("Missing witness signature")
+
+    return errors</code></pre>
+
+            <p><strong>Why code wins:</strong></p>
+            <ul>
+                <li>100% consistent validation</li>
+                <li>Auditable for FDA inspections</li>
+                <li>Can prove compliance</li>
+                <li>No risk of AI "hallucinating" compliance</li>
+            </ul>
+
+            <hr>
+
+            <h3>Example 2: Financial Services (Precision Required)</h3>
+
+            <p><strong>Scenario:</strong> Calculating capital gains tax on stock sales</p>
+
+            <p><strong>Wrong approach (Probabilistic AI):</strong></p>
+            <pre><code>"Calculate the capital gains on these stock transactions"
+
+AI might:
+- Round incorrectly
+- Misapply cost basis rules
+- Forget wash sale adjustments
+- Not handle stock splits correctly</code></pre>
+
+            <p><strong>Right approach (Deterministic Code):</strong></p>
+            <pre><code>def calculateCapitalGains(transactions):
+    totalGain = 0
+
+    for sale in sales:
+        costBasis = determineCostBasis(sale, method="FIFO")
+        gain = sale.proceeds - costBasis - sale.commissions
+
+        if isWashSale(sale):
+            costBasis += washSaleAdjustment(sale)
+
+        totalGain += gain
+
+    return totalGain</code></pre>
+
+            <p><strong>Why this matters:</strong></p>
+            <ul>
+                <li>IRS requires exact calculations</li>
+                <li>Audit trail must be reproducible</li>
+                <li>Mistakes mean penalties</li>
+                <li>Can't have variance between runs</li>
+            </ul>
+
+            <hr>
+
+            <h3>Example 3: E-Commerce Operations (Hybrid Approach)</h3>
+
+            <p><strong>Task:</strong> Processing product returns</p>
+
+            <p><strong>AI for judgment (Probabilistic):</strong></p>
+            <pre><code>AI analyzes: "Customer says product arrived damaged. Photos show box
+dents but product appears intact. Customer history: 2 returns in 5 years,
+both legitimate. Sentiment: frustrated but polite."
+
+AI recommends: "APPROVE - Good customer, minor issue, low fraud risk"</code></pre>
+
+            <p><strong>Code for execution (Deterministic):</strong></p>
+            <pre><code>def processReturn(returnRequest, aiRecommendation):
+    if aiRecommendation == "APPROVE":
+        refundAmount = calculateRefund(
+            orderAmount=returnRequest.originalPrice,
+            shippingCost=returnRequest.shippingPaid,
+            restockingFee=getRestockingFee(returnRequest.reason)
+        )
+
+        initiateRefund(customerId, refundAmount)
+        updateInventory(sku, quantity=1)
+        logTransaction(returnRequest, refundAmount)</code></pre>
+
+            <p><strong>The split:</strong></p>
+            <ul>
+                <li>AI handles the subjective judgment call</li>
+                <li>Code handles the precise financial transactions</li>
+                <li>Best of both worlds</li>
+            </ul>
+
+            <hr>
+
+            <h3>Example 4: Media & Content (My Audio Processing Example)</h3>
+
+            <p><strong>Task:</strong> Adding sound effects to podcast episodes</p>
+
+            <p><strong>AI for creative decisions (Probabilistic):</strong></p>
+            <pre><code>"Read this script and decide where dramatic music should start"
+
+AI understands narrative flow, emotional beats, pacing
+Output: "Add suspense music at 3:45 during the plot reveal"</code></pre>
+
+            <p><strong>Code for precise execution (Deterministic):</strong></p>
+            <pre><code>function calculateSoundEffectTiming(aiDecisions, audioMetadata) {
+    return aiDecisions.map(sfx => ({
+        startTime: sfx.relativeTime + audioMetadata.coldOpenDuration,
+        duration: sfx.assetDuration,
+        fadeIn: sfx.fadeIn || DEFAULT_FADE_IN,
+        volume: calculateVolume(sfx.intensity, MIX_PROFILE)
+    }));
+}</code></pre>
+
+            <p><strong>Why split it:</strong></p>
+            <ul>
+                <li>AI is excellent at creative interpretation</li>
+                <li>Code ensures exact timing calculations</li>
+                <li>AI error in creative choice = artistic preference</li>
+                <li>Code error in timing = broken audio</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Hidden Cost of Using AI Where Code Should Be</h2>
+
+            <p>Let me show you the actual financial impact with a real example from my audio processing system:</p>
+
+            <p><strong>Scenario:</strong> Converting sound design plans to precise audio instructions</p>
+            <ul>
+                <li>Processing volume: 10,000 episodes/year</li>
+            </ul>
+
+            <h3>Option 1: AI for Everything (Expensive)</h3>
+
+            <pre><code>Task: "Take these sound effects and calculate exact timings"
+
+Cost per episode: $0.0008 (Claude API call)
+Annual cost: 10,000 × $0.0008 = $8,000
+Processing time: 2 seconds per episode
+Reliability: ~95% (occasional math errors)</code></pre>
+
+            <p><strong>Real bug we encountered:</strong></p>
+
+            <pre><code>{
+  "summary": "Cold open with footsteps 0-2.5s, then speech at 4s",
+  "speech_start_time": 0  // ❌ WRONG! AI understood but calculated wrong
+}</code></pre>
+
+            <p>AI was excellent at understanding the concept but unreliable at arithmetic.</p>
+
+            <h3>Option 2: AI Once, Code Forever (Smart)</h3>
+
+            <pre><code>// Had ChatGPT write this function ONCE
+function calculateSpeechStart(effects) {
+    const coldOpenEffects = effects.filter(e => e.startTime <= 0.5);
+    const lastEffect = Math.max(...coldOpenEffects.map(e => e.endTime));
+    return lastEffect + TRANSITION_GAP;
+}
+
+// Result: 2.5 + 1.5 = 4.0 ✅ Always correct</code></pre>
+
+            <p><strong>Annual cost:</strong> $0 (code runs for free)<br>
+            <strong>Processing time:</strong> 0.002 seconds per episode (1000x faster)<br>
+            <strong>Reliability:</strong> 100%</p>
+
+            <p><strong>Savings:</strong> $8,000/year + faster processing + perfect accuracy</p>
+
+            <hr>
+
+            <h2>Decision Framework for Business Leaders</h2>
+
+            <h3>Use AI in Real-Time (Probabilistic) When:</h3>
+
+            <p>✅ <strong>The task requires interpretation</strong></p>
+            <ul>
+                <li>Analyzing customer sentiment</li>
+                <li>Categorizing support tickets</li>
+                <li>Screening resumes for qualified candidates</li>
+                <li>Detecting potential fraud patterns</li>
+                <li>Summarizing meeting notes</li>
+            </ul>
+
+            <p>✅ <strong>There's no single "right" answer</strong></p>
+            <ul>
+                <li>"Is this email urgent?"</li>
+                <li>"What's the tone of this customer feedback?"</li>
+                <li>"Does this product photo need approval?"</li>
+            </ul>
+
+            <p>✅ <strong>You can tolerate some variance</strong></p>
+            <ul>
+                <li>95% accuracy is good enough</li>
+                <li>Errors are easily caught and corrected</li>
+                <li>Stakes are low for misclassification</li>
+            </ul>
+
+            <p>✅ <strong>The context changes significantly</strong></p>
+            <ul>
+                <li>Market sentiment shifts</li>
+                <li>Customer preferences evolve</li>
+                <li>Trends emerge and fade</li>
+            </ul>
+
+            <h3>Use Code (Deterministic) When:</h3>
+
+            <p>✅ <strong>Precision is required</strong></p>
+            <ul>
+                <li>Financial calculations</li>
+                <li>Regulatory compliance</li>
+                <li>Clinical trial protocols</li>
+                <li>Tax computations</li>
+                <li>Inventory counting</li>
+            </ul>
+
+            <p>✅ <strong>Auditability matters</strong></p>
+            <ul>
+                <li>Must prove exact logic used</li>
+                <li>Regulatory requirements</li>
+                <li>Legal documentation</li>
+                <li>FDA submissions</li>
+            </ul>
+
+            <p>✅ <strong>Same input must give same output</strong></p>
+            <ul>
+                <li>Mathematical operations</li>
+                <li>Data transformations</li>
+                <li>Format conversions</li>
+                <li>Validation rules</li>
+            </ul>
+
+            <p>✅ <strong>You'll run it thousands of times</strong></p>
+            <ul>
+                <li>Initial development cost amortizes quickly</li>
+                <li>Code runs essentially for free</li>
+                <li>No per-use AI costs</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Hybrid Approach: Best of Both Worlds</h2>
+
+            <p>The smartest implementations combine AI judgment with code precision:</p>
+
+            <h3>Pattern 1: AI Decides, Code Executes</h3>
+
+            <pre><code>1. AI makes the judgment call (run every time)
    ↓
-2. Code Validates & Calculates (Deterministic) ← Written once, runs forever
+2. Code implements with precision (run every time)</code></pre>
+
+            <p><strong>Example: Expense Report Approval</strong></p>
+
+            <pre><code>AI: Analyzes receipt image and context
+    "This is a legitimate business dinner: $127.50 at client restaurant,
+     expense policy allows up to $150, receipt is genuine"
+    → RECOMMEND APPROVE
+
+Code: If approved, execute precise reimbursement
+    amountToReimburse = receiptAmount - (receiptAmount * companyTaxRate)
+    createPayment(employee, amountToReimburse)
+    updateBudget(department, -amountToReimburse)
+    logTransaction(expenseId, amountToReimburse, timestamp)</code></pre>
+
+            <h3>Pattern 2: AI Generates Code Once, Code Runs Forever</h3>
+
+            <pre><code>1. AI writes the business logic (ONE time)
    ↓
-3. Code Executes Reliably (Deterministic) ← Written once, runs forever</code></pre>
+2. Human reviews and tests (ONE time)
+   ↓
+3. Code runs millions of times (FREE)</code></pre>
 
-                <h3>Real Example from Our Podcast System</h3>
-                <p><strong>For Every Episode We Process:</strong></p>
+            <p><strong>Example: Sales Commission Calculation</strong></p>
 
-                <ol>
-                    <li><strong>AI Analyzes Script</strong> (Probabilistic - $0.02 per episode)
-                        <ul>
-                            <li>Read the podcast script</li>
-                            <li>Understand the narrative arc</li>
-                            <li>Decide where sound effects should go</li>
-                            <li>Choose appropriate music mood</li>
-                        </ul>
-                    </li>
-                    <li><strong>Code Calculates Timing</strong> (Deterministic - $0)
-                        <ul>
-                            <li>Take AI's creative decisions</li>
-                            <li>Calculate exact timestamps</li>
-                            <li>Validate all data is correct</li>
-                            <li>Transform coordinates</li>
-                        </ul>
-                    </li>
-                    <li><strong>Code Generates Audio</strong> (Deterministic - $0)
-                        <ul>
-                            <li>Compile to FFmpeg commands</li>
-                            <li>Mix the audio</li>
-                            <li>Export final file</li>
-                        </ul>
-                    </li>
-                </ol>
+            <pre><code>Ask AI: "Write a function to calculate sales commission:
+- Base 5% on first $100k
+- 7% on $100k-$500k
+- 10% above $500k
+- Bonus multiplier if quota exceeded"
 
-                <p><strong>Total cost:</strong> $0.02/episode instead of $0.08/episode if we used AI for everything</p>
-                <p><strong>Savings:</strong> 75% cost reduction + 100% reliability on math</p>
+AI generates tested code (once)
+Then: Run on every sales transaction (free, fast, perfect)</code></pre>
 
-                <hr>
+            <hr>
 
-                <h2>Key Takeaways for Decision Makers</h2>
+            <h2>Industry-Specific Guidance</h2>
 
-                <h3>✅ Smart Uses of AI</h3>
-                <ol>
-                    <li><strong>Use AI in real-time for creative decisions</strong>
-                        <ul>
-                            <li>Understanding customer sentiment</li>
-                            <li>Generating marketing copy variations</li>
-                            <li>Deciding visual design elements</li>
-                            <li>Interpreting messy user input</li>
-                        </ul>
-                    </li>
-                    <li><strong>Use AI once to write code for deterministic tasks</strong>
-                        <ul>
-                            <li>Have ChatGPT/Claude write the calculation function</li>
-                            <li>Review and test the code</li>
-                            <li>Run it thousands of times for free</li>
-                            <li>Example: "Write me a function to calculate tax based on these rules"</li>
-                        </ul>
-                    </li>
-                    <li><strong>Combine both in hybrid systems</strong>
-                        <ul>
-                            <li>AI for "what should happen"</li>
-                            <li>Code for "make it happen exactly right every time"</li>
-                        </ul>
-                    </li>
-                </ol>
+            <h3>Healthcare & Life Sciences</h3>
 
-                <h3>❌ Expensive Mistakes to Avoid</h3>
-                <ol>
-                    <li><strong>Don't use AI in real-time for simple math</strong>
-                        <ul>
-                            <li>Bad: Ask AI to calculate totals on every transaction</li>
-                            <li>Good: Use AI once to write a calculation function, then run it</li>
-                            <li>Savings: Thousands of dollars per year</li>
-                        </ul>
-                    </li>
-                    <li><strong>Don't use AI where you need 100% consistency</strong>
-                        <ul>
-                            <li>Bad: AI for financial calculations, legal compliance checks</li>
-                            <li>Good: AI to write the code, then code runs deterministically</li>
-                            <li>Risk mitigation: Avoid regulatory issues</li>
-                        </ul>
-                    </li>
-                    <li><strong>Don't assume "AI everywhere" is the strategy</strong>
-                        <ul>
-                            <li>Just because you CAN use AI doesn't mean you SHOULD</li>
-                            <li>Ask: "Does this need interpretation or calculation?"</li>
-                            <li>The right tool for the right job saves money and improves reliability</li>
-                        </ul>
-                    </li>
-                </ol>
+            <p><strong>Use AI for:</strong></p>
+            <ul>
+                <li>Preliminary radiology screening</li>
+                <li>Patient triage recommendations</li>
+                <li>Literature review and summarization</li>
+                <li>Adverse event signal detection (screening)</li>
+            </ul>
 
-                <h3>The ROI Question</h3>
-                <p>Before adding AI to any process, ask:</p>
+            <p><strong>Use Code for:</strong></p>
+            <ul>
+                <li>Protocol compliance validation</li>
+                <li>Dose calculations</li>
+                <li>Lab value range checks</li>
+                <li>Regulatory report generation</li>
+                <li>Patient safety alerts</li>
+            </ul>
 
-                <p><strong>"Will this run more than 100 times?"</strong></p>
-                <ul>
-                    <li>If YES: Consider using AI once to write code</li>
-                    <li>If NO: Maybe AI in real-time is fine</li>
-                </ul>
+            <p><strong>Critical: Never use probabilistic AI for:</strong></p>
+            <ul>
+                <li>Drug dosing calculations</li>
+                <li>Radiotherapy planning</li>
+                <li>Safety reporting thresholds</li>
+                <li>Clinical trial endpoint calculations</li>
+            </ul>
 
-                <p><strong>"Does this need to be exactly the same every time?"</strong></p>
-                <ul>
-                    <li>If YES: Use code (maybe AI-generated)</li>
-                    <li>If NO: AI in real-time might be appropriate</li>
-                </ul>
+            <h3>Financial Services</h3>
 
-                <p><strong>"Can I describe this as step-by-step instructions?"</strong></p>
-                <ul>
-                    <li>If YES: That's just code. Have AI write it for you.</li>
-                    <li>If NO: This needs judgment. Use AI in real-time.</li>
-                </ul>
+            <p><strong>Use AI for:</strong></p>
+            <ul>
+                <li>Fraud pattern detection</li>
+                <li>Customer sentiment analysis</li>
+                <li>Market trend identification</li>
+                <li>Document classification</li>
+            </ul>
 
-                <hr>
+            <p><strong>Use Code for:</strong></p>
+            <ul>
+                <li>Interest calculations</li>
+                <li>Tax computations</li>
+                <li>Reconciliation</li>
+                <li>Compliance checks</li>
+                <li>Audit trails</li>
+                <li>Portfolio rebalancing math</li>
+            </ul>
 
-                <h2>Our Results</h2>
-                <p>After implementing the hybrid approach:</p>
+            <h3>Legal & Compliance</h3>
 
-                <p><strong>What Got Better:</strong></p>
-                <ul>
-                    <li>Cold open timing accuracy: 0% → 100%</li>
-                    <li>Processing speed: 2 seconds → 0.002 seconds per episode</li>
-                    <li>Monthly costs: $80 → $20 (75% reduction)</li>
-                    <li>Debugging time: "AI did something weird" → "Bug is in line 42"</li>
-                    <li>Reliability: 95% → 100%</li>
-                </ul>
+            <p><strong>Use AI for:</strong></p>
+            <ul>
+                <li>Contract review (preliminary)</li>
+                <li>Legal research</li>
+                <li>Document similarity detection</li>
+                <li>Privilege screening</li>
+            </ul>
 
-                <p><strong>What Stayed the Same:</strong></p>
-                <ul>
-                    <li>Creative quality of sound design (AI still makes these decisions)</li>
-                    <li>Variety and appropriateness of choices</li>
-                    <li>Understanding of narrative flow</li>
-                </ul>
+            <p><strong>Use Code for:</strong></p>
+            <ul>
+                <li>Statute of limitations calculations</li>
+                <li>Compliance deadline tracking</li>
+                <li>Evidence chain of custody</li>
+                <li>Document retention rules</li>
+            </ul>
 
-                <p>The code didn't make the creative decisions worse—it just made the math reliable and affordable.</p>
+            <h3>Marketing & Sales</h3>
 
-                <hr>
+            <p><strong>Use AI for:</strong></p>
+            <ul>
+                <li>Content personalization</li>
+                <li>Lead scoring</li>
+                <li>Campaign optimization</li>
+                <li>Creative generation</li>
+            </ul>
 
-                <h2>The Bottom Line</h2>
-                <p><strong>Probabilistic AI (real-time):</strong> Great for creativity, expensive for repetition</p>
-                <p><strong>Deterministic Code:</strong> Perfect for consistency, can be generated by AI once</p>
-                <p><strong>The Winning Move:</strong> Use both</p>
-                <ul>
-                    <li>AI interprets messy human intent</li>
-                    <li>Code executes precisely and reliably</li>
-                    <li>You save money and get better results</li>
-                </ul>
+            <p><strong>Use Code for:</strong></p>
+            <ul>
+                <li>Attribution modeling (when deterministic rules apply)</li>
+                <li>Budget allocation execution</li>
+                <li>A/B test statistical significance</li>
+                <li>ROI calculations</li>
+            </ul>
 
-                <hr>
+            <hr>
 
-                <h2>Three Questions to Ask Your Team</h2>
-                <ol>
-                    <li><strong>"Are we using AI in real-time where we could use code?"</strong>
-                        <ul>
-                            <li>Look for: calculations, format conversions, data validation</li>
-                            <li>Potential savings: 75%+ cost reduction</li>
-                        </ul>
-                    </li>
-                    <li><strong>"Can I describe this task as step-by-step instructions?"</strong>
-                        <ul>
-                            <li>If YES: Have AI write the code once, run it forever</li>
-                            <li>If NO: Use AI in real-time</li>
-                        </ul>
-                    </li>
-                    <li><strong>"What's the cost of running this 10,000 times?"</strong>
-                        <ul>
-                            <li>AI in real-time: 10,000 × $0.001 = $10/month</li>
-                            <li>Code (written by AI once): $0/month</li>
-                            <li>The math speaks for itself</li>
-                        </ul>
-                    </li>
-                </ol>
+            <h2>Red Flags: When You're Using AI Wrong</h2>
 
-                <hr>
+            <h3>🚩 Red Flag 1: "AI will calculate that"</h3>
 
-                <p><strong>About This Post</strong></p>
-                <p>These lessons come from building an automated podcast production pipeline that processes thousands of episodes. We started with "AI for everything" and learned that hybrid systems are smarter, faster, and cheaper.</p>
-                <p>The complete implementation is open source at <a href="https://github.com/sparrowfm/aviary" target="_blank" rel="noopener">github.com/sparrowfm/aviary</a>.</p>
+            <p>If the task is purely mathematical, AI is the wrong tool:</p>
+
+            <p>❌ "AI, calculate the tax on this transaction"<br>
+            ✅ Have AI write the tax calculation function once, then run it</p>
+
+            <p>❌ "AI, reconcile these two datasets"<br>
+            ✅ Write reconciliation logic with exact matching rules</p>
+
+            <h3>🚩 Red Flag 2: "We need this to be 100% accurate every time, so we'll check AI's work"</h3>
+
+            <p>If you're manually checking every AI output for accuracy, you're wasting money:</p>
+
+            <p>❌ AI generates invoice → Human checks math → Manual corrections<br>
+            ✅ Code generates invoice → Always correct → No checking needed</p>
+
+            <h3>🚩 Red Flag 3: "The AI gets it right 90% of the time"</h3>
+
+            <p>For compliance, financial, or safety-critical tasks, 90% isn't good enough:</p>
+
+            <p>❌ "AI correctly flags 90% of protocol violations"<br>
+            ✅ Code flags 100% based on exact protocol rules</p>
+
+            <h3>🚩 Red Flag 4: "We're spending $10k/month on AI API calls for data processing"</h3>
+
+            <p>If you're doing the same transformation thousands of times:</p>
+
+            <p>❌ Calling AI API for each record<br>
+            ✅ Have AI write the transformation once, run on all records</p>
+
+            <hr>
+
+            <h2>The ROI Questions to Ask</h2>
+
+            <p>Before implementing any AI solution, ask these three questions:</p>
+
+            <h3>1. "Does this task have one objectively correct answer?"</h3>
+
+            <p><strong>If YES → Use Code (maybe AI-generated)</strong></p>
+            <ul>
+                <li>Mathematical calculations</li>
+                <li>Data validation</li>
+                <li>Format conversions</li>
+                <li>Compliance checks</li>
+            </ul>
+
+            <p><strong>If NO → AI might help</strong></p>
+            <ul>
+                <li>Subjective judgments</li>
+                <li>Interpretation tasks</li>
+                <li>Pattern recognition</li>
+            </ul>
+
+            <h3>2. "Will we run this more than 100 times?"</h3>
+
+            <p><strong>If YES → Write code (one-time cost, free forever)</strong></p>
+
+            <p><strong>If NO → Maybe AI in real-time is fine</strong></p>
+
+            <p><strong>Example calculation:</strong></p>
+            <ul>
+                <li>AI cost: $0.001 per call × 10,000 calls = $100/month</li>
+                <li>Code cost: $500 to develop once = $0/month after</li>
+                <li>Break-even: 5 months, then pure savings</li>
+            </ul>
+
+            <h3>3. "What happens if the output varies by 5%?"</h3>
+
+            <p><strong>If disaster → Must use deterministic code</strong></p>
+            <ul>
+                <li>Financial penalties</li>
+                <li>Regulatory violations</li>
+                <li>Safety risks</li>
+                <li>Legal liability</li>
+            </ul>
+
+            <p><strong>If acceptable → AI might work</strong></p>
+            <ul>
+                <li>Slightly different wording</li>
+                <li>Priority scores vary</li>
+                <li>Recommendations differ</li>
+            </ul>
+
+            <hr>
+
+            <h2>Real Results from Our Implementation</h2>
+
+            <p>After switching from "AI for everything" to "AI for judgment, code for precision":</p>
+
+            <p><strong>What Improved:</strong></p>
+            <ul>
+                <li>Processing cost: $80/month → $20/month (75% reduction)</li>
+                <li>Calculation accuracy: 95% → 100%</li>
+                <li>Processing speed: 2 seconds → 0.002 seconds per item (1000x faster)</li>
+                <li>Debuggability: "AI error" → "Bug on line 47 in calculator.ts"</li>
+                <li>Audit compliance: "Can't verify" → "Fully reproducible"</li>
+            </ul>
+
+            <p><strong>What Stayed the Same:</strong></p>
+            <ul>
+                <li>Quality of creative decisions (AI still makes these)</li>
+                <li>Flexibility to handle new scenarios</li>
+                <li>Ability to adapt to changing requirements</li>
+            </ul>
+
+            <p><strong>Bottom line:</strong> Code didn't reduce quality—it made precision affordable and reliable.</p>
+
+            <hr>
+
+            <h2>Implementation Roadmap</h2>
+
+            <h3>Phase 1: Audit Current AI Usage (Week 1)</h3>
+
+            <p>Map where you're currently using AI:</p>
+
+            <pre><code>Task: _______________
+Current approach: AI real-time / Code / Manual
+Input type: Structured / Unstructured
+Output type: Creative / Calculated
+Precision required: 100% / Directional
+Volume: _____ per month
+Current cost: $ _____</code></pre>
+
+            <h3>Phase 2: Identify Quick Wins (Week 2)</h3>
+
+            <p>Look for tasks that are:</p>
+            <ul>
+                <li>Currently using AI</li>
+                <li>High volume (>1000/month)</li>
+                <li>Deterministic (same input → same output)</li>
+                <li>Mathematical or rule-based</li>
+            </ul>
+
+            <p><strong>Example quick wins:</strong></p>
+            <ul>
+                <li>Data format conversions</li>
+                <li>Calculation operations</li>
+                <li>Validation checks</li>
+                <li>Simple transformations</li>
+            </ul>
+
+            <h3>Phase 3: Replace with Code (Weeks 3-4)</h3>
+
+            <p>For each quick win:</p>
+            <ol>
+                <li>Have AI (ChatGPT/Claude) write the code</li>
+                <li>Test with sample data</li>
+                <li>Review for edge cases</li>
+                <li>Deploy and measure</li>
+            </ol>
+
+            <p><strong>Expected results:</strong></p>
+            <ul>
+                <li>70-90% cost reduction</li>
+                <li>100% consistency</li>
+                <li>100-1000x speed improvement</li>
+            </ul>
+
+            <h3>Phase 4: Optimize Hybrid Systems (Month 2+)</h3>
+
+            <p>For complex workflows:</p>
+            <ol>
+                <li>AI for interpretation/judgment</li>
+                <li>Code for execution/calculation</li>
+                <li>Human oversight for high-stakes decisions</li>
+            </ol>
+
+            <hr>
+
+            <h2>Key Takeaways by Role</h2>
+
+            <h3>For CFOs:</h3>
+            <ul>
+                <li>AI costs scale linearly with usage</li>
+                <li>Code costs are one-time + maintenance</li>
+                <li>For high-volume deterministic tasks, code ROI is massive</li>
+                <li>Financial compliance requires deterministic precision</li>
+            </ul>
+
+            <h3>For CIOs/CTOs:</h3>
+            <ul>
+                <li>Audit where AI is being used for simple calculations</li>
+                <li>Implement hybrid architectures (AI + Code)</li>
+                <li>Ensure compliance-critical paths use deterministic code</li>
+                <li>Track AI API costs as they can balloon quickly</li>
+            </ul>
+
+            <h3>For Compliance Officers:</h3>
+            <ul>
+                <li>Regulatory requirements often mandate deterministic processes</li>
+                <li>AI outputs may not be auditable for FDA/SEC/other regulators</li>
+                <li>Code provides reproducible audit trails</li>
+                <li>Consider hybrid: AI for screening, code for reporting</li>
+            </ul>
+
+            <h3>For Product Managers:</h3>
+            <ul>
+                <li>Understand the precision requirements for each feature</li>
+                <li>Don't default to "AI for everything"</li>
+                <li>Calculate break-even points for AI vs code approaches</li>
+                <li>Consider maintenance burden of both approaches</li>
+            </ul>
+
+            <h3>For Data Scientists:</h3>
+            <ul>
+                <li>Not every problem needs ML</li>
+                <li>Sometimes a SQL query beats a model</li>
+                <li>Focus AI where interpretation/judgment is needed</li>
+                <li>Use code for the transformation/calculation layer</li>
+            </ul>
+
+            <hr>
+
+            <h2>The Bottom Line</h2>
+
+            <p><strong>Probabilistic AI (real-time):</strong></p>
+            <ul>
+                <li>Excellent for judgment, interpretation, creativity</li>
+                <li>Expensive at scale</li>
+                <li>~90-99% reliable</li>
+                <li>Best for ambiguous, context-dependent tasks</li>
+            </ul>
+
+            <p><strong>Deterministic Code:</strong></p>
+            <ul>
+                <li>Perfect for calculations, transformations, validation</li>
+                <li>Free to run after development</li>
+                <li>100% reliable</li>
+                <li>Best for precision, compliance, high-volume operations</li>
+            </ul>
+
+            <p><strong>The Winning Strategy:</strong></p>
+            <ul>
+                <li>AI for what requires judgment</li>
+                <li>Code for what requires precision</li>
+                <li>Hybrid for complex workflows</li>
+                <li>Always question "do we really need AI for this?"</li>
+            </ul>
+
+            <p>Don't fall for "AI everywhere." Ask: <strong>Does this need creativity or calculation?</strong></p>
+
+            <p>The right architecture saves money, improves reliability, and meets regulatory requirements.</p>
+
+            <hr>
+
+            <p><strong>About This Post</strong></p>
+
+            <p>These lessons come from building systems across media production, clinical data, and financial operations. I've seen firsthand where AI shines and where it's overkill. The framework here applies whether you're processing podcasts or patient data.</p>
+
+            <p><strong>Want to discuss your use case?</strong> I'm always interested in hearing how different industries navigate these tradeoffs. The patterns are remarkably consistent across domains.</p>
+
+            <hr>
+
+            <p><em>Last updated: October 27, 2025</em></p>
 
         </article>
     </main>
