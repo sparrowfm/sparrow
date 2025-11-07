@@ -228,20 +228,41 @@ Example: iZotope RX "Learn" mode (suggests + allows tuning), some AI tools (no c
 
             <p><strong>Key insight:</strong> The knowledge gets used during every design review. It stays current because I'm constantly refining it based on what actually matters in my workflow.</p>
 
-            <h3>Example 3: Calendar Availability Analysis (Complex Tool Knowledge)</h3>
+            <h3>Example 3: Tool Usage Expertise (Using New Utility Tools)</h3>
 
-            <p><strong>The problem:</strong> I built a Port42 tool called <code>cal-avails</code> that analyzes calendar availability. It has dozens of options, edge cases, and usage patterns I keep forgetting.</p>
+            <p><strong>The context:</strong> A former colleague is building <a href="https://github.com/port42/port42" target="_blank" rel="noopener">Port42</a>, a brand-new command-line tool ecosystem with a cool vision: "consciousness computing" where intent becomes executable through conversation. It's still in early development, but the concept is fascinating—your tools evolve with your thinking patterns.</p>
 
-            <p><strong>Traditional solution:</strong> README file with examples.</p>
+            <p><strong>The problem:</strong> I started using Port42's <code>md-to-docx</code> tool frequently (converts Markdown to Word documents). Later, I'm trying <code>cal-avails</code> for calendar availability analysis. Both have dozens of options, edge cases, and usage patterns I keep forgetting.</p>
+
+            <p><strong>Traditional solution:</strong> README files with examples.</p>
             <ul>
                 <li>Problem: I'd forget which flags to use</li>
                 <li>Edge cases not well documented</li>
                 <li>Usage patterns scattered</li>
             </ul>
 
-            <p><strong>What I built instead:</strong> Skill that knows how to use the tool expertly.</p>
+            <p><strong>What I'm building:</strong> Skills that know how to use these tools expertly.</p>
 
-            <pre><code># Calendar Availability Analyzer Skill
+            <pre><code># Markdown to DOCX Converter Skill
+
+When converting Markdown to Word documents:
+
+Common usage patterns:
+- Single file: md-to-docx document.md
+- Batch conversion: md-to-docx *.md
+- Preserve formatting: headings, bold, italic, lists, code blocks, tables
+
+Best practices:
+- Use --output/-o to organize output files
+- Check for images and links before conversion
+- Preview complex tables (may need manual adjustment)
+
+Common gotchas:
+- Custom markdown extensions may not convert
+- Code blocks need proper language specification
+- Image paths must be relative or absolute
+
+# Calendar Availability Analyzer Skill (Experimental)
 
 When analyzing calendar availability:
 
@@ -250,19 +271,14 @@ For finding meeting slots:
 - Check both --work-hours and extended hours for flexibility
 - Look for fragmentation patterns (many short slots = bad schedule)
 
-For calendar health analysis:
-- Compare work-hours view vs extended view to spot boundary violations
-- Calculate availability density (free hours / total hours)
-- Identify fragmentation score (# of slots vs total available time)
-
 Common mistakes:
-- Forgetting timezone specification (leads to wrong slot times)
+- Forgetting timezone specification
 - Not accounting for weekends when using date ranges
-- Missing calendar source authentication issues
+- Missing calendar source authentication
 
 ...</code></pre>
 
-            <p><strong>Result:</strong> Now when I ask "when am I free for a 90-minute meeting?", Claude knows exactly how to use <code>cal-avails</code>, which flags matter, and how to interpret the results.</p>
+            <p><strong>Result:</strong> When I need to convert a blog post to Word format, Claude knows <code>md-to-docx</code> flags and gotchas. I use this constantly. The calendar analyzer is more experimental, but the same pattern applies—capture tool expertise once, apply it every time.</p>
 
             <hr>
 
