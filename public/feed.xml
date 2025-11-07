@@ -12,8 +12,23 @@
     <copyright>Copyright 2025 Neel Ketkar</copyright>
     <managingEditor>neel@ketkar.com (Neel Ketkar)</managingEditor>
     <webMaster>neel@ketkar.com (Neel Ketkar)</webMaster>
-    <lastBuildDate>Wed, 28 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 06 Nov 2025 00:00:00 +0000</lastBuildDate>
     <generator>Hand-crafted with Claude Code</generator>
+
+    <item>
+      <title>Domain Expertise as Code: Why Documentation That Executes Beats Documentation That Rots</title>
+      <link>https://sparrowfm.github.io/sparrow/posts/domain-expertise-as-code.html</link>
+      <guid isPermaLink="true">https://sparrowfm.github.io/sparrow/posts/domain-expertise-as-code.html</guid>
+      <description>How turning domain knowledge into executable code reduces onboarding time from weeks to days, prevents knowledge loss when experts leave, and ensures consistency across teams—with examples from healthcare, finance, legal, and creative industries.</description>
+      <pubDate>Wed, 06 Nov 2025 00:00:00 +0000</pubDate>
+      <dc:creator>Neel Ketkar</dc:creator>
+      <category>Knowledge Management</category>
+      <category>Team Scaling</category>
+      <category>AI Strategy</category>
+      <category>Executable Knowledge</category>
+      <category>Cross-Industry</category>
+      <category>ROI Analysis</category>
+    </item>
 
     <item>
       <title>The Curious Case of the Silent Cold Open: A Production Debugging Story</title>
