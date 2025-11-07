@@ -186,7 +186,7 @@ For ECR image pushes, check:
 
             <p><strong>Result:</strong> Now when I deploy, Claude <em>actively stops me</em> from saying "deployed successfully" until we've verified actual resource states. It's like having a paranoid DevOps engineer pair-programming with me.</p>
 
-            <p><strong>Key insight:</strong> This "documentation" gets used <em>every single deployment</em>. It can't go stale because Claude is applying it in real-time. When AWS changes something, I update the skill once and it applies everywhere.</p>
+            <p><strong>Key insight:</strong> This "documentation" gets used <em>every single deployment</em>. It can't go stale because Claude Code is applying it in real-time. When something breaks or AWS changes, Claude Code updates the skill based on what we learn. I just review the changes—I'm not manually maintaining docs.</p>
 
             <h3>Example 2: Creative Tools UX (Knowledge I Keep Relearning)</h3>
 
@@ -224,9 +224,9 @@ Example: iZotope RX "Learn" mode (suggests + allows tuning), some AI tools (no c
 
 ...</code></pre>
 
-            <p><strong>Result:</strong> When I design new features, Claude actively checks them against these patterns <em>while I'm designing</em>. "Hey, this feature has no preview—users will hate that. Here's how ElevenLabs solved it..."</p>
+            <p><strong>Result:</strong> When I design new features, Claude Code actively checks them against these patterns <em>while I'm designing</em>. "Hey, this feature has no preview—users will hate that. Here's how ElevenLabs solved it..."</p>
 
-            <p><strong>Key insight:</strong> The knowledge gets used during every design review. It stays current because I'm constantly refining it based on what actually matters in my workflow.</p>
+            <p><strong>Key insight:</strong> The knowledge gets used during every design review. It stays current because Claude Code refines it based on what I learn. I review and approve, but I'm not manually editing markdown files—Claude handles that.</p>
 
             <h3>Example 3: Tool Usage Expertise (Using New Utility Tools)</h3>
 
@@ -288,19 +288,21 @@ Common mistakes:
 
             <p>Traditional docs rot because they're write-once, read-maybe.</p>
 
-            <p>These skills get used <em>every time I work in that domain</em>. If something's wrong, I notice immediately and fix it. The knowledge evolves with my actual workflow.</p>
+            <p>These skills get used <em>every time I work in that domain</em>. If something's wrong, I notice immediately—Claude Code notices it breaks, updates the skill, and I review the change. The knowledge evolves with my actual workflow.</p>
 
             <h3>2. Active Application vs Passive Reference</h3>
 
-            <p>Docs require me to remember to check them.</p>
+            <p>Docs require me to remember to check them. <strong>Even AI assistants don't reliably reference docs.</strong></p>
 
-            <p>Skills actively guide me. Claude applies the knowledge proactively. It's like having domain experts pair-programming with you.</p>
+            <p>I tried documenting everything in GitHub—microservice standards, API conventions, architectural patterns. Just like humans don't read docs, Claude Code didn't consistently reference them either.</p>
+
+            <p>So I moved critical knowledge into skills (like my microservices-standards). Now Claude Code applies the knowledge proactively every time it writes code. It's like having domain experts pair-programming with you who actually <em>remember</em> your conventions.</p>
 
             <h3>3. No "Code" to Maintain</h3>
 
             <p>This isn't code that can break or need refactoring. It's structured knowledge in markdown.</p>
 
-            <p>Update is simple: Edit the markdown when you learn something new. No tests, no dependencies, no deployment.</p>
+            <p>Claude Code handles updates when patterns change. I review and approve. No tests, no dependencies, no deployment pipeline.</p>
 
             <h3>4. Scales With Complexity</h3>
 
@@ -425,9 +427,9 @@ Common mistakes:
                 <li>Design review criteria?</li>
             </ul>
 
-            <h3>2. Capture Core Patterns</h3>
+            <h3>2. Capture Core Patterns (With Your AI Assistant)</h3>
 
-            <p>Write 1-2 pages of markdown:</p>
+            <p>Work with your AI assistant to capture 1-2 pages of markdown:</p>
             <ul>
                 <li>What does an expert in this domain know?</li>
                 <li>What are common mistakes?</li>
@@ -435,19 +437,23 @@ Common mistakes:
                 <li>What examples illustrate the patterns?</li>
             </ul>
 
+            <p><strong>Real talk</strong>: I don't write these by hand. Claude Code helps me capture patterns based on our conversations. I review and refine.</p>
+
             <h3>3. Configure Your AI Assistant</h3>
 
             <ul>
-                <li><strong>Claude Code</strong>: Create a skill in <code>~/.claude/skills/</code></li>
+                <li><strong>Claude Code</strong>: Create a skill in <code>~/.claude/skills/</code> (Claude can help create the initial version)</li>
                 <li><strong>GitHub Copilot</strong>: Add custom instructions to <code>.github/copilot-instructions.md</code></li>
                 <li><strong>Cursor</strong>: Add to project rules in <code>.cursorrules</code></li>
             </ul>
 
-            <h3>4. Use It Daily</h3>
+            <h3>4. Use It Daily (And Let It Evolve)</h3>
 
             <p>The magic happens when you <em>actually use it</em>. Don't just write it and forget.</p>
 
-            <p>Every time you work in that domain, let the AI assistant apply the patterns. Refine based on what works.</p>
+            <p>Every time you work in that domain, let the AI assistant apply the patterns. When something breaks or you learn something new, your AI assistant updates the skill. You review and approve the changes.</p>
+
+            <p>You're not maintaining docs manually—you're curating knowledge with AI assistance.</p>
 
             <hr>
 
