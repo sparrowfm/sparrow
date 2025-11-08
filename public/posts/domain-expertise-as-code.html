@@ -280,6 +280,70 @@ Common mistakes:
 
             <p><strong>Result:</strong> When I need to convert a blog post to Word format, Claude knows <code>md-to-docx</code> flags and gotchas. I use this constantly. The calendar analyzer is more experimental, but the same pattern applies—capture tool expertise once, apply it every time.</p>
 
+            <h3>Example 4: Tools Breeding Tools</h3>
+
+            <p><strong>The Problem:</strong> My availability was fragmented across Google Calendar (personal) and Prelude Studios (work). Manual cross-checking was error-prone and time-consuming.</p>
+
+            <p><strong>First Attempt (Nov 2):</strong> Built three composable Port42 tools:</p>
+            <ul>
+                <li><code>cal-avails</code> - Find free time from Google Calendar (iCal)</li>
+                <li><code>prelude-scraper</code> - Scrape Prelude work calendar via Playwright</li>
+                <li><code>prelude-format</code> - Format availability with timezones</li>
+            </ul>
+
+            <p>I thought I had a working orchestrator. I didn't.</p>
+
+            <p><strong>Discovery (Nov 8):</strong> Asked Claude Code "show me my availability for Nov 10-14" → it called <code>cal-avails</code> → returned "No available slots found"</p>
+
+            <p><strong>Why?</strong> <code>cal-avails</code> had <code>prelude_url</code> in its config but zero integration code. It was incomplete.</p>
+
+            <p><strong>The Solution:</strong> Built the meta-tool using Port42's reference system:</p>
+
+            <pre><code>port42 swim @ai-engineer "create unified-avails orchestrator" \
+  --ref p42:/commands/cal-avails \
+  --ref p42:/commands/prelude-scraper</code></pre>
+
+            <p>Then applied TDD to finalize features (date filtering, slot merging, PT/ET timezone display).</p>
+
+            <p><strong>The Result:</strong></p>
+
+            <p>Before (manual workflow):</p>
+            <ul>
+                <li>Terminal 1: Check Google Calendar</li>
+                <li>Terminal 2: Scrape Prelude</li>
+                <li>Brain: Cross-check and merge manually</li>
+                <li>5 minutes</li>
+            </ul>
+
+            <p>After (one command):</p>
+            <pre><code>unified-avails --start 2025-11-18 --end 2025-11-18</code></pre>
+
+            <p>Output:</p>
+            <pre><code>Tue 11/18:
+  - 8:30 AM-4:00 PM PT / 11:30 AM-7:00 PM ET [Calendar + Prelude]</code></pre>
+
+            <p>True synthesis. 5 seconds.</p>
+
+            <p><strong>Why This is Executable Configuration:</strong></p>
+
+            <p>The knowledge of "how to synthesize work and personal calendars" isn't in a wiki. It's encoded in:</p>
+            <ul>
+                <li>Tool composition patterns (via <code>--ref p42:/commands/tool</code>)</li>
+                <li>Date filtering logic (via TDD tests)</li>
+                <li>Slot merging algorithms (via implementation)</li>
+                <li>Multi-timezone display (via format code)</li>
+            </ul>
+
+            <p><strong>This knowledge stays fresh because:</strong></p>
+            <ul>
+                <li>I use it daily when scheduling meetings</li>
+                <li>If Prelude changes their UI, <code>prelude-scraper</code> breaks immediately</li>
+                <li>If Google Calendar format changes, <code>cal-avails</code> fails</li>
+                <li>Any staleness is caught instantly through usage</li>
+            </ul>
+
+            <p><strong>Tools breeding tools:</strong> The orchestrator (<code>unified-avails</code>) was bred from foundation tools (<code>cal-avails</code>, <code>prelude-scraper</code>, <code>prelude-format</code>) through Port42's reference system. The meta-pattern itself is executable configuration.</p>
+
             <hr>
 
             <h2>Why This Works Better Than Documentation</h2>
